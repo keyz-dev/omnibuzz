@@ -1,0 +1,163 @@
+"use strict";
+const { Model } = require("sequelize");
+const TownUtils = require("../../utils/townUtils");
+const { cleanupImages, cleanupOldImages } = require("../../utils/imageCleanup");
+
+module.exports = (sequelize, DataTypes) => {
+  class Agency extends Model {
+    /**
+     * Helper method for defining associations.
+     * This method is not a part of Sequelize lifecycle.
+     * The `models/index` file will call this method automatically.
+     */
+    static associate(models) {
+      // define associations here
+      Agency.hasMany(models.Station, {
+        foreignKey: "agencyId",
+        as: "stations",
+      });
+      Agency.hasMany(models.VerificationDocument, {
+        foreignKey: "agencyId",
+        as: "verificationDocuments",
+      });
+      Agency.belongsTo(models.User, {
+        foreignKey: "ownerId",
+        as: "owner",
+      });
+    }
+
+    // Method to check if agency can be published
+    async canBePublished() {
+      // Check if agency has at least one station
+      const stationCount = await this.countStations();
+      if (stationCount === 0) {
+        return false;
+      }
+
+      // Check if all verification documents are approved
+      const documents = await this.getVerificationDocuments();
+      if (documents.length === 0) {
+        return false;
+      }
+
+      const allDocumentsApproved = documents.every(
+        (doc) => doc.status === "approved"
+      );
+      if (!allDocumentsApproved) {
+        return false;
+      }
+
+      return true;
+    }
+
+    // Method to update publishing status
+    async updatePublishingStatus() {
+      const canPublish = await this.canBePublished();
+      if (this.isPublished !== canPublish) {
+        this.isPublished = canPublish;
+        await this.save();
+      }
+      return canPublish;
+    }
+  }
+  Agency.init(
+    {
+      id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true,
+      },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      headAddress: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      description: {
+        type: DataTypes.TEXT,
+      },
+      logoURL: {
+        type: DataTypes.STRING,
+      },
+      contactInfo: {
+        type: DataTypes.ARRAY(DataTypes.JSONB),
+        defaultValue: [],
+      },
+      images: {
+        type: DataTypes.ARRAY(DataTypes.STRING),
+      },
+      towns: {
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        allowNull: false,
+        validate: {
+          isValidTowns(value) {
+            if (!TownUtils.validateTowns(value)) {
+              throw new Error("One or more towns are not valid");
+            }
+          },
+        },
+      },
+      townCount: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      isPublished: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+      isVerified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+      ownerId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        references: {
+          model: "Users",
+          key: "id",
+        },
+      },
+    },
+    {
+      sequelize,
+      modelName: "Agency",
+      hooks: {
+        beforeValidate: (agency) => {
+          if (agency.towns) {
+            agency.townCount = agency.towns.length;
+          }
+        },
+        afterCreate: async (agency) => {
+          await agency.updatePublishingStatus();
+        },
+        beforeSave: async (agency) => {
+          // Clean up old images if they're being changed
+          if (agency.changed("logoURL") && agency.previous("logoURL")) {
+            await cleanupOldImages(agency, {
+              logoURL: agency.previous("logoURL"),
+            });
+          }
+          if (agency.changed("images")) {
+            const oldImages = agency.previous("images") || [];
+            const newImages = agency.images || [];
+            const removedImages = oldImages.filter(
+              (img) => !newImages.includes(img)
+            );
+            if (removedImages.length > 0) {
+              await cleanupOldImages(agency, { images: removedImages });
+            }
+          }
+        },
+        beforeDestroy: async (agency) => {
+          // Clean up all images when agency is deleted
+          await cleanupImages(agency);
+        },
+      },
+    }
+  );
+  return Agency;
+};
