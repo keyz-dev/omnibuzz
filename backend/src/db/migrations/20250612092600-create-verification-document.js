@@ -9,9 +9,20 @@ module.exports = {
         primaryKey: true,
       },
       type: {
-        type: Sequelize.STRING,
+        type: Sequelize.ENUM(
+          "business_registration",
+          "tax_clearance",
+          "operating_license",
+          "insurance_certificate",
+          "safety_certificate",
+          "vehicle_registration",
+          "driver_license",
+          "other"
+        ),
         allowNull: false,
-        comment: "Type of document (e.g., business_license, tax_certificate)",
+        validate: {
+          notEmpty: true,
+        },
       },
       fileType: {
         type: Sequelize.STRING,

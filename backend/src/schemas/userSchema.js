@@ -34,7 +34,7 @@ const updateUserSchema = Joi.object({
   phone: phoneSchema.allow(null, ""),
   password: passwordSchema,
   avatar: singleImageSchema,
-  authProvider: Joi.string().valid("local", "google"),
+  authProvider: Joi.string().valid("local", "google").default("local"),
   role: roleSchema,
   isActive: Joi.boolean(),
   emailVerified: Joi.boolean(),
@@ -46,10 +46,23 @@ const staffInvitationSchema = Joi.object({
   email: emailSchema,
   fullName: Joi.string().required(),
   role: Joi.string().valid("station_manager", "ticket_agent").required(),
+  stationId: Joi.string().uuid().required(),
+  agencyId: Joi.string().uuid().required(),
+});
+
+// Accept Invitation Schema
+const acceptInvitationSchema = Joi.object({
+  token: Joi.string().required(),
+  password: passwordSchema.required(),
+  confirmPassword: Joi.string()
+    .valid(Joi.ref("password"))
+    .required()
+    .messages({ "any.only": "Passwords do not match" }),
 });
 
 // Password Reset Schema
 const passwordResetSchema = Joi.object({
+  code: Joi.string().required(),
   password: passwordSchema.required(),
   confirmPassword: Joi.string()
     .valid(Joi.ref("password"))
@@ -61,5 +74,6 @@ module.exports = {
   createUserSchema,
   updateUserSchema,
   staffInvitationSchema,
+  acceptInvitationSchema,
   passwordResetSchema,
 };

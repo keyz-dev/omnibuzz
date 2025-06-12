@@ -1,193 +1,33 @@
-const { User } = require("../db/models");
+require("dotenv").config();
+const { User, Station, StationWorker } = require("../db/models");
 const {
-  createUserSchema,
   updateUserSchema,
   staffInvitationSchema,
+  acceptInvitationSchema,
 } = require("../schemas/userSchema");
 const { validateRequest } = require("../utils/validation");
-const { catchAsync } = require("../utils/errorHandling");
 const emailService = require("../services/emailService");
 const { uploadToCloudinary } = require("../utils/cloudinary");
-const {
-  BadRequestError,
-  NotFoundError,
-  UnauthorizedError,
-} = require("../utils/errors");
-const { OAuth2Client } = require("google-auth-library");
+const { BadRequestError, NotFoundError } = require("../utils/errors");
+const { Op } = require("sequelize");
+const { generateToken } = require("../utils/jwt");
+const { isLocalImageUrl } = require("../utils/imageUtils");
 
-const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+// Helper function to format avatar URL
+const formatAvatarUrl = (avatar) => {
+  if (!avatar) return null;
 
-// Register a new user
-const register = catchAsync(async (req, res) => {
-  const { error, value } = validateRequest(req.body, createUserSchema);
-  if (error) throw new BadRequestError(error.message);
-
-  console.log(value);
-
-  const { email, password, ...userData } = value;
-
-  // Check if user already exists
-  const existingUser = await User.findOne({ where: { email } });
-  if (existingUser) {
-    throw new BadRequestError("Email already registered");
+  if (isLocalImageUrl(avatar)) {
+    return `${process.env.SERVER_URL}${avatar}`;
   }
-
-  // Handle avatar upload if present
-  let avatarUrl = null;
-  if (req.file) {
-    const uploadResult = await uploadToCloudinary(req.file.path);
-    avatarUrl = uploadResult.secure_url;
-  }
-
-  // Create user
-  const user = await User.create({
-    ...userData,
-    email,
-    password,
-    avatar: avatarUrl,
-  });
-
-  // Generate verification code
-  const verificationCode = Math.floor(
-    100000 + Math.random() * 900000
-  ).toString();
-  await user.update({
-    emailVerificationCode: verificationCode,
-    emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
-  });
-
-  // Send verification email
-  await emailService.sendEmail({
-    to: email,
-    subject: "Verify your email",
-    template: "emailVerification",
-    data: {
-      name: user.fullName,
-      verificationCode,
-    },
-  });
-
-  // Generate auth token
-  const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
-  });
-
-  res.status(201).json({
-    status: "success",
-    data: {
-      user: {
-        id: user.id,
-        fullName: user.fullName,
-        email: user.email,
-        role: user.role,
-        avatar: user.avatar,
-      },
-      token,
-    },
-  });
-});
-
-// Login user
-const login = catchAsync(async (req, res) => {
-  const { email, password } = req.body;
-
-  // Validate input
-  if (!email || !password) {
-    throw new BadRequestError("Please provide email and password");
-  }
-
-  // Find user
-  const user = await User.findOne({ where: { email } });
-  if (!user) {
-    throw new UnauthorizedError("Invalid credentials");
-  }
-
-  // Check password
-  const isPasswordValid = await user.comparePassword(password);
-  if (!isPasswordValid) {
-    throw new UnauthorizedError("Invalid credentials");
-  }
-
-  // Check if user is active
-  if (!user.isActive) {
-    throw new UnauthorizedError("Account is deactivated");
-  }
-
-  // Generate token
-  const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
-  });
-
-  res.json({
-    status: "success",
-    data: {
-      user: {
-        id: user.id,
-        fullName: user.fullName,
-        email: user.email,
-        role: user.role,
-        avatar: user.avatar,
-      },
-      token,
-    },
-  });
-});
-
-// Google OAuth login
-const googleLogin = catchAsync(async (req, res) => {
-  const { token } = req.body;
-
-  // Verify Google token
-  const ticket = await googleClient.verifyIdToken({
-    idToken: token,
-    audience: process.env.GOOGLE_CLIENT_ID,
-  });
-
-  const payload = ticket.getPayload();
-  const { email, name, picture } = payload;
-
-  // Find or create user
-  let user = await User.findOne({ where: { email } });
-
-  if (!user) {
-    // Create new user
-    user = await User.create({
-      email,
-      fullName: name,
-      avatar: picture,
-      authProvider: "google",
-      emailVerified: true,
-    });
-  } else if (user.authProvider !== "google") {
-    throw new BadRequestError(
-      "Email already registered with different provider"
-    );
-  }
-
-  // Generate token
-  const authToken = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
-  });
-
-  res.json({
-    status: "success",
-    data: {
-      user: {
-        id: user.id,
-        fullName: user.fullName,
-        email: user.email,
-        role: user.role,
-        avatar: user.avatar,
-      },
-      token: authToken,
-    },
-  });
-});
+  return avatar;
+};
 
 // Verify email
-const verifyEmail = catchAsync(async (req, res) => {
+const verifyEmail = async (req, res) => {
   const { code } = req.body;
 
+  // Find user by verification code
   const user = await User.findOne({
     where: {
       emailVerificationCode: code,
@@ -199,20 +39,38 @@ const verifyEmail = catchAsync(async (req, res) => {
     throw new BadRequestError("Invalid or expired verification code");
   }
 
+  // Update user verification status
   await user.update({
     emailVerified: true,
     emailVerificationCode: null,
     emailVerificationExpires: null,
   });
 
+  // Generate new token if user was authenticated
+  let token = null;
+  if (req.user && req.user.id === user.id) {
+    token = generateToken({ userId: user.id, isTemporary: false }, "7d");
+  }
+
   res.json({
     status: "success",
     message: "Email verified successfully",
+    data: {
+      user: {
+        id: user.id,
+        fullName: user.fullName,
+        email: user.email,
+        role: user.role,
+        avatar: formatAvatarUrl(user.avatar),
+        emailVerified: true,
+      },
+      ...(token && { token }), // Only include token if it was generated
+    },
   });
-});
+};
 
 // Request password reset
-const requestPasswordReset = catchAsync(async (req, res) => {
+const requestPasswordReset = async (req, res) => {
   const { email } = req.body;
 
   const user = await User.findOne({ where: { email } });
@@ -242,10 +100,10 @@ const requestPasswordReset = catchAsync(async (req, res) => {
     status: "success",
     message: "Password reset instructions sent to your email",
   });
-});
+};
 
 // Reset password
-const resetPassword = catchAsync(async (req, res) => {
+const resetPassword = async (req, res) => {
   const { code, password } = req.body;
 
   const user = await User.findOne({
@@ -269,22 +127,27 @@ const resetPassword = catchAsync(async (req, res) => {
     status: "success",
     message: "Password reset successful",
   });
-});
+};
 
 // Get current user profile
-const getProfile = catchAsync(async (req, res) => {
+const getProfile = async (req, res) => {
   const user = await User.findByPk(req.user.id, {
     attributes: { exclude: ["password"] },
   });
 
+  const userData = user.toJSON();
+  if (userData.avatar && !userData.avatar.startsWith("http")) {
+    userData.avatar = `${process.env.SERVER_URL}${userData.avatar}`;
+  }
+
   res.json({
     status: "success",
-    data: { user },
+    data: { user: userData },
   });
-});
+};
 
 // Update user profile
-const updateProfile = catchAsync(async (req, res) => {
+const updateProfile = async (req, res) => {
   const { error, value } = validateRequest(req.body, updateUserSchema);
   if (error) throw new BadRequestError(error.message);
 
@@ -310,18 +173,18 @@ const updateProfile = catchAsync(async (req, res) => {
         fullName: user.fullName,
         email: user.email,
         role: user.role,
-        avatar: user.avatar,
+        avatar: formatAvatarUrl(user.avatar),
       },
     },
   });
-});
+};
 
 // Invite staff member
-const inviteStaff = catchAsync(async (req, res) => {
+const inviteStaff = async (req, res) => {
   const { error, value } = validateRequest(req.body, staffInvitationSchema);
   if (error) throw new BadRequestError(error.message);
 
-  const { email, fullName, role } = value;
+  const { email, fullName, role, stationId, agencyId } = value;
 
   // Check if user already exists
   const existingUser = await User.findOne({ where: { email } });
@@ -329,15 +192,29 @@ const inviteStaff = catchAsync(async (req, res) => {
     throw new BadRequestError("Email already registered");
   }
 
-  // Create invitation
-  const invitationToken = Math.random().toString(36).substring(2, 15);
+  // Verify station belongs to agency
+  const station = await Station.findOne({
+    where: { id: stationId, agencyId },
+  });
+  if (!station) {
+    throw new BadRequestError("Invalid station for this agency");
+  }
+
+  // Create user with invitation
   const user = await User.create({
     email,
     fullName,
     role,
-    invitationToken,
-    invitationExpires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+    status: "pending",
     invitedBy: req.user.id,
+  });
+
+  // Create station worker record
+  await StationWorker.create({
+    userId: user.id,
+    stationId,
+    role,
+    isActive: true,
   });
 
   // Send invitation email
@@ -348,7 +225,8 @@ const inviteStaff = catchAsync(async (req, res) => {
     data: {
       name: fullName,
       role,
-      invitationLink: `${process.env.FRONTEND_URL}/accept-invitation?token=${invitationToken}`,
+      stationName: station.name,
+      invitationLink: `${process.env.FRONTEND_URL}/accept-invitation?token=${user.invitationToken}`,
     },
   });
 
@@ -356,34 +234,45 @@ const inviteStaff = catchAsync(async (req, res) => {
     status: "success",
     message: "Staff invitation sent successfully",
   });
-});
+};
 
 // Accept staff invitation
-const acceptInvitation = catchAsync(async (req, res) => {
-  const { token, password } = req.body;
+const acceptInvitation = async (req, res) => {
+  const { error, value } = validateRequest(req.body, acceptInvitationSchema);
+  if (error) throw new BadRequestError(error.message);
+
+  const { token, password } = value;
 
   const user = await User.findOne({
     where: {
       invitationToken: token,
       invitationExpires: { [Op.gt]: new Date() },
+      status: "pending",
     },
+    include: [
+      {
+        model: StationWorker,
+        as: "workingStations",
+        include: [{ model: Station, as: "station" }],
+      },
+    ],
   });
 
   if (!user) {
     throw new BadRequestError("Invalid or expired invitation token");
   }
 
+  // Update user
   await user.update({
     password,
     invitationToken: null,
     invitationExpires: null,
     emailVerified: true,
+    status: "active",
   });
 
   // Generate auth token
-  const authToken = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
-  });
+  const authToken = generateToken({ userId: user.id }, "7d");
 
   res.json({
     status: "success",
@@ -393,17 +282,35 @@ const acceptInvitation = catchAsync(async (req, res) => {
         fullName: user.fullName,
         email: user.email,
         role: user.role,
-        avatar: user.avatar,
+        avatar: formatAvatarUrl(user.avatar),
+        stations: user.workingStations.map((sw) => ({
+          id: sw.station.id,
+          name: sw.station.name,
+          role: sw.role,
+        })),
       },
       token: authToken,
     },
   });
-});
+};
+
+// Delete user account
+const deleteAccount = async (req, res) => {
+  const user = await User.findByPk(req.user.id);
+  if (!user) {
+    throw new NotFoundError("User not found");
+  }
+
+  // Delete user (this will trigger the beforeDestroy hook to clean up files)
+  await user.destroy();
+
+  res.json({
+    status: "success",
+    message: "Account deleted successfully",
+  });
+};
 
 module.exports = {
-  register,
-  login,
-  googleLogin,
   verifyEmail,
   requestPasswordReset,
   resetPassword,
@@ -411,4 +318,5 @@ module.exports = {
   updateProfile,
   inviteStaff,
   acceptInvitation,
+  deleteAccount,
 };

@@ -1,11 +1,12 @@
 "use strict";
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable("Stations", {
       id: {
         type: Sequelize.UUID,
-        allowNull: false,
+        defaultValue: Sequelize.UUIDV4,
         primaryKey: true,
       },
       name: {
@@ -19,18 +20,18 @@ module.exports = {
       neighborhood: {
         type: Sequelize.STRING,
         allowNull: false,
-        comment: "Neighborhood or quarter where the station is located",
       },
       baseTown: {
         type: Sequelize.STRING,
         allowNull: false,
-        comment: "The town where this station is located",
       },
       destinations: {
         type: Sequelize.ARRAY(Sequelize.STRING),
         defaultValue: [],
-        comment:
-          "Array of destination towns where trips from this station can go",
+      },
+      images: {
+        type: Sequelize.ARRAY(Sequelize.STRING),
+        defaultValue: [],
       },
       agencyId: {
         type: Sequelize.UUID,
@@ -39,12 +40,23 @@ module.exports = {
           model: "Agencies",
           key: "id",
         },
-        onUpdate: "CASCADE",
-        onDelete: "CASCADE",
       },
       isActive: {
         type: Sequelize.BOOLEAN,
-        defaultValue: true,
+        defaultValue: false,
+      },
+      coordinates: {
+        type: Sequelize.JSONB,
+        allowNull: false,
+        defaultValue: {
+          lat: null,
+          lng: null,
+        },
+      },
+      paymentMethods: {
+        type: Sequelize.JSONB,
+        defaultValue: [],
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,
@@ -56,6 +68,7 @@ module.exports = {
       },
     });
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("Stations");
   },

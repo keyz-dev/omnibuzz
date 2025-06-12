@@ -21,7 +21,7 @@ module.exports = {
       description: {
         type: Sequelize.TEXT,
       },
-      logoURL: {
+      logo: {
         type: Sequelize.STRING,
       },
       contactInfo: {

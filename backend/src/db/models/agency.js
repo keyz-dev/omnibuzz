@@ -24,6 +24,13 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "ownerId",
         as: "owner",
       });
+
+      // Add many-to-many relationship for agency workers
+      Agency.belongsToMany(models.User, {
+        through: "StationWorkers",
+        foreignKey: "agencyId",
+        as: "workers",
+      });
     }
 
     // Method to check if agency can be published
@@ -80,7 +87,7 @@ module.exports = (sequelize, DataTypes) => {
       description: {
         type: DataTypes.TEXT,
       },
-      logoURL: {
+      logo: {
         type: DataTypes.STRING,
       },
       contactInfo: {
@@ -136,9 +143,9 @@ module.exports = (sequelize, DataTypes) => {
         },
         beforeSave: async (agency) => {
           // Clean up old images if they're being changed
-          if (agency.changed("logoURL") && agency.previous("logoURL")) {
+          if (agency.changed("logo") && agency.previous("logo")) {
             await cleanupOldImages(agency, {
-              logoURL: agency.previous("logoURL"),
+              logo: agency.previous("logo"),
             });
           }
           if (agency.changed("images")) {

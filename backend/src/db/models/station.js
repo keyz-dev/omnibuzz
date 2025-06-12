@@ -12,6 +12,12 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "agencyId",
         as: "agency",
       });
+
+      // Add association with StationWorker
+      Station.hasMany(models.StationWorker, {
+        foreignKey: "stationId",
+        as: "workers",
+      });
     }
 
     // Method to add a destination
@@ -48,6 +54,43 @@ module.exports = (sequelize, DataTypes) => {
       return this.destinations.some(
         (town) => town.toLowerCase() === townName.toLowerCase()
       );
+    }
+
+    // Method to update active status based on workers
+    async updateActiveStatus() {
+      const workerCount = await this.countWorkers();
+      const shouldBeActive = workerCount > 0;
+
+      if (this.isActive !== shouldBeActive) {
+        this.isActive = shouldBeActive;
+        await this.save();
+      }
+
+      return this.isActive;
+    }
+
+    // Method to validate payment information
+    validatePaymentInfo() {
+      if (!this.paymentMethods || !Array.isArray(this.paymentMethods)) {
+        throw new Error("Payment methods must be an array");
+      }
+
+      // Validate each payment method
+      this.paymentMethods.forEach((method) => {
+        if (
+          !method.method ||
+          !method.value ||
+          !method.value.name ||
+          !method.value.number
+        ) {
+          throw new Error(
+            "Each payment method must have method and value (with name and number)"
+          );
+        }
+        if (!["OM", "MoMo"].includes(method.method)) {
+          throw new Error("Payment method must be either 'OM' or 'MoMo'");
+        }
+      });
     }
   }
   Station.init(
@@ -145,7 +188,64 @@ module.exports = (sequelize, DataTypes) => {
       },
       isActive: {
         type: DataTypes.BOOLEAN,
-        defaultValue: true,
+        defaultValue: false,
+      },
+      coordinates: {
+        type: DataTypes.JSONB,
+        allowNull: false,
+        defaultValue: {
+          lat: null,
+          lng: null,
+        },
+        validate: {
+          isValidCoordinates(value) {
+            if (!value || typeof value !== "object") {
+              throw new Error("Coordinates must be an object");
+            }
+            if (
+              typeof value.lat !== "number" ||
+              typeof value.lng !== "number"
+            ) {
+              throw new Error(
+                "Coordinates must have numeric lat and lng values"
+              );
+            }
+            if (value.lat < -90 || value.lat > 90) {
+              throw new Error("Latitude must be between -90 and 90");
+            }
+            if (value.lng < -180 || value.lng > 180) {
+              throw new Error("Longitude must be between -180 and 180");
+            }
+          },
+        },
+      },
+      // Payment Information
+      paymentMethods: {
+        type: DataTypes.JSONB,
+        defaultValue: [],
+        validate: {
+          isValidPaymentMethods(value) {
+            if (!Array.isArray(value)) {
+              throw new Error("Payment methods must be an array");
+            }
+
+            value.forEach((method) => {
+              if (
+                !method.method ||
+                !method.value ||
+                !method.value.name ||
+                !method.value.number
+              ) {
+                throw new Error(
+                  "Each payment method must have method and value (with name and number)"
+                );
+              }
+              if (!["OM", "MoMo"].includes(method.method)) {
+                throw new Error("Payment method must be either 'OM' or 'MoMo'");
+              }
+            });
+          },
+        },
       },
     },
     {
@@ -164,6 +264,9 @@ module.exports = (sequelize, DataTypes) => {
               await cleanupOldImages(station, { images: removedImages });
             }
           }
+
+          // Validate payment information
+          station.validatePaymentInfo();
         },
         beforeDestroy: async (station) => {
           // Clean up all images when station is deleted

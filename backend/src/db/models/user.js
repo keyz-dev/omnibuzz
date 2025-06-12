@@ -16,11 +16,37 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "ownerId",
         as: "ownedAgency",
       });
+
+      // Add many-to-many relationship for agency workers
+      User.belongsToMany(models.Agency, {
+        through: "StationWorkers",
+        foreignKey: "userId",
+        as: "workingAgencies",
+      });
+
+      // Station relationships
+      User.belongsToMany(models.Station, {
+        through: "StationWorkers",
+        foreignKey: "userId",
+        as: "workingStations",
+      });
     }
 
     // Instance method to check password
     async comparePassword(candidatePassword) {
       return bcrypt.compare(candidatePassword, this.password);
+    }
+
+    // Helper method to check if user is a station worker
+    isStationWorker() {
+      return ["station_manager", "ticket_agent"].includes(this.role);
+    }
+
+    // Helper method to check if user is an agency worker
+    isStationWorker() {
+      return ["agency_admin", "station_manager", "ticket_agent"].includes(
+        this.role
+      );
     }
   }
   User.init(
@@ -59,9 +85,6 @@ module.exports = (sequelize, DataTypes) => {
       avatar: {
         type: DataTypes.STRING,
         allowNull: true,
-        validate: {
-          isUrl: true,
-        },
       },
       authProvider: {
         type: DataTypes.ENUM("local", "google"),
@@ -97,20 +120,13 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: true,
       },
-      invitationToken: {
-        type: DataTypes.STRING,
-        allowNull: true,
-        comment: "Token for ticket_agent invitation link",
-      },
-      invitationExpires: {
+      createdAt: {
+        allowNull: false,
         type: DataTypes.DATE,
-        allowNull: true,
-        comment: "Expiration time for invitation token",
       },
-      invitedBy: {
-        type: DataTypes.UUID,
-        allowNull: true,
-        comment: "ID of the agency_admin who sent the invitation",
+      updatedAt: {
+        allowNull: false,
+        type: DataTypes.DATE,
       },
     },
     {
@@ -126,14 +142,6 @@ module.exports = (sequelize, DataTypes) => {
             user.emailVerificationExpires = new Date(
               Date.now() + 24 * 60 * 60 * 1000
             ); // 24 hours
-          }
-
-          // Generate invitation token for ticket_agent members
-          if (["station_manager", "ticket_agent"].includes(user.role)) {
-            user.invitationToken = Math.random().toString(36).substring(2, 15);
-            user.invitationExpires = new Date(
-              Date.now() + 7 * 24 * 60 * 60 * 1000
-            ); // 7 days
           }
         },
         beforeSave: async (user) => {

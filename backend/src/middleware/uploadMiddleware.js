@@ -4,6 +4,7 @@ const path = require("path");
 const fs = require("fs");
 const { v4: uuidv4 } = require("uuid");
 const { uploadToCloudinary } = require("../utils/cloudinary");
+const { BadRequestError } = require("../utils/errors");
 
 const inProduction = process.env.NODE_ENV === "production";
 
@@ -20,7 +21,7 @@ const createUploadDirs = () => {
   ];
 
   dirs.forEach((dir) => {
-    const dirPath = path.join(process.cwd(), dir);
+    const dirPath = path.join(process.cwd(), "src", dir);
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true });
     }
@@ -36,52 +37,45 @@ const storage = inProduction
   : multer.diskStorage({
       // Use disk storage for development
       destination: (req, file, cb) => {
-        let uploadPath = "uploads/";
+        // Determine subdirectory based on file fieldname
+        const subDir =
+          file.fieldname === "avatar"
+            ? "avatars"
+            : file.fieldname === "logo"
+              ? "agencies"
+              : file.fieldname === "stationImage"
+                ? "stations"
+                : file.fieldname === "document"
+                  ? "documents"
+                  : "others";
 
-        // Determine upload directory based on file type
-        if (file.fieldname === "avatar") {
-          uploadPath += "avatars/";
-        } else if (
-          file.fieldname === "agencyLogo" ||
-          file.fieldname === "agencyImages"
-        ) {
-          uploadPath += "agencies/";
-        } else if (file.fieldname === "stationImages") {
-          uploadPath += "stations/";
-        } else if (file.fieldname === "document") {
-          uploadPath += "documents/";
+        // Set the folderName on the file object
+        file.folderName = subDir;
+
+        const uploadDir = path.join(__dirname, "../uploads", subDir);
+
+        // Create uploads directory if it doesn't exist
+        if (!fs.existsSync(uploadDir)) {
+          fs.mkdirSync(uploadDir, { recursive: true });
         }
 
-        cb(null, uploadPath);
+        cb(null, uploadDir);
       },
       filename: (req, file, cb) => {
-        // Generate unique filename
-        const uniqueSuffix = `${Date.now()}-${uuidv4()}`;
+        // Generate unique filename with UUID for better uniqueness
+        const uniqueId = uuidv4();
         const ext = path.extname(file.originalname);
-        cb(null, `${file.fieldname}-${uniqueSuffix}${ext}`);
+        cb(null, `${uniqueId}${ext}`);
       },
     });
 
 // File filter
 const fileFilter = (req, file, cb) => {
-  // Allowed file types
-  const allowedTypes = {
-    "image/jpeg": true,
-    "image/png": true,
-    "image/jpg": true,
-    "application/pdf": true,
-  };
-
-  if (allowedTypes[file.mimetype]) {
-    cb(null, true);
-  } else {
-    cb(
-      new Error(
-        "Invalid file type. Only JPEG, PNG, and PDF files are allowed."
-      ),
-      false
-    );
+  // Accept images only
+  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+    return cb(new BadRequestError("Only image files are allowed!"), false);
   }
+  cb(null, true);
 };
 
 // Configure multer
@@ -89,7 +83,7 @@ const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB limit
+    fileSize: 5 * 1024 * 1024, // 5MB limit
   },
 });
 
@@ -105,24 +99,32 @@ const handleCloudinaryUpload = async (req, res, next) => {
     }
 
     if (req.file) {
+      // Set folderName for Cloudinary uploads
+      const folderName = getCloudinaryFolder(req.file.fieldname);
+      req.file.folderName = folderName;
+
       // Handle single file upload
       const result = await uploadToCloudinary(req.file.buffer, {
-        folder: getCloudinaryFolder(req.file.fieldname),
+        folder: folderName,
         resource_type: "auto",
       });
       req.file.path = result.secure_url;
     } else if (req.files) {
       // Handle multiple file uploads
-      const uploadPromises = req.files.map((file) =>
-        uploadToCloudinary(file.buffer, {
-          folder: getCloudinaryFolder(file.fieldname),
+      const uploadPromises = req.files.map((file) => {
+        const folderName = getCloudinaryFolder(file.fieldname);
+        file.folderName = folderName;
+
+        return uploadToCloudinary(file.buffer, {
+          folder: folderName,
           resource_type: "auto",
-        })
-      );
+        });
+      });
       const results = await Promise.all(uploadPromises);
-      req.files = results.map((result) => ({
+      req.files = results.map((result, index) => ({
         ...result,
         path: result.secure_url,
+        folderName: req.files[index].folderName,
       }));
     }
 
@@ -149,32 +151,13 @@ const getCloudinaryFolder = (fieldname) => {
   }
 };
 
-// Error handling middleware
-const handleUploadError = (err, req, res, next) => {
-  if (err instanceof multer.MulterError) {
-    if (err.code === "LIMIT_FILE_SIZE") {
-      return res.status(400).json({
-        error: "File size too large. Maximum size is 5MB.",
-      });
-    }
-    return res.status(400).json({
-      error: err.message,
-    });
-  }
-
-  if (err) {
-    return res.status(400).json({
-      error: err.message,
-    });
-  }
-
-  next();
-};
-
-// Middleware to format file paths for response
+// Format file paths for response
 const formatFilePaths = (req, res, next) => {
   if (req.file) {
-    req.file.path = req.file.path.replace(/\\/g, "/");
+    // In development, return the local URL
+    if (process.env.NODE_ENV !== "production") {
+      req.file.path = `/uploads/${req.file.folderName}/${path.basename(req.file.path)}`;
+    }
   }
   if (req.files) {
     req.files = req.files.map((file) => {
@@ -183,6 +166,19 @@ const formatFilePaths = (req, res, next) => {
     });
   }
   next();
+};
+
+// Error handling middleware
+const handleUploadError = (err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    if (err.code === "LIMIT_FILE_SIZE") {
+      return next(
+        new BadRequestError("File size too large. Maximum size is 5MB.")
+      );
+    }
+    return next(new BadRequestError(err.message));
+  }
+  next(err);
 };
 
 // Export middleware chain

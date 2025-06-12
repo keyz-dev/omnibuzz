@@ -1,7 +1,7 @@
 require("dotenv").config();
-const jwt = require("jsonwebtoken");
 const { User } = require("../db/models");
 const { UnauthorizedError, ForbiddenError } = require("../utils/errors");
+const { verifyToken } = require("../utils/jwt");
 
 // Authentication middleware
 const authenticate = async (req, res, next) => {
@@ -15,7 +15,7 @@ const authenticate = async (req, res, next) => {
     const token = authHeader.split(" ")[1];
 
     // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = verifyToken(token);
     if (!decoded) {
       throw new UnauthorizedError("Invalid or expired token");
     }
@@ -31,6 +31,13 @@ const authenticate = async (req, res, next) => {
 
     if (!user.isActive) {
       throw new UnauthorizedError("Account is deactivated");
+    }
+
+    // Check email verification
+    if (!user.emailVerified) {
+      throw new ForbiddenError(
+        "Please verify your email to access this resource"
+      );
     }
 
     // Attach user to request object
@@ -64,7 +71,35 @@ const authorize = (roles) => {
   };
 };
 
+// Optional authentication middleware (for routes that can be accessed without verification)
+const optionalAuth = async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return next();
+    }
+
+    const token = authHeader.split(" ")[1];
+    const decoded = verifyToken(token);
+
+    if (decoded) {
+      const user = await User.findByPk(decoded.userId, {
+        attributes: { exclude: ["password"] },
+      });
+
+      if (user) {
+        req.user = user;
+      }
+    }
+
+    next();
+  } catch (error) {
+    next();
+  }
+};
+
 module.exports = {
   authenticate,
   authorize,
+  optionalAuth,
 };

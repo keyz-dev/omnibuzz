@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { authenticate, authorize } = require("../middleware/auth");
+const { authenticate, authorize, optionalAuth } = require("../middleware/auth");
 const {
   upload,
   handleCloudinaryUpload,
@@ -8,17 +8,20 @@ const {
   formatFilePaths,
 } = require("../middleware/uploadMiddleware");
 const {
-  register,
-  login,
-  googleLogin,
+  getProfile,
+  updateProfile,
+  deleteAccount,
   verifyEmail,
   requestPasswordReset,
   resetPassword,
-  getProfile,
-  updateProfile,
   inviteStaff,
   acceptInvitation,
 } = require("../controllers/userController");
+const {
+  register,
+  login,
+  googleLogin,
+} = require("../controllers/authController");
 
 // Public routes
 router.post(
@@ -32,7 +35,7 @@ router.post(
 
 router.post("/login", login);
 router.post("/google-login", googleLogin);
-router.post("/verify-email", verifyEmail);
+router.post("/verify-email", optionalAuth, verifyEmail);
 router.post("/request-password-reset", requestPasswordReset);
 router.post("/reset-password", resetPassword);
 router.post("/accept-invitation", acceptInvitation);
@@ -49,6 +52,9 @@ router.patch(
   formatFilePaths,
   updateProfile
 );
+
+// Delete account route
+router.delete("/account", deleteAccount);
 
 // Admin only routes
 router.post(

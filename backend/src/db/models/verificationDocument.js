@@ -30,7 +30,16 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
       },
       type: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM(
+          "business_registration",
+          "tax_clearance",
+          "operating_license",
+          "insurance_certificate",
+          "safety_certificate",
+          "vehicle_registration",
+          "driver_license",
+          "other"
+        ),
         allowNull: false,
         validate: {
           notEmpty: true,

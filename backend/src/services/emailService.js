@@ -1,27 +1,60 @@
+require("dotenv").config();
 const nodemailer = require("nodemailer");
 const logger = require("../utils/logger");
+const handlebars = require("handlebars");
+const fs = require("fs").promises;
+const path = require("path");
 
 class EmailService {
   constructor() {
     this.transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: process.env.SMTP_PORT,
-      secure: process.env.SMTP_SECURE === "true",
+      secure: process.env.SMTP_SECURE === "true" ? true : false,
       auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+        user: process.env.SMTP_EMAIL,
+        pass: process.env.SMTP_PASSWORD,
       },
     });
   }
 
-  async sendEmail({ to, subject, html, text }) {
+  /**
+   * Load and compile a Handlebars template
+   * @param {string} templateName - Name of the template file (without extension)
+   * @param {Object} data - Data to inject into the template
+   * @returns {Promise<string>} - Compiled HTML
+   */
+  async compileTemplate(templateName, data) {
     try {
+      const templatePath = path.join(
+        __dirname,
+        "../templates/emails",
+        `${templateName}.hbs`
+      );
+      const template = await fs.readFile(templatePath, "utf-8");
+      const compiledTemplate = handlebars.compile(template);
+      return compiledTemplate(data);
+    } catch (error) {
+      logger.error("Error compiling email template", { error, templateName });
+      throw new Error(`Failed to compile email template: ${templateName}`);
+    }
+  }
+
+  async sendEmail({ to, subject, template, data, html, text }) {
+    try {
+      let finalHtml = html;
+
+      // If template is provided, compile it
+      if (template) {
+        finalHtml = await this.compileTemplate(template, data);
+      }
+
       const info = await this.transporter.sendMail({
-        from: `"OmniBuzz" <${process.env.SMTP_FROM}>`,
+        from: process.env.SMTP_FROM_NAME,
         to,
         subject,
         text,
-        html,
+        html: finalHtml,
       });
 
       logger.info("Email sent successfully", { messageId: info.messageId });
@@ -59,6 +92,18 @@ class EmailService {
           <li>Seats: ${booking.seats.join(", ")}</li>
         </ul>
       `,
+    });
+  }
+
+  async sendVerificationEmail(user, verificationCode) {
+    return this.sendEmail({
+      to: user.email,
+      subject: "Verify your email",
+      template: "emailVerification",
+      data: {
+        name: user.fullName,
+        verificationCode,
+      },
     });
   }
 }
