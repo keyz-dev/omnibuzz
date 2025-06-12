@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { authenticate, authorize, optionalAuth } = require("../middleware/auth");
+const { authenticate, optionalAuth } = require("../middleware/auth");
 const {
   upload,
   handleCloudinaryUpload,
@@ -14,7 +14,6 @@ const {
   verifyEmail,
   requestPasswordReset,
   resetPassword,
-  inviteStaff,
   acceptInvitation,
 } = require("../controllers/userController");
 const {
@@ -38,7 +37,15 @@ router.post("/google-login", googleLogin);
 router.post("/verify-email", optionalAuth, verifyEmail);
 router.post("/request-password-reset", requestPasswordReset);
 router.post("/reset-password", resetPassword);
-router.post("/accept-invitation", acceptInvitation);
+
+router.post(
+  "/accept-invitation",
+  upload.single("avatar"),
+  handleCloudinaryUpload,
+  handleUploadError,
+  formatFilePaths,
+  acceptInvitation
+);
 
 // Protected routes
 router.use(authenticate);
@@ -55,12 +62,5 @@ router.patch(
 
 // Delete account route
 router.delete("/account", deleteAccount);
-
-// Admin only routes
-router.post(
-  "/invite-staff",
-  authorize(["system_admin", "agency_admin"]),
-  inviteStaff
-);
 
 module.exports = router;

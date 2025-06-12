@@ -41,9 +41,9 @@ const storage = inProduction
         const subDir =
           file.fieldname === "avatar"
             ? "avatars"
-            : file.fieldname === "logo"
+            : file.fieldname === "logo" || file.fieldname === "agencyImages"
               ? "agencies"
-              : file.fieldname === "stationImage"
+              : file.fieldname === "stationImages"
                 ? "stations"
                 : file.fieldname === "document"
                   ? "documents"
@@ -72,7 +72,7 @@ const storage = inProduction
 // File filter
 const fileFilter = (req, file, cb) => {
   // Accept images only
-  if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+  if (!file.originalname.match(/\.(jpg|jpeg|png|gif|webp|svg|ico|avif)$/)) {
     return cb(new BadRequestError("Only image files are allowed!"), false);
   }
   cb(null, true);
@@ -109,7 +109,7 @@ const handleCloudinaryUpload = async (req, res, next) => {
         resource_type: "auto",
       });
       req.file.path = result.secure_url;
-    } else if (req.files) {
+    } else if (req.files && req.files.length > 0) {
       // Handle multiple file uploads
       const uploadPromises = req.files.map((file) => {
         const folderName = getCloudinaryFolder(file.fieldname);
@@ -159,10 +159,19 @@ const formatFilePaths = (req, res, next) => {
       req.file.path = `/uploads/${req.file.folderName}/${path.basename(req.file.path)}`;
     }
   }
-  if (req.files) {
-    req.files = req.files.map((file) => {
-      file.path = file.path.replace(/\\/g, "/");
-      return file;
+  if (req.files && Object.keys(req.files).length > 0) {
+    Object.keys(req.files).forEach((key) => {
+      if (Array.isArray(req.files[key])) {
+        req.files[key] = req.files[key].map((file) => {
+          if (process.env.NODE_ENV !== "production") {
+            file.path = `/uploads/${file.folderName}/${path.basename(file.path)}`;
+          }
+          file.path = file.path.replace(/\\/g, "/");
+          return file;
+        });
+      } else {
+        req.files[key].path = req.files[key].path.replace(/\\/g, "/");
+      }
     });
   }
   next();

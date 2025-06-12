@@ -17,6 +17,9 @@ module.exports = (sequelize, DataTypes) => {
         "application/pdf",
         "image/jpeg",
         "image/png",
+        "image/webp",
+        "image/svg",
+        "image/ico",
         "image/jpg",
       ];
       return allowedTypes.includes(fileType.toLowerCase());

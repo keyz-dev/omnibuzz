@@ -1,5 +1,6 @@
 const Joi = require("joi");
 const TownUtils = require("../utils/townUtils");
+const { imageArraySchema } = require("../utils/imageUtils");
 
 // Common schemas
 const townSchema = Joi.string().custom((value, helpers) => {
@@ -36,22 +37,56 @@ const destinationsSchema = Joi.array()
     return value;
   });
 
+const coordinatesSchema = Joi.object({
+  lat: Joi.number().required(),
+  lng: Joi.number().required(),
+});
+
+const contactInfoSchema = Joi.object({
+  phone: Joi.string().required(),
+  whatsapp: Joi.string(),
+  telegram: Joi.string(),
+  email: Joi.string().email(),
+  website: Joi.string().uri().allow("", null),
+  facebook: Joi.string().uri().allow("", null),
+  twitter: Joi.string().uri().allow("", null),
+  instagram: Joi.string().uri().allow("", null),
+});
+
+const paymentMethodSchema = Joi.object({
+  method: Joi.string().valid("OM", "MoMo").required(),
+  value: Joi.object({
+    name: Joi.string().required(),
+    number: Joi.string().required(),
+  }).required(),
+});
+
 // Create Station Schema
 const createStationSchema = Joi.object({
-  name: Joi.string().required(),
+  name: Joi.string().required().min(3).max(100),
+  description: Joi.string().allow("", null),
   address: Joi.string().required(),
+  coordinates: coordinatesSchema.required(),
+  contactInfo: contactInfoSchema.required(),
   neighborhood: Joi.string().required(),
   baseTown: townSchema.required(),
   destinations: destinationsSchema.default([]),
-  agencyId: Joi.string().guid().required(),
+  stationImages: imageArraySchema,
+  agencyId: Joi.string().uuid().required(),
   isActive: Joi.boolean().default(true),
+  paymentMethods: Joi.array().items(paymentMethodSchema).min(1).required(),
 });
 
 // Update Station Schema
 const updateStationSchema = Joi.object({
-  name: Joi.string(),
+  name: Joi.string().min(3).max(100),
+  description: Joi.string().allow("", null),
   address: Joi.string(),
   neighborhood: Joi.string(),
+  coordinates: coordinatesSchema,
+  contactInfo: contactInfoSchema,
+  stationImages: imageArraySchema,
+  paymentMethods: Joi.array().items(paymentMethodSchema).min(1),
   baseTown: townSchema,
   destinations: destinationsSchema,
   isActive: Joi.boolean(),

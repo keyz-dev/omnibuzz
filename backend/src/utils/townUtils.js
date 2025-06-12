@@ -30,7 +30,6 @@ class TownUtils {
 
   static validateTowns(townNames) {
     if (!Array.isArray(townNames)) return false;
-
     const validTowns = townsData.map((t) => t.city.toLowerCase());
     return townNames.every((town) => validTowns.includes(town.toLowerCase()));
   }

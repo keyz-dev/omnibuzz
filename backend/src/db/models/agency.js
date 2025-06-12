@@ -110,7 +110,9 @@ module.exports = (sequelize, DataTypes) => {
       },
       townCount: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
+        comment: "Generated column based on towns array length",
+        validate: false, // Disable validation for this field
       },
       isPublished: {
         type: DataTypes.BOOLEAN,
@@ -128,19 +130,27 @@ module.exports = (sequelize, DataTypes) => {
           key: "id",
         },
       },
+      coordinates: {
+        type: DataTypes.JSONB,
+        allowNull: true,
+        validate: {
+          isCoordinates(value) {
+            if (
+              value &&
+              (typeof value.lat !== "number" || typeof value.lng !== "number")
+            ) {
+              throw new Error(
+                "Coordinates must be an object with numeric lat and lng"
+              );
+            }
+          },
+        },
+      },
     },
     {
       sequelize,
       modelName: "Agency",
       hooks: {
-        beforeValidate: (agency) => {
-          if (agency.towns) {
-            agency.townCount = agency.towns.length;
-          }
-        },
-        afterCreate: async (agency) => {
-          await agency.updatePublishingStatus();
-        },
         beforeSave: async (agency) => {
           // Clean up old images if they're being changed
           if (agency.changed("logo") && agency.previous("logo")) {

@@ -8,11 +8,15 @@ const fileTypeSchema = Joi.string().custom((value, helpers) => {
     "image/jpeg",
     "image/png",
     "image/jpg",
+    "image/webp",
+    "image/svg",
+    "image/ico",
   ];
 
   if (!allowedTypes.includes(value.toLowerCase())) {
     return helpers.error("any.invalid", {
-      message: "Invalid file type. Allowed types: PDF, JPEG, PNG",
+      message:
+        "Invalid file type. Allowed types: PDF, JPEG, PNG, WEBP, SVG, ICO",
     });
   }
   return value;

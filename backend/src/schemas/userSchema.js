@@ -41,25 +41,6 @@ const updateUserSchema = Joi.object({
   phoneVerified: Joi.boolean(),
 }).min(1); // At least one field must be provided for update
 
-// Staff Invitation Schema
-const staffInvitationSchema = Joi.object({
-  email: emailSchema,
-  fullName: Joi.string().required(),
-  role: Joi.string().valid("station_manager", "ticket_agent").required(),
-  stationId: Joi.string().uuid().required(),
-  agencyId: Joi.string().uuid().required(),
-});
-
-// Accept Invitation Schema
-const acceptInvitationSchema = Joi.object({
-  token: Joi.string().required(),
-  password: passwordSchema.required(),
-  confirmPassword: Joi.string()
-    .valid(Joi.ref("password"))
-    .required()
-    .messages({ "any.only": "Passwords do not match" }),
-});
-
 // Password Reset Schema
 const passwordResetSchema = Joi.object({
   code: Joi.string().required(),
@@ -73,7 +54,5 @@ const passwordResetSchema = Joi.object({
 module.exports = {
   createUserSchema,
   updateUserSchema,
-  staffInvitationSchema,
-  acceptInvitationSchema,
   passwordResetSchema,
 };

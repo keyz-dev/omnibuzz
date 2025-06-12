@@ -36,12 +36,7 @@ const register = async (req, res) => {
   // Handle avatar upload if present
   let avatarUrl = null;
   if (req.file) {
-    if (process.env.NODE_ENV === "production") {
-      const cloudUploadedUrl = await uploadToCloudinary(req.file.path, "users");
-      avatarUrl = cloudUploadedUrl.secure_url;
-    } else {
-      avatarUrl = req.file.path;
-    }
+    avatarUrl = req.file.path;
   }
 
   // Create user

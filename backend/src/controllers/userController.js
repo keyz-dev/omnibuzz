@@ -1,10 +1,7 @@
 require("dotenv").config();
 const { User, Station, StationWorker } = require("../db/models");
-const {
-  updateUserSchema,
-  staffInvitationSchema,
-  acceptInvitationSchema,
-} = require("../schemas/userSchema");
+const { updateUserSchema } = require("../schemas/userSchema");
+const { acceptInvitationSchema } = require("../schemas/stationWorkerSchema");
 const { validateRequest } = require("../utils/validation");
 const emailService = require("../services/emailService");
 const { uploadToCloudinary } = require("../utils/cloudinary");
@@ -12,6 +9,9 @@ const { BadRequestError, NotFoundError } = require("../utils/errors");
 const { Op } = require("sequelize");
 const { generateToken } = require("../utils/jwt");
 const { isLocalImageUrl } = require("../utils/imageUtils");
+const bcrypt = require("bcrypt");
+const { ValidationError } = require("../utils/errors");
+const { verifyToken } = require("../utils/jwt");
 
 // Helper function to format avatar URL
 const formatAvatarUrl = (avatar) => {
@@ -179,117 +179,82 @@ const updateProfile = async (req, res) => {
   });
 };
 
-// Invite staff member
-const inviteStaff = async (req, res) => {
-  const { error, value } = validateRequest(req.body, staffInvitationSchema);
-  if (error) throw new BadRequestError(error.message);
-
-  const { email, fullName, role, stationId, agencyId } = value;
-
-  // Check if user already exists
-  const existingUser = await User.findOne({ where: { email } });
-  if (existingUser) {
-    throw new BadRequestError("Email already registered");
-  }
-
-  // Verify station belongs to agency
-  const station = await Station.findOne({
-    where: { id: stationId, agencyId },
-  });
-  if (!station) {
-    throw new BadRequestError("Invalid station for this agency");
-  }
-
-  // Create user with invitation
-  const user = await User.create({
-    email,
-    fullName,
-    role,
-    status: "pending",
-    invitedBy: req.user.id,
-  });
-
-  // Create station worker record
-  await StationWorker.create({
-    userId: user.id,
-    stationId,
-    role,
-    isActive: true,
-  });
-
-  // Send invitation email
-  await emailService.sendEmail({
-    to: email,
-    subject: "You've been invited to join OmniBuzz",
-    template: "staffInvitation",
-    data: {
-      name: fullName,
-      role,
-      stationName: station.name,
-      invitationLink: `${process.env.FRONTEND_URL}/accept-invitation?token=${user.invitationToken}`,
-    },
-  });
-
-  res.json({
-    status: "success",
-    message: "Staff invitation sent successfully",
-  });
-};
-
-// Accept staff invitation
+// Accept worker invitation
 const acceptInvitation = async (req, res) => {
   const { error, value } = validateRequest(req.body, acceptInvitationSchema);
-  if (error) throw new BadRequestError(error.message);
+
+  if (error) {
+    throw new ValidationError(error.details[0].message);
+  }
 
   const { token, password } = value;
 
-  const user = await User.findOne({
+  // Verify the token and get the user ID
+  const decoded = await verifyToken(token);
+  if (!decoded || !decoded.userId) {
+    throw new ValidationError("Invalid or expired invitation token");
+  }
+
+  // Find the worker record with this token
+  const worker = await StationWorker.findOne({
     where: {
       invitationToken: token,
-      invitationExpires: { [Op.gt]: new Date() },
-      status: "pending",
+      isActive: false,
+      invitationExpires: {
+        [Op.gt]: new Date(),
+      },
     },
     include: [
       {
-        model: StationWorker,
-        as: "workingStations",
-        include: [{ model: Station, as: "station" }],
+        model: User,
+        as: "user",
+        where: { id: decoded.userId },
       },
     ],
   });
 
-  if (!user) {
-    throw new BadRequestError("Invalid or expired invitation token");
+  if (!worker) {
+    throw new ValidationError("Invalid or expired invitation token");
   }
 
-  // Update user
-  await user.update({
-    password,
-    invitationToken: null,
-    invitationExpires: null,
-    emailVerified: true,
-    status: "active",
+  // Update user profile
+  const user = worker.user;
+  user.password = await bcrypt.hash(password, 10);
+
+  // Handle avatar upload
+  let avatar = null;
+  if (req.file) {
+    avatar = req.file.path;
+  }
+
+  user.isActive = true;
+  await user.save();
+
+  // Update worker status
+  worker.isActive = true;
+  worker.invitationToken = null;
+  worker.invitationExpires = null;
+  await worker.save();
+
+  // Generate new auth token
+  const authToken = generateToken({
+    id: user.id,
+    email: user.email,
+    role: worker.role,
   });
 
-  // Generate auth token
-  const authToken = generateToken({ userId: user.id }, "7d");
-
   res.json({
-    status: "success",
+    success: true,
+    message: "Invitation accepted successfully",
     data: {
+      token: authToken,
       user: {
         id: user.id,
-        fullName: user.fullName,
         email: user.email,
-        role: user.role,
+        fullName: user.fullName,
+        role: worker.role,
         avatar: formatAvatarUrl(user.avatar),
-        stations: user.workingStations.map((sw) => ({
-          id: sw.station.id,
-          name: sw.station.name,
-          role: sw.role,
-        })),
       },
-      token: authToken,
     },
   });
 };
@@ -316,7 +281,6 @@ module.exports = {
   resetPassword,
   getProfile,
   updateProfile,
-  inviteStaff,
   acceptInvitation,
   deleteAccount,
 };

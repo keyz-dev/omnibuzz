@@ -1,5 +1,21 @@
 [
     {
+        "city": "Douala",
+        "country": "Cameroon",
+        "pop2024": 2942040,
+        "latitude": 4.04827,
+        "longitude": 9.70428,
+        "region": "Littoral"
+    },
+    {
+        "city": "Yaounde",
+        "country": "Cameroon",
+        "pop2024": 2874259,
+        "latitude": 3.86667,
+        "longitude": 11.5167,
+        "region": "Centre"
+    },
+    {
         "city": "Garoua",
         "country": "Cameroon",
         "pop2024": 436899,

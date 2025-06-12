@@ -15,9 +15,9 @@ const createAgencySchema = Joi.object({
   name: Joi.string().required(),
   headAddress: Joi.string().required(),
   description: Joi.string().allow(null, ""),
-  logoURL: singleImageSchema,
+  logo: singleImageSchema,
   contactInfo: contactInfoSchema.default([]),
-  images: imageArraySchema,
+  agencyImages: imageArraySchema,
   towns: Joi.array()
     .items(Joi.string())
     .required()
@@ -30,6 +30,10 @@ const createAgencySchema = Joi.object({
       return value;
     }),
   ownerId: Joi.string().guid().required(),
+  coordinates: Joi.object({
+    lat: Joi.number().required(),
+    lng: Joi.number().required(),
+  }),
 });
 
 // Update Agency Schema
@@ -37,9 +41,9 @@ const updateAgencySchema = Joi.object({
   name: Joi.string(),
   headAddress: Joi.string(),
   description: Joi.string().allow(null, ""),
-  logoURL: singleImageSchema,
+  logo: singleImageSchema,
   contactInfo: contactInfoSchema,
-  images: imageArraySchema,
+  agencyImages: imageArraySchema,
   towns: Joi.array()
     .items(Joi.string())
     .custom((value, helpers) => {
@@ -52,6 +56,11 @@ const updateAgencySchema = Joi.object({
     }),
   isPublished: Joi.boolean(),
   isVerified: Joi.boolean(),
+  ownerId: Joi.string().guid(),
+  coordinates: Joi.object({
+    lat: Joi.number(),
+    lng: Joi.number(),
+  }),
 }).min(1); // At least one field must be provided for update
 
 module.exports = {
