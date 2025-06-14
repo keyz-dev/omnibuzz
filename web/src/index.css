@@ -1,68 +1,86 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import "tailwindcss";
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+:root{
+  font-family: 'Euclid Circular', 'Sofia Pro Regular', 'sans serif';
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+html{
+  scroll-behavior: smooth;
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+@theme {
+  --font-hero: 'Recoleta', 'Sofia Pro Light', 'Euclid Circular';
+  --font-custom: 'Sofia Pro Light', 'Euclid Circular';
+
+  --breakpoint-2xl: 1540px; 
+  --color-accent: #3e8cff;
+  --color-accent-bg: #94A3BB;
+  --color-primary: #212121;
+  --color-primary-bg: #f4eeeb;
+  --color-secondary: #6a6a6a;
+  --color-secondary-bg: #F6F6F6;
+  --color-light_bg: #f6f8fa;
+  --color-placeholder: #adadad;
+
+  --color-success: #4DC281;
+  --color-success-bg: #C5F1DE;
+  --color-success-bg-light: #e1f2ee;
+  --color-pending: #5e63ff;
+  --color-pending-bg: #adb0fd6b;
+  --color-pending-bg-light: #edf0f7;
+  --color-pending1: #713DC9;
+  --color-pending1-bg: #E1CFFD5b;
+  --color-pending1-bg-light: #EAE6F8;
+  --color-warning: #E2796C;
+  --text-warning: #E2796C;
+  --color-warning-bg: #F6D4CA;
+  --color-warning-bg-light: #F3F1F2;
+  --color-error: #FF5540;
+  --color-error-bg: #ffc9cac1;
+  --color-error-bg-light: #F4E2EE;
+  --color-border_clr: '#C2C21C2';
+  --color-line_clr: #DCDEE3;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+@layer components {
+  .container{
+    @apply mx-auto px-1 max-w-[840px];
   }
-  a:hover {
-    color: #747bff;
+  
+  .btn {
+    @apply px-4 py-2 font-medium text-base min-w-32 min-h-[45px] transition duration-150 ease-in-out hover:opacity-75;
   }
-  button {
-    background-color: #f9f9f9;
+  .primarybtn {
+      @apply bg-accent text-white hover:opacity-75;
+  }
+  .secondarybtn {
+      @apply bg-primary text-white hover:opacity-75 border border-border_clr;
+  }
+}
+
+@layer utilities{
+  .default_transition{
+    @apply transition-all duration-300 ease-in-out;
+  }
+  .flexbox{
+    @apply flex items-center justify-center
+  }
+}
+
+.nav_active, .nav_item:hover{
+  color: var(--color-accent);
+  position: relative;
+  transition: ease 0.3s;
+
+  &::after {
+    content: '';
+    display: block;
+    height: 3px;
+    width: 100%;
+    left: 0;
+    background-color: var(--color-accent-bg);
+    position: absolute;
+    bottom: -25%;
+    transition: all ease 0.3s;
   }
 }
