@@ -4,7 +4,6 @@ const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class VerificationDocument extends Model {
     static associate(models) {
-      // define associations here
       VerificationDocument.belongsTo(models.Agency, {
         foreignKey: "agencyId",
         as: "agency",
@@ -23,6 +22,13 @@ module.exports = (sequelize, DataTypes) => {
         "image/jpg",
       ];
       return allowedTypes.includes(fileType.toLowerCase());
+    }
+
+    // Instance method to get the associated agency
+    async getAgency(options) {
+      // 'sequelize.models' is available via 'this.sequelize'
+      const Agency = this.sequelize.models.Agency;
+      return Agency.findByPk(this.agencyId, options);
     }
   }
   VerificationDocument.init(

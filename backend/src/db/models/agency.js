@@ -35,26 +35,36 @@ module.exports = (sequelize, DataTypes) => {
 
     // Method to check if agency can be published
     async canBePublished() {
-      // Check if agency has at least one station
-      const stationCount = await this.countStations();
-      if (stationCount === 0) {
+      try {
+        // 1. Check if agency has at least one station
+        const stationCount = await this.countStations();
+        if (stationCount === 0) {
+          return false;
+        }
+
+        // 2. Define required document types
+        const requiredDocuments = [
+          "business_registration",
+          "tax_clearance",
+          "operating_license",
+        ];
+
+        // 3. Get all verification documents
+        const documents = await this.getVerificationDocuments();
+
+        // 4. Check if all required documents exist and are approved
+        for (const requiredType of requiredDocuments) {
+          const document = documents.find((doc) => doc.type === requiredType);
+          if (!document || document.status !== "approved") {
+            return false;
+          }
+        }
+
+        return true;
+      } catch (error) {
+        console.error("Error checking publishing status:", error);
         return false;
       }
-
-      // Check if all verification documents are approved
-      const documents = await this.getVerificationDocuments();
-      if (documents.length === 0) {
-        return false;
-      }
-
-      const allDocumentsApproved = documents.every(
-        (doc) => doc.status === "approved"
-      );
-      if (!allDocumentsApproved) {
-        return false;
-      }
-
-      return true;
     }
 
     // Method to update publishing status
@@ -65,6 +75,36 @@ module.exports = (sequelize, DataTypes) => {
         await this.save();
       }
       return canPublish;
+    }
+
+    // Method to get verification status details
+    async getVerificationStatus() {
+      const stationCount = await this.countStations();
+      const documents = await this.getVerificationDocuments();
+
+      const requiredDocuments = [
+        "business_registration",
+        "tax_clearance",
+        "operating_license",
+      ];
+
+      const documentStatus = requiredDocuments.map((type) => {
+        const doc = documents.find((d) => d.type === type);
+        return {
+          type,
+          status: doc ? doc.status : "missing",
+          documentId: doc ? doc.id : null,
+        };
+      });
+
+      return {
+        canBePublished: await this.canBePublished(),
+        requirements: {
+          hasStation: stationCount > 0,
+          stationCount,
+          documents: documentStatus,
+        },
+      };
     }
   }
   Agency.init(

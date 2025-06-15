@@ -23,7 +23,7 @@ const errorHandler = (err, req, res, next) => {
     return res.status(400).json({
       status: false,
       message: "Validation error",
-      errors: err.details.map((detail) => ({
+      error: err.details.map((detail) => ({
         field: detail.path.join("."),
         message: detail.message,
       })),
@@ -35,7 +35,7 @@ const errorHandler = (err, req, res, next) => {
     return res.status(400).json({
       status: false,
       message: "Validation error",
-      errors: err.errors.map((e) => ({
+      error: err.errors.map((e) => ({
         field: e.path,
         message: e.message,
       })),
@@ -47,7 +47,7 @@ const errorHandler = (err, req, res, next) => {
     return res.status(409).json({
       status: false,
       message: "Duplicate entry",
-      errors: err.errors.map((e) => ({
+      error: err.errors.map((e) => ({
         field: e.path,
         message: `${e.path} already exists`,
       })),

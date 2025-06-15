@@ -3,11 +3,15 @@ const { User, Station, StationWorker } = require("../db/models");
 const { createUserSchema } = require("../schemas/userSchema");
 const { validateRequest } = require("../utils/validation");
 const emailService = require("../services/emailService");
-const { uploadToCloudinary } = require("../utils/cloudinary");
-const { BadRequestError, UnauthorizedError } = require("../utils/errors");
+const {
+  BadRequestError,
+  UnauthorizedError,
+  NotFoundError,
+} = require("../utils/errors");
 const { OAuth2Client } = require("google-auth-library");
 const { generateToken } = require("../utils/jwt");
 const { isLocalImageUrl } = require("../utils/imageUtils");
+const axios = require("axios");
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -46,6 +50,7 @@ const register = async (req, res) => {
     password,
     avatar: avatarUrl,
     emailVerified: false,
+    isActive: false,
   });
 
   // Generate verification code
@@ -54,7 +59,7 @@ const register = async (req, res) => {
   ).toString();
   await user.update({
     emailVerificationCode: verificationCode,
-    emailVerificationExpires: new Date(Date.now() + 12 * 60 * 60 * 1000), // 12 hours
+    emailVerificationExpires: new Date(Date.now() + 30 * 60 * 1000), // 30 mins
   });
 
   // Send verification email
@@ -68,23 +73,14 @@ const register = async (req, res) => {
     },
   });
 
-  // Generate temporary token (expires in 1 hour)
-  const token = generateToken({ userId: user.id, isTemporary: true }, "1h");
-
   res.status(201).json({
     status: "success",
     message: "Registration successful. Please verify your email.",
     data: {
       user: {
         id: user.id,
-        fullName: user.fullName,
         email: user.email,
-        role: user.role,
-        avatar: formatAvatarUrl(user.avatar),
-        emailVerified: false,
       },
-      token,
-      requiresVerification: true,
     },
   });
 };
@@ -101,23 +97,27 @@ const login = async (req, res) => {
   // Find user with their stations
   const user = await User.findOne({
     where: { email },
-    include: [
-      {
-        model: StationWorker,
-        as: "workingStations",
-        include: [{ model: Station, as: "station" }],
-      },
-    ],
   });
-
   if (!user) {
-    throw new UnauthorizedError("Invalid credentials");
+    throw new UnauthorizedError("Incorrect email or password");
+  }
+
+  if (user.role === "station_manager" || user.role === "ticket_agent") {
+    await user.reload({
+      include: [
+        {
+          model: StationWorker,
+          as: "workingStations",
+          include: [{ model: Station, as: "station" }],
+        },
+      ],
+    });
   }
 
   // Check password
   const isPasswordValid = await user.comparePassword(password);
   if (!isPasswordValid) {
-    throw new UnauthorizedError("Invalid credentials");
+    throw new UnauthorizedError("Incorrect email or password");
   }
 
   // Check if user is active
@@ -125,43 +125,58 @@ const login = async (req, res) => {
     throw new UnauthorizedError("Account is deactivated");
   }
 
-  // Generate token
-  const token = generateToken({ userId: user.id }, "7d");
+  // Generate verification code
+  const verificationCode = Math.floor(
+    100000 + Math.random() * 900000
+  ).toString();
+  await user.update({
+    emailVerificationCode: verificationCode,
+    emailVerificationExpires: new Date(Date.now() + 30 * 60 * 1000), // 30 mins
+  });
 
-  res.json({
+  // Send verification email
+  await emailService.sendEmail({
+    to: email,
+    subject: "Verify your email",
+    template: "emailVerification",
+    data: {
+      name: user.fullName,
+      verificationCode,
+    },
+  });
+
+  res.status(209).json({
     status: "success",
+    message: "Login successful. Please verify your email.",
     data: {
       user: {
         id: user.id,
-        fullName: user.fullName,
         email: user.email,
-        role: user.role,
-        avatar: formatAvatarUrl(user.avatar),
-        stations: user.workingStations.map((sw) => ({
-          id: sw.station.id,
-          name: sw.station.name,
-          role: sw.role,
-        })),
       },
-      token,
     },
   });
 };
 
 // Google OAuth login
 const googleLogin = async (req, res) => {
-  const { token } = req.body;
+  const { access_token } = req.body;
 
-  // Verify Google token
-  const ticket = await googleClient.verifyIdToken({
-    idToken: token,
-    audience: process.env.GOOGLE_CLIENT_ID,
-  });
+  if (!access_token) {
+    throw new NotFoundError("Access token not found");
+  }
 
-  const payload = ticket.getPayload();
-  const { email, name, picture } = payload;
+  // 1. Validate token & get user profile from Google
+  const response = await axios.get(
+    "https://www.googleapis.com/oauth2/v2/userinfo",
+    {
+      headers: { Authorization: `Bearer ${access_token}` },
+    }
+  );
+  const { email, name, picture } = response.data;
+  if (!email) {
+    throw new NotFoundError("Email not available from Google");
+  }
 
-  // Find or create user
   let user = await User.findOne({ where: { email } });
 
   if (!user) {
@@ -172,11 +187,8 @@ const googleLogin = async (req, res) => {
       avatar: picture,
       authProvider: "google",
       emailVerified: true,
+      isActive: true,
     });
-  } else if (user.authProvider !== "google") {
-    throw new BadRequestError(
-      "Email already registered with different provider"
-    );
   }
 
   // Generate token
@@ -197,8 +209,79 @@ const googleLogin = async (req, res) => {
   });
 };
 
+// Verify token and get user data
+const verifyToken = async (req, res) => {
+  // User data is already attached to req.user by the authenticate middleware
+  const user = req.user;
+
+  res.json({
+    status: "success",
+    data: {
+      user: {
+        id: user.id,
+        fullName: user.fullName,
+        email: user.email,
+        role: user.role,
+        avatar: formatAvatarUrl(user.avatar),
+        emailVerified: user.emailVerified,
+      },
+    },
+  });
+};
+
+// Resend verification code
+const resendVerificationCode = async (req, res) => {
+  const { email } = req.body;
+
+  // Find user
+  const user = await User.findOne({
+    where: {
+      email,
+      emailVerified: false,
+      isActive: false,
+    },
+  });
+
+  if (!user) {
+    throw new BadRequestError("No unverified account found with this email");
+  }
+
+  // Generate new verification code
+  const verificationCode = Math.floor(
+    100000 + Math.random() * 900000
+  ).toString();
+  await user.update({
+    emailVerificationCode: verificationCode,
+    emailVerificationExpires: new Date(Date.now() + 30 * 60 * 1000), // 30 mins
+  });
+
+  // Send verification email
+  await emailService.sendEmail({
+    to: email,
+    subject: "Verify your email",
+    template: "emailVerification",
+    data: {
+      name: user.fullName,
+      verificationCode,
+    },
+  });
+
+  res.json({
+    status: "success",
+    message: "New verification code sent. Please check your email.",
+    data: {
+      user: {
+        id: user.id,
+        email: user.email,
+      },
+    },
+  });
+};
+
 module.exports = {
   register,
   login,
   googleLogin,
+  verifyToken,
+  resendVerificationCode,
 };

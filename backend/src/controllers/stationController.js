@@ -17,7 +17,6 @@ const {
 } = require("../schemas/stationWorkerSchema");
 const { generateToken } = require("../utils/jwt");
 const emailService = require("../services/emailService");
-const { bcrypt } = require("bcryptjs");
 
 // Helper function to format image URLs
 const formatImageUrl = (image) => {

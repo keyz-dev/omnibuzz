@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { authenticate, optionalAuth } = require("../middleware/auth");
+const { authenticate } = require("../middleware/auth");
 const {
   upload,
   handleCloudinaryUpload,
@@ -20,6 +20,8 @@ const {
   register,
   login,
   googleLogin,
+  verifyToken,
+  resendVerificationCode,
 } = require("../controllers/authController");
 
 // Public routes
@@ -33,8 +35,9 @@ router.post(
 );
 
 router.post("/login", login);
-router.post("/google-login", googleLogin);
-router.post("/verify-email", optionalAuth, verifyEmail);
+router.post("/google-oauth", googleLogin);
+router.post("/verify-email", verifyEmail);
+router.post("/resend-verification", resendVerificationCode);
 router.post("/request-password-reset", requestPasswordReset);
 router.post("/reset-password", resetPassword);
 
@@ -46,6 +49,9 @@ router.post(
   formatFilePaths,
   acceptInvitation
 );
+
+// Token verification route
+router.get("/verify-token", authenticate, verifyToken);
 
 // Protected routes
 router.use(authenticate);

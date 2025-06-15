@@ -9,7 +9,7 @@ const { BadRequestError, NotFoundError } = require("../utils/errors");
 const { Op } = require("sequelize");
 const { generateToken } = require("../utils/jwt");
 const { isLocalImageUrl } = require("../utils/imageUtils");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const { ValidationError } = require("../utils/errors");
 const { verifyToken } = require("../utils/jwt");
 
@@ -25,11 +25,12 @@ const formatAvatarUrl = (avatar) => {
 
 // Verify email
 const verifyEmail = async (req, res) => {
-  const { code } = req.body;
+  const { email, code } = req.body;
 
-  // Find user by verification code
+  // Find user by email and verification code
   const user = await User.findOne({
     where: {
+      email,
       emailVerificationCode: code,
       emailVerificationExpires: { [Op.gt]: new Date() },
     },
@@ -41,16 +42,14 @@ const verifyEmail = async (req, res) => {
 
   // Update user verification status
   await user.update({
+    isActive: true,
     emailVerified: true,
     emailVerificationCode: null,
     emailVerificationExpires: null,
   });
 
-  // Generate new token if user was authenticated
-  let token = null;
-  if (req.user && req.user.id === user.id) {
-    token = generateToken({ userId: user.id, isTemporary: false }, "7d");
-  }
+  // Generate token after successful verification
+  const token = generateToken({ userId: user.id }, "7d");
 
   res.json({
     status: "success",
@@ -64,7 +63,7 @@ const verifyEmail = async (req, res) => {
         avatar: formatAvatarUrl(user.avatar),
         emailVerified: true,
       },
-      ...(token && { token }), // Only include token if it was generated
+      token, // Only send token after successful verification
     },
   });
 };

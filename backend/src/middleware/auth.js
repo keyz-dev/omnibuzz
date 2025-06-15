@@ -71,35 +71,7 @@ const authorize = (roles) => {
   };
 };
 
-// Optional authentication middleware (for routes that can be accessed without verification)
-const optionalAuth = async (req, res, next) => {
-  try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return next();
-    }
-
-    const token = authHeader.split(" ")[1];
-    const decoded = verifyToken(token);
-
-    if (decoded) {
-      const user = await User.findByPk(decoded.userId, {
-        attributes: { exclude: ["password"] },
-      });
-
-      if (user) {
-        req.user = user;
-      }
-    }
-
-    next();
-  } catch (error) {
-    next();
-  }
-};
-
 module.exports = {
   authenticate,
   authorize,
-  optionalAuth,
 };
