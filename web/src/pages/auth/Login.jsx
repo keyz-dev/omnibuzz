@@ -5,13 +5,12 @@ import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
 
 const Login = () => {
-  const { login } = useAuth();
+  const { login, setAuthError, handleGoogleLogin, loading, authError } =
+    useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,18 +22,13 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setErrors({});
 
     try {
-      const result = await login(formData.email, formData.password);
-      if (!result.success) {
-        setErrors({ submit: result.error });
-      }
+      await login(formData.email, formData.password);
     } catch (error) {
-      setErrors({ submit: "An error occurred during login" });
-    } finally {
-      setIsLoading(false);
+      setAuthError(
+        error.response?.data?.message || "An error occurred during login"
+      );
     }
   };
 
@@ -42,10 +36,15 @@ const Login = () => {
     <div className="container mx-auto max-w-md px-4 py-16">
       <div className="text-center">
         <h1 className="text-3xl font-bold text-gray-900">Welcome back</h1>
-        <p className="mt-2 text-gray-600">
+        <p className="mt-2 text-secondary">
           Sign in to your account to continue
         </p>
       </div>
+      {authError && (
+        <div className="rounded-xs bg-error-bg-light p-4 my-4">
+          <p className="text-sm text-error text-center">{authError}</p>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-6">
         <Input
@@ -53,8 +52,7 @@ const Login = () => {
           type="email"
           name="email"
           value={formData.email}
-          onChange={handleChange}
-          error={errors.email}
+          onChangeHandler={handleChange}
           placeholder="Enter your email"
           required
         />
@@ -64,8 +62,7 @@ const Login = () => {
           type="password"
           name="password"
           value={formData.password}
-          onChange={handleChange}
-          error={errors.password}
+          onChangeHandler={handleChange}
           placeholder="Enter your password"
           required
         />
@@ -94,25 +91,42 @@ const Login = () => {
           </RouterLink>
         </div>
 
-        {errors.submit && (
-          <div className="rounded-md bg-red-50 p-4">
-            <p className="text-sm text-red-700">{errors.submit}</p>
-          </div>
-        )}
-
-        <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Signing in..." : "Sign in"}
+        <Button
+          type="submit"
+          id="register-btn"
+          additionalClasses="w-full mt-6 primarybtn"
+          isLoading={loading}
+        >
+          Login
         </Button>
 
-        <p className="mt-4 text-center text-sm text-gray-600">
+        <p className="text-center text-sm text-gray-600 mt-2">
           Don't have an account?{" "}
-          <RouterLink
-            to="/register"
-            className="text-blue-600 hover:text-blue-500"
-          >
-            Sign up here
+          <RouterLink to="/register" className="text-accent hover:underline">
+            Register here
           </RouterLink>
         </p>
+
+        <div className="flex items-center my-4">
+          <div className="flex-grow border-t border-gray-200"></div>
+          <span className="mx-2 text-gray-400 text-sm">Or</span>
+          <div className="flex-grow border-t border-gray-200"></div>
+        </div>
+
+        <Button
+          type="button"
+          onClickHandler={handleGoogleLogin}
+          isLoading={loading}
+          id="google-signIn"
+          additionalClasses="w-full flex items-center justify-center border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+        >
+          <img
+            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+            alt="Google"
+            className="w-5 h-5"
+          />
+          Continue with Google
+        </Button>
       </form>
     </div>
   );

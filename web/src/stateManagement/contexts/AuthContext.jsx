@@ -86,19 +86,13 @@ export const AuthProvider = ({ children }) => {
     setAuthError(null);
     setLoading(true);
     try {
-      const response = await api.post("/auth/login", { email, password });
-      const { token: newToken, user: userData } = response.data;
-
-      setUserAndToken(userData, newToken);
-      redirectBasedOnRole(userData);
-      return { success: true };
+      const response = await api.post("/user/login", { email, password });
+      const { user } = response.data;
+      navigate("/verify-account", { state: { email: user.email } });
     } catch (error) {
-      setAuthError(error.response?.data?.message || "Invalid credentials");
-      console.error("Login failed:", error);
-      return {
-        success: false,
-        error: error.response?.data?.message || "Invalid credentials",
-      };
+      setAuthError(
+        error.response?.data?.message || error.message || "Invalid credentials"
+      );
     } finally {
       setLoading(false);
     }
@@ -108,19 +102,13 @@ export const AuthProvider = ({ children }) => {
     setAuthError(null);
     setLoading(true);
     try {
-      console.log(userData);
-      // throw new Error("Debugging the submission");
       const response = await api.post("/user/register", userData);
-      const { user } = response.data.data;
-      setUser(user);
-      return { success: true };
+      const { user } = response.data;
+      navigate("/verify-account", { state: { email: user.email } });
     } catch (error) {
-      setAuthError(error.response?.data?.message || "Registration failed");
-      console.error("Registration failed:", error);
-      return {
-        success: false,
-        error: error.response?.data?.message || "Registration failed",
-      };
+      setAuthError(
+        error.response?.data?.message || error.message || "Registration failed"
+      );
     } finally {
       setLoading(false);
     }
@@ -129,11 +117,16 @@ export const AuthProvider = ({ children }) => {
   const verifyAccount = async (email, code) => {
     setLoading(true);
     try {
-      await api.post("/user/verify-email", { email, code });
-      return { success: true };
+      const response = await api.post("/user/verify-email", { email, code });
+      const { user, token } = response.data.data;
+      setUserAndToken(user, token);
+      redirectBasedOnRole(user);
     } catch (error) {
-      console.error("Verification failed:", error);
-      return { success: false, error: error.response?.data?.message };
+      setAuthError(
+        error.response?.data?.message ||
+          error.message ||
+          "Account registration failed"
+      );
     } finally {
       setLoading(false);
     }
@@ -201,15 +194,15 @@ export const AuthProvider = ({ children }) => {
             redirectBasedOnRole(user);
           }
         } catch (error) {
-          setAuthError("Google login failed. Please try again.");
-          console.error("Error during Google login:", error);
+          setAuthError(
+            error.response?.data?.message ||
+              "Google login failed. Please try again."
+          );
         }
       }
     },
     onError: (error) => {
-      // Handle login error here
-      setAuthError("Google login failed. Please try again.");
-      console.error("Login Failed:", error);
+      setAuthError(error.message || "Google login failed. Please try again.");
     },
   });
 

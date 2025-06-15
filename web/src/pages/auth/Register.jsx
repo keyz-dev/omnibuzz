@@ -6,7 +6,14 @@ import { UploadCloud } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
-  const { register, loading, user } = useAuth();
+  const {
+    register,
+    loading,
+    user,
+    handleGoogleLogin,
+    authError,
+    setAuthError,
+  } = useAuth();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -91,15 +98,11 @@ const Register = () => {
         phone = phone.replace("+237 ", "+237");
       }
       registrationData.phone = phone;
-
-      const result = await register({ ...registrationData, avatar });
-      if (result.success) {
-        navigate("/verify-account", { state: { email: user.email } });
-      } else {
-        setErrors({ submit: result.error });
-      }
-    } catch {
-      setErrors({ submit: "An error occurred during registration" });
+      await register({ ...registrationData, avatar });
+    } catch (error) {
+      setAuthError(
+        error.response?.data?.message || "An error occurred during registration"
+      );
     }
   };
 
@@ -119,8 +122,13 @@ const Register = () => {
           </h1>
         </div>
         {errors.submit && (
-          <div className="rounded-md bg-error-bg-light p-4 my-4">
+          <div className="rounded-xs bg-error-bg-light p-4 my-4">
             <p className="text-sm text-error text-center">{errors.submit}</p>
+          </div>
+        )}
+        {authError && (
+          <div className="rounded-xs bg-error-bg-light p-4 my-4">
+            <p className="text-sm text-error text-center">{authError}</p>
           </div>
         )}
         <div className="space-y-4">
@@ -237,7 +245,9 @@ const Register = () => {
         </div>
 
         <Button
-          type="submit"
+          type="button"
+          onClickHandler={handleGoogleLogin}
+          isLoading={loading}
           id="google-signIn"
           additionalClasses="w-full flex items-center justify-center border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
         >
