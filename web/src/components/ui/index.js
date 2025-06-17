@@ -9,4 +9,5 @@ export { default as Card } from "./Card";
 export { default as TownSelectorModal } from "./TownSelectorModal";
 export { default as ContactModal } from "./ContactModal";
 export { default as Tag } from "./Tag";
+export { default as MapComponent } from "./MapComponent";
 export { default as AddressInput } from "./AddressInput";

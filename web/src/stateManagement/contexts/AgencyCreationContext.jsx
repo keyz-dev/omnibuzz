@@ -13,7 +13,12 @@ const STEPS = {
 export const AgencyCreationProvider = ({ children }) => {
   const [activeStep, setActiveStep] = useState(STEPS.AGENCY_SETUP);
   const [visitedSteps, setVisitedSteps] = useState([STEPS.AGENCY_SETUP]);
-  const [agencyCreationData, setAgencyCreationData] = useState({});
+  const [agencyCreationData, setAgencyCreationData] = useState({
+    name: "",
+    headAddress: "",
+    description: "",
+    coordinates: null,
+  });
 
   const updateFormData = (stepData) => {
     setAgencyCreationData((prev) => ({ ...prev, ...stepData }));

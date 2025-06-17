@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-import { AddressInput, Button } from "../ui";
+import { useNavigate } from "react-router-dom";
+import { AddressInput } from "../ui";
 import { useAgencyCreation } from "../../stateManagement/contexts";
+import { StepNavButtons } from "./index";
 
 const Step2_Location = () => {
   const { nextStep, agencyCreationData, updateFormData, prevStep } =
@@ -81,25 +83,11 @@ const Step2_Location = () => {
             />
           </div>
 
-          <div className="flex justify-between mt-8 w-full">
-            <Button
-              type="button"
-              id="back-btn"
-              additionalClasses="w-full border border-line_clr text-secondary"
-              onClickHandler={prevStep}
-            >
-              Back
-            </Button>
-
-            <Button
-              type="submit"
-              id="continue-btn"
-              additionalClasses="w-full primarybtn"
-              onClickHandler={handleSubmit}
-            >
-              Continue
-            </Button>
-          </div>
+          <StepNavButtons
+            onBack={() => prevStep()}
+            onContinue={handleSubmit}
+            canContinue={!!coordinates && !!formData.headAddress}
+          />
         </div>
       </form>
     </div>

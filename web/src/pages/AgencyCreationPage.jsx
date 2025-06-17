@@ -57,11 +57,10 @@ const AgencyCreationFlow = () => {
 
 // The wrapper that provides the context
 const AgencyCreationPage = () => {
-  // const { user } = useAuth();
-  // if (!user) {
-  //   console.log("No user found, from the registration page");
-  //   return <Navigate to="/login" state={{ from: "/agency-registration" }} />;
-  // }
+  const { user } = useAuth();
+  if (!user) {
+    return <Navigate to="/login" state={{ from: "/agency-registration" }} />;
+  }
   return (
     <AgencyCreationProvider>
       <AgencyCreationFlow />

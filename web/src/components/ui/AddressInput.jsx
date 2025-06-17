@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { MapPin, Navigation } from "lucide-react";
-import Button from "./Button";
 
 const AddressInput = ({
   value,
@@ -101,31 +100,31 @@ const AddressInput = ({
           value={value}
           onChange={handleAddressChange}
           placeholder={placeholder}
-          className={`w-full px-4 py-2 border ${
-            error ? "border-red-500" : "border-gray-300"
-          } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+          className={`w-full px-4 py-2 border pr-12 ${
+            error ? "border-error" : "border-line_clr"
+          } rounded-xs focus:outline-none focus:ring-2 focus:ring-accent`}
         />
         <button
           type="button"
           onClick={getCurrentLocation}
-          className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-gray-500 hover:text-blue-500"
+          className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-gray-500 hover:text-accent"
           title="Use current location"
         >
           <Navigation size={20} />
         </button>
       </div>
 
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+      {error && <p className="text-error text-sm mt-1">{error}</p>}
 
       {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg">
+        <div className="absolute z-10 w-full mt-1 bg-white border border-line_clr rounded-xs shadow-lg">
           {suggestions.map((suggestion, index) => (
             <button
               key={index}
               onClick={() => handleSuggestionClick(suggestion)}
               className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2"
             >
-              <MapPin size={16} className="text-gray-500" />
+              <MapPin size={16} className="text-secondary" />
               <span>{suggestion.display_name}</span>
             </button>
           ))}
@@ -134,7 +133,7 @@ const AddressInput = ({
 
       {isGeocoding && (
         <div className="absolute right-12 top-1/2 -translate-y-1/2">
-          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-accent"></div>
         </div>
       )}
     </div>

@@ -25,3 +25,24 @@ export const validateRegisterForm = (formData, setErrors) => {
   setErrors(newErrors);
   return Object.keys(newErrors).length === 0;
 };
+
+export const validateLocationForm = (agencyCreationData, coordinates) => {
+  const newErrors = {
+    headAddress: "",
+    coordinates: "",
+  };
+
+  let isValid = true;
+
+  if (!agencyCreationData.headAddress.trim()) {
+    newErrors.headAddress = "Headquarters address is required";
+    isValid = false;
+  }
+
+  if (!coordinates) {
+    newErrors.coordinates = "Please select a valid address with coordinates";
+    isValid = false;
+  }
+
+  return isValid;
+};
