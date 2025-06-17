@@ -25,7 +25,7 @@ const AgencyOverviewDescription = ({ description, setAgencyCreationData }) => {
           <i className="fas fa-pen"></i>
         </button>
       </div>
-      <div className="text-gray-600 text-sm leading-relaxed">
+      <div className="text-secondary text-sm leading-relaxed">
         {description || "No description provided."}
       </div>
       {/* Description Modal */}
@@ -41,7 +41,7 @@ const AgencyOverviewDescription = ({ description, setAgencyCreationData }) => {
               </h3>
               <button
                 onClick={() => setIsDescModalOpen(false)}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-gray-400 hover:text-secondary transition-colors"
               >
                 <i className="fas fa-times"></i>
               </button>

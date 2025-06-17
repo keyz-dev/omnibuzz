@@ -12,7 +12,7 @@ const Step2_Location = () => {
       libraries={libraries}
       loadingElement={
         <div className="flex justify-center items-center h-screen">
-          <div className="text-gray-600">Loading Maps...</div>
+          <div className="text-secondary">Loading Maps...</div>
         </div>
       }
     >

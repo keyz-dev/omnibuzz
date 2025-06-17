@@ -18,7 +18,7 @@ const StepNavButtons = ({ onBack, onContinue, canContinue, isLoading }) => {
         id="continue-btn"
         additionalClasses="w-full primarybtn"
         onClickHandler={onContinue}
-        disabled={!canContinue}
+        isDisabled={isLoading || !canContinue}
       >
         Continue
       </Button>

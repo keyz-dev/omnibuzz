@@ -1,12 +1,12 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const PassengerSearch = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useState({
-    from: '',
-    to: '',
-    date: '',
+    from: "",
+    to: "",
+    date: "",
     passengers: 1,
   });
 
@@ -30,25 +30,25 @@ const PassengerSearch = () => {
       setSearchResults([
         {
           id: 1,
-          route: 'Lagos to Abuja',
-          departureTime: '08:00 AM',
-          arrivalTime: '02:00 PM',
-          duration: '6 hours',
+          route: "Lagos to Abuja",
+          departureTime: "08:00 AM",
+          arrivalTime: "02:00 PM",
+          duration: "6 hours",
           price: 15000,
           availableSeats: 15,
-          busType: 'Executive',
-          busNumber: 'BUS001',
+          busType: "Executive",
+          busNumber: "BUS001",
         },
         {
           id: 2,
-          route: 'Lagos to Abuja',
-          departureTime: '10:00 AM',
-          arrivalTime: '04:00 PM',
-          duration: '6 hours',
+          route: "Lagos to Abuja",
+          departureTime: "10:00 AM",
+          arrivalTime: "04:00 PM",
+          duration: "6 hours",
           price: 12000,
           availableSeats: 8,
-          busType: 'Standard',
-          busNumber: 'BUS002',
+          busType: "Standard",
+          busNumber: "BUS002",
         },
       ]);
       setIsSearching(false);
@@ -68,7 +68,9 @@ const PassengerSearch = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">From</label>
+              <label className="block text-sm font-medium text-gray-700">
+                From
+              </label>
               <input
                 type="text"
                 name="from"
@@ -80,7 +82,9 @@ const PassengerSearch = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">To</label>
+              <label className="block text-sm font-medium text-gray-700">
+                To
+              </label>
               <input
                 type="text"
                 name="to"
@@ -92,7 +96,9 @@ const PassengerSearch = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Date</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Date
+              </label>
               <input
                 type="date"
                 name="date"
@@ -103,7 +109,9 @@ const PassengerSearch = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Passengers</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Passengers
+              </label>
               <input
                 type="number"
                 name="passengers"
@@ -122,7 +130,7 @@ const PassengerSearch = () => {
               className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
               disabled={isSearching}
             >
-              {isSearching ? 'Searching...' : 'Search Buses'}
+              {isSearching ? "Searching..." : "Search Buses"}
             </button>
           </div>
         </form>
@@ -134,27 +142,31 @@ const PassengerSearch = () => {
             <div key={bus.id} className="bg-white rounded-lg shadow p-6">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">{bus.route}</h3>
-                  <p className="text-gray-600">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    {bus.route}
+                  </h3>
+                  <p className="text-secondary">
                     {bus.departureTime} - {bus.arrivalTime} ({bus.duration})
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-2xl font-bold text-gray-900">₦{bus.price}</p>
-                  <p className="text-sm text-gray-600">per passenger</p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    ₦{bus.price}
+                  </p>
+                  <p className="text-sm text-secondary">per passenger</p>
                 </div>
               </div>
               <div className="mt-4 grid grid-cols-3 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600">Bus Type</p>
+                  <p className="text-sm text-secondary">Bus Type</p>
                   <p className="font-medium">{bus.busType}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Available Seats</p>
+                  <p className="text-sm text-secondary">Available Seats</p>
                   <p className="font-medium">{bus.availableSeats}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Bus Number</p>
+                  <p className="text-sm text-secondary">Bus Number</p>
                   <p className="font-medium">{bus.busNumber}</p>
                 </div>
               </div>
@@ -171,8 +183,10 @@ const PassengerSearch = () => {
         </div>
       ) : (
         <div className="text-center py-12">
-          <p className="text-gray-600">
-            {isSearching ? 'Searching for buses...' : 'Enter your search criteria to find buses'}
+          <p className="text-secondary">
+            {isSearching
+              ? "Searching for buses..."
+              : "Enter your search criteria to find buses"}
           </p>
         </div>
       )}
@@ -180,4 +194,4 @@ const PassengerSearch = () => {
   );
 };
 
-export default PassengerSearch; 
+export default PassengerSearch;

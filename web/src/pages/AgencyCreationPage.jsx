@@ -13,8 +13,9 @@ import {
   Step1_AgencyDetails,
   Step2_Location,
   Step3_ContactInfo,
-  Step4_Overview,
-  Step5_CreationSuccess,
+  Step4_ImageAddition,
+  Step5_Overview,
+  Step6_CreationSuccess,
 } from "../components/agency/";
 
 // This is the main component that renders the correct step
@@ -29,10 +30,12 @@ const AgencyCreationFlow = () => {
         return <Step2_Location />;
       case STEPS.CONTACTINFO_SETUP:
         return <Step3_ContactInfo />;
+      case STEPS.IMAGE_ADDITION:
+        return <Step4_ImageAddition />;
       case STEPS.OVERVIEW:
-        return <Step4_Overview />;
+        return <Step5_Overview />;
       case STEPS.SUCCESS:
-        return <Step5_CreationSuccess />;
+        return <Step6_CreationSuccess />;
       default:
         return <Step1_AgencyDetails />;
     }

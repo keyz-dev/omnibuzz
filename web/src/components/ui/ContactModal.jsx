@@ -28,7 +28,7 @@ const ContactModal = ({ isOpen, onClose, onAdd }) => {
           </h3>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
+            className="text-gray-400 hover:text-secondary transition-colors"
           >
             <X size={20} />
           </button>

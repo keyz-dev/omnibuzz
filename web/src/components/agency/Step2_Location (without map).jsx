@@ -63,7 +63,7 @@ const Step2_Location = () => {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Agency Location
           </h1>
-          <p className="text-gray-600">Tell us where your agency is located</p>
+          <p className="text-secondary">Tell us where your agency is located</p>
         </div>
 
         <div className="space-y-6">

@@ -169,7 +169,7 @@ const MapSelector = () => {
         <h1 className="text-2xl font-bold text-gray-900 mb-2">
           Is the marker on the right spot?
         </h1>
-        <p className="text-gray-600">
+        <p className="text-secondary">
           confirm the address of the station by checking the marker
         </p>
       </div>

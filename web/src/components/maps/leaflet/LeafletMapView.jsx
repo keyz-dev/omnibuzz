@@ -122,7 +122,7 @@ const LeafletMapView = ({ coordinates, address }) => {
   }, [coordinates]);
 
   return (
-    <div className="relative h-80 md:h-[450px] w-full rounded-lg overflow-hidden border border-gray-200">
+    <div className="relative h-80 md:h-[450px] w-full rounded-sm overflow-hidden border-2 z-[1] border-light_bg">
       <ConfirmationBar address={address} visible={!!coordinates} />
       <div ref={mapRef} className="w-full h-full" />
     </div>

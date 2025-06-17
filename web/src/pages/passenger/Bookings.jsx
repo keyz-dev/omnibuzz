@@ -38,7 +38,7 @@ const PassengerBookings = () => {
           <h3 className="text-lg font-semibold text-gray-900">
             {booking.route}
           </h3>
-          <p className="text-gray-600">
+          <p className="text-secondary">
             {booking.date} at {booking.time}
           </p>
         </div>
@@ -54,11 +54,11 @@ const PassengerBookings = () => {
       </div>
       <div className="mt-4 grid grid-cols-2 gap-4">
         <div>
-          <p className="text-sm text-gray-600">Seat Number</p>
+          <p className="text-sm text-secondary">Seat Number</p>
           <p className="font-medium">{booking.seatNumber}</p>
         </div>
         <div>
-          <p className="text-sm text-gray-600">Bus Number</p>
+          <p className="text-sm text-secondary">Bus Number</p>
           <p className="font-medium">{booking.busNumber}</p>
         </div>
       </div>
@@ -111,7 +111,7 @@ const PassengerBookings = () => {
           bookings[activeTab].map(renderBookingCard)
         ) : (
           <div className="text-center py-12">
-            <p className="text-gray-600">No {activeTab} bookings found</p>
+            <p className="text-secondary">No {activeTab} bookings found</p>
           </div>
         )}
       </div>

@@ -108,7 +108,7 @@ const Login = () => {
           Login
         </Button>
 
-        <p className="text-center text-sm text-gray-600 mt-2">
+        <p className="text-center text-sm text-secondary mt-2">
           Don't have an account?{" "}
           <RouterLink to="/register" className="text-accent hover:underline">
             Register here

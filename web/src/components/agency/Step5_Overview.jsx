@@ -6,7 +6,7 @@ import AgencyOverviewTowns from "./overview/AgencyOverviewTowns";
 import AgencyOverviewContacts from "./overview/AgencyOverviewContacts";
 import { Button } from "../ui";
 
-const Step4_Overview = () => {
+const Step5_Overview = () => {
   const { agencyCreationData, setAgencyCreationData } = useAgencyCreation();
   const {
     name,
@@ -27,7 +27,20 @@ const Step4_Overview = () => {
       return;
     }
     console.log("submit");
-    console.log(agencyCreationData);
+    const formData = new FormData();
+
+    // Add basic agency info
+    formData.append("name", name);
+    formData.append("headAddress", headAddress);
+    formData.append("description", description);
+    formData.append("coordinates", JSON.stringify(coordinates));
+    formData.append("towns", JSON.stringify(towns));
+    formData.append("contactInfo", JSON.stringify(contactInfo));
+    if (logo) {
+      formData.append("logo", logo);
+    }
+
+    console.log(formData);
   };
 
   return (
@@ -61,4 +74,4 @@ const Step4_Overview = () => {
   );
 };
 
-export default Step4_Overview;
+export default Step5_Overview;

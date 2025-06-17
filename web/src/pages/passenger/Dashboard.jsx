@@ -31,7 +31,7 @@ const PassengerDashboard = () => {
             Recent Bookings
           </h2>
           <div className="space-y-4">
-            <p className="text-gray-600">No recent bookings</p>
+            <p className="text-secondary">No recent bookings</p>
           </div>
         </div>
 
@@ -41,7 +41,7 @@ const PassengerDashboard = () => {
             Upcoming Trips
           </h2>
           <div className="space-y-4">
-            <p className="text-gray-600">No upcoming trips</p>
+            <p className="text-secondary">No upcoming trips</p>
           </div>
         </div>
       </div>

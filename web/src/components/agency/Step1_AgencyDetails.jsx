@@ -107,7 +107,7 @@ const Step1_AgencyDetails = () => {
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               Setup Your Agency
             </h1>
-            <p className="text-gray-600">Tell us about your bus agency</p>
+            <p className="text-secondary">Tell us about your bus agency</p>
           </div>
 
           {/* Logo section */}

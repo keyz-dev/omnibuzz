@@ -6,18 +6,23 @@ const STEPS = {
   AGENCY_SETUP: 0,
   LOCATION_SETUP: 1,
   CONTACTINFO_SETUP: 2,
-  OVERVIEW: 3,
-  SUCCESS: 4,
+  IMAGE_ADDITION: 3,
+  OVERVIEW: 4,
+  SUCCESS: 5,
 };
 
 export const AgencyCreationProvider = ({ children }) => {
-  const [activeStep, setActiveStep] = useState(STEPS.LOCATION_SETUP);
+  const [activeStep, setActiveStep] = useState(STEPS.IMAGE_ADDITION);
   const [visitedSteps, setVisitedSteps] = useState([STEPS.AGENCY_SETUP]);
   const [agencyCreationData, setAgencyCreationData] = useState({
     name: "",
     headAddress: "",
     description: "",
     coordinates: null,
+    contactInfo: [],
+    agencyImages: [],
+    towns: [],
+    logo: null,
   });
 
   const updateFormData = (stepData) => {

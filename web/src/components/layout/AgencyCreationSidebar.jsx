@@ -7,6 +7,7 @@ import {
   PhoneCall,
   BookmarkCheck,
   ArrowLeft,
+  ImagePlus,
   Menu,
   X,
 } from "lucide-react";
@@ -34,6 +35,12 @@ const steps = [
   },
   {
     id: 3,
+    icon: <ImagePlus size={20} />,
+    title: "Image Addition",
+    description: "Add images to your agency",
+  },
+  {
+    id: 4,
     icon: <BookmarkCheck size={20} />,
     title: "Overview & Finish",
     description: "Cross-check your information",

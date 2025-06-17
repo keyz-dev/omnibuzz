@@ -124,7 +124,7 @@ const Step3_ContactInfo = () => {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Contact Information
           </h1>
-          <p className="text-gray-600">How can people reach your agency?</p>
+          <p className="text-secondary">How can people reach your agency?</p>
         </div>
 
         <div className="space-y-6">

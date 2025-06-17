@@ -6,11 +6,16 @@ import {
   LeafletMapView,
 } from "./index";
 import { StepNavButtons } from "../../agency";
+import { useAgencyCreation } from "../../../stateManagement/contexts";
 
 // Main MapSelector Component
 const MapSelector = () => {
-  const [address, setAddress] = useState("");
-  const [coordinates, setCoordinates] = useState(null);
+  const { agencyCreationData, setAgencyCreationData, nextStep, prevStep } =
+    useAgencyCreation();
+  const [address, setAddress] = useState(agencyCreationData.headAddress);
+  const [coordinates, setCoordinates] = useState(
+    agencyCreationData.coordinates
+  );
   const [confirmed, setConfirmed] = useState(false);
   const [inputFocused, setInputFocused] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
@@ -115,33 +120,19 @@ const MapSelector = () => {
     }
   };
 
-  const handleConfirm = async () => {
+  const handleConfirm = () => {
     if (!address || !coordinates) return;
-
-    try {
-      // Simulate API call to save address
-      const addressData = {
-        address,
-        lat: coordinates.lat,
-        lng: coordinates.lng,
-        timestamp: new Date().toISOString(),
-      };
-
-      console.log("Saving address to database:", addressData);
-
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      setConfirmed(true);
-      alert("Address saved successfully!");
-    } catch (error) {
-      console.error("Error saving address:", error);
-      alert("Failed to save address. Please try again.");
-    }
+    setAgencyCreationData({
+      ...agencyCreationData,
+      headAddress: address,
+      coordinates: coordinates,
+    });
+    setConfirmed(true);
+    nextStep();
   };
 
   const handleBack = () => {
-    // Reset or navigate back
+    prevStep();
     setAddress("");
     setCoordinates(null);
     setConfirmed(false);
@@ -155,13 +146,13 @@ const MapSelector = () => {
         <h1 className="text-2xl font-bold text-gray-900 mb-2">
           Is the marker on the right spot?
         </h1>
-        <p className="text-gray-600">
+        <p className="text-secondary">
           confirm the address of the station by checking the marker
         </p>
       </div>
 
       {/* Address Input Section */}
-      <div className="relative mb-6">
+      <div className="relative mb-6 z-10">
         <AddressInput
           value={address}
           onChange={setAddress}

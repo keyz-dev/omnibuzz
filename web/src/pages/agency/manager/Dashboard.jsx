@@ -37,7 +37,7 @@ const Dashboard = () => {
         <h1 className="text-2xl font-bold text-gray-900">
           Welcome back, {user?.name}
         </h1>
-        <p className="text-gray-600">
+        <p className="text-secondary">
           Here's what's happening with your agency today.
         </p>
       </div>
