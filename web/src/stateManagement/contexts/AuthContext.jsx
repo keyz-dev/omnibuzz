@@ -57,23 +57,20 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      console.log("Checking auth...");
+      setLoading(true);
       try {
         const storedToken = localStorage.getItem("token");
         if (storedToken) {
-          console.log("Token found, verifying...");
           // Validate token with backend
           const response = await api.get("/user/verify-token");
           if (response.data.valid) {
             const { user } = response.data.data;
             setUserAndToken(user, storedToken);
           } else {
-            console.log("Token is invalid, clearing everything...");
             // Token is invalid, clear everything
             invalidateToken();
           }
         } else {
-          console.log("No token found, clearing everything...");
           invalidateToken();
         }
       } catch (error) {

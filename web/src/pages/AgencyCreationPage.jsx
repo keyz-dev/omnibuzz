@@ -6,6 +6,7 @@ import {
 import AgencyCreationSidebar from "../components/layout/AgencyCreationSidebar"; // The left sidebar
 import { useAuth } from "../stateManagement/contexts/AuthContext";
 import { Navigate } from "react-router-dom";
+import { Loader } from "../components/ui";
 
 // Import step components
 import {
@@ -57,7 +58,14 @@ const AgencyCreationFlow = () => {
 
 // The wrapper that provides the context
 const AgencyCreationPage = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader />
+      </div>
+    );
+  }
   if (!user) {
     return <Navigate to="/login" state={{ from: "/agency-registration" }} />;
   }

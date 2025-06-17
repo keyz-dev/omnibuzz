@@ -1,15 +1,19 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../stateManagement/contexts/AuthContext";
+import { Loader } from "../ui";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader />
+      </div>
+    );
   }
 
   if (!user) {
-    console.log("User not found, redirecting to login");
     return <Navigate to="/login" />;
   }
 
