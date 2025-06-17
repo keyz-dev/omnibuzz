@@ -8,6 +8,8 @@ const { Op } = require("sequelize");
 const { cleanupImages } = require("../utils/imageCleanup");
 const { validateRequest } = require("../utils/validation");
 const { isLocalImageUrl } = require("../utils/imageUtils");
+const emailService = require("../services/emailService");
+const { sequelize } = require("../db/models");
 
 // Helper function to format image URLs
 const formatImageUrl = (image) => {
@@ -117,9 +119,6 @@ class AgencyController {
   // Create a new agency
   async create(req, res, next) {
     try {
-      // Parse JSON fields
-      req.body.contactInfo = JSON.parse(req.body.contactInfo);
-      req.body.coordinates = JSON.parse(req.body.coordinates);
       const { error, value } = validateRequest(req.body, createAgencySchema);
       if (error) {
         throw new ValidationError(error.details[0].message);
@@ -136,26 +135,58 @@ class AgencyController {
         }
       }
 
-      // Create agency
-      const agency = await Agency.create({
-        ...value,
-        ...fileData,
-        ownerId: req.user.id,
-      });
-
-      // Return created agency with owner details
-      const agencyWithOwner = await Agency.findByPk(agency.id, {
-        include: [
+      // Start transaction
+      const result = await sequelize.transaction(async (t) => {
+        // Create agency
+        const agency = await Agency.create(
           {
-            model: User,
-            as: "owner",
-            attributes: ["id", "fullName", "email", "role", "avatar"],
+            ...value,
+            ...fileData,
+            ownerId: req.user.id,
           },
-        ],
+          { transaction: t }
+        );
+
+        // Update user role to agency_admin
+        await User.update(
+          { role: "agency_admin" },
+          {
+            where: { id: req.user.id },
+            transaction: t,
+          }
+        );
+
+        // Return created agency with owner details
+        const agencyWithOwner = await Agency.findByPk(agency.id, {
+          include: [
+            {
+              model: User,
+              as: "owner",
+              attributes: ["id", "fullName", "email", "role", "avatar"],
+            },
+          ],
+          transaction: t,
+        });
+
+        return agencyWithOwner;
       });
 
       // Format agency data including owner avatar
-      const formattedAgency = formatAgencyData(agencyWithOwner);
+      const formattedAgency = formatAgencyData(result);
+
+      // Send welcome email to the new agency admin
+      await emailService.sendEmail({
+        to: req.user.email,
+        subject: "Welcome to OmniBuzz Agency Admin",
+        template: "agencyAdminWelcome",
+        data: {
+          name: req.user.fullName,
+          agencyName: formattedAgency.name,
+          dashboardUrl: `${process.env.FRONTEND_URL}/agency/admin`,
+          supportEmail: process.env.SMTP_EMAIL,
+          currentYear: new Date().getFullYear(),
+        },
+      });
 
       res.status(201).json({
         success: true,

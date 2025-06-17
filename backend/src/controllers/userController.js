@@ -1,11 +1,15 @@
 require("dotenv").config();
-const { User, Station, StationWorker } = require("../db/models");
+const { User, Station, StationWorker, Agency } = require("../db/models");
 const { updateUserSchema } = require("../schemas/userSchema");
 const { acceptInvitationSchema } = require("../schemas/stationWorkerSchema");
 const { validateRequest } = require("../utils/validation");
 const emailService = require("../services/emailService");
 const { uploadToCloudinary } = require("../utils/cloudinary");
-const { BadRequestError, NotFoundError } = require("../utils/errors");
+const {
+  BadRequestError,
+  NotFoundError,
+  ForbiddenError,
+} = require("../utils/errors");
 const { Op } = require("sequelize");
 const { generateToken } = require("../utils/jwt");
 const { isLocalImageUrl } = require("../utils/imageUtils");
@@ -25,7 +29,16 @@ const formatAvatarUrl = (avatar) => {
 
 // Verify email
 const verifyEmail = async (req, res) => {
-  const { email, code } = req.body;
+  const { email, code, option } = req.body;
+
+  let role = "passenger";
+  if (option && option === "update-role") {
+    // Check if user is already an agency admin
+    if (req.user.role === "agency_admin") {
+      throw new BadRequestError("You are already an agency admin");
+    }
+    role = "agency_admin";
+  }
 
   // Find user by email and verification code
   const user = await User.findOne({
@@ -46,6 +59,7 @@ const verifyEmail = async (req, res) => {
     emailVerified: true,
     emailVerificationCode: null,
     emailVerificationExpires: null,
+    role,
   });
 
   // Generate token after successful verification

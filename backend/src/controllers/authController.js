@@ -1,6 +1,9 @@
 require("dotenv").config();
 const { User, Station, StationWorker } = require("../db/models");
-const { createUserSchema } = require("../schemas/userSchema");
+const {
+  createUserSchema,
+  googleLoginSchema,
+} = require("../schemas/userSchema");
 const { validateRequest } = require("../utils/validation");
 const emailService = require("../services/emailService");
 const {
@@ -8,12 +11,9 @@ const {
   UnauthorizedError,
   NotFoundError,
 } = require("../utils/errors");
-const { OAuth2Client } = require("google-auth-library");
 const { generateToken } = require("../utils/jwt");
 const { isLocalImageUrl } = require("../utils/imageUtils");
 const axios = require("axios");
-
-const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Helper function to format avatar URL
 const formatAvatarUrl = (avatar) => {
@@ -159,7 +159,10 @@ const login = async (req, res) => {
 
 // Google OAuth login
 const googleLogin = async (req, res) => {
-  const { access_token } = req.body;
+  const { error, value } = validateRequest(req.body, googleLoginSchema);
+  if (error) throw new BadRequestError(error.message);
+
+  const { access_token, role } = value;
 
   if (!access_token) {
     throw new NotFoundError("Access token not found");
@@ -188,6 +191,7 @@ const googleLogin = async (req, res) => {
       authProvider: "google",
       emailVerified: true,
       isActive: true,
+      role,
     });
   }
 

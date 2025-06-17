@@ -578,9 +578,7 @@ class StationController {
 
       // Generate invitation token
       const invitationToken = generateToken({ userId: user.id }, "1d");
-      const invitationExpiresAt = new Date(
-        Date.now() + 7 * 24 * 60 * 60 * 1000
-      ); // 7 days
+      const invitationExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 1 day
 
       // Create station worker record
       const worker = await StationWorker.create({

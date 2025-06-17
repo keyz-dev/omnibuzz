@@ -17,7 +17,6 @@ router.get("/", agencyController.getAll);
 router.post(
   "/",
   authenticate,
-  isAgencyAdmin,
   upload.fields([
     { name: "logo", maxCount: 1 },
     { name: "agencyImages", maxCount: 10 },

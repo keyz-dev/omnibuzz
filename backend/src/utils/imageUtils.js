@@ -31,7 +31,7 @@ const validateImageUrl = (url, helpers) => {
 const imageUrlSchema = Joi.string().custom(validateImageUrl);
 
 // Schema for single image
-const singleImageSchema = imageUrlSchema.allow(null, "");
+const singleImageSchema = imageUrlSchema.allow(null, "").optional();
 
 // Schema for array of images
 const imageArraySchema = Joi.array().items(imageUrlSchema).allow(null);

@@ -51,8 +51,15 @@ const passwordResetSchema = Joi.object({
     .messages({ "any.only": "Passwords do not match" }),
 });
 
+// Google Login Schema
+const googleLoginSchema = Joi.object({
+  access_token: Joi.string().required(),
+  role: Joi.string().valid("passenger", "agency_admin").default("passenger"),
+});
+
 module.exports = {
   createUserSchema,
   updateUserSchema,
   passwordResetSchema,
+  googleLoginSchema,
 };
