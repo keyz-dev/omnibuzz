@@ -22,5 +22,5 @@ export const passengerRoutes = [
     <Route path="profile" element={<PassengerProfile />} />
     <Route path="bookings" element={<PassengerBookings />} />
     <Route path="search" element={<PassengerSearch />} />
-  </Route>
+  </Route>,
 ];

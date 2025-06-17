@@ -12,8 +12,18 @@ const TextArea = ({
   value,
   onChangeHandler,
   error,
+  required = false,
   props,
 }) => {
+  // If label is a string and required, append a red asterisk unless already present
+  let labelContent = label;
+  if (label && typeof label === "string" && required && !/\*/.test(label)) {
+    labelContent = (
+      <>
+        {label} <span className="text-red-500">*</span>
+      </>
+    );
+  }
   return (
     <div className="w-full flex flex-col">
       {label && (
@@ -21,7 +31,7 @@ const TextArea = ({
           htmlFor="{{ $id }}"
           className={`block transition-all duration-300 transform text-base font-normal text-primary z-0 px-2 ${labelClasses}`}
         >
-          {label}
+          {labelContent}
         </label>
       )}
       <textarea

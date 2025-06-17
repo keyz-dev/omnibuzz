@@ -1,0 +1,834 @@
+[
+    {
+        "city": "Douala",
+        "country": "Cameroon",
+        "pop2024": 2942040,
+        "latitude": 4.04827,
+        "longitude": 9.70428,
+        "region": "Littoral"
+    },
+    {
+        "city": "Yaounde",
+        "country": "Cameroon",
+        "pop2024": 2874259,
+        "latitude": 3.86667,
+        "longitude": 11.5167,
+        "region": "Centre"
+    },
+    {
+        "city": "Garoua",
+        "country": "Cameroon",
+        "pop2024": 436899,
+        "latitude": 9.30143,
+        "longitude": 13.3977,
+        "region": "North"
+    },
+    {
+        "city": "Kousseri",
+        "country": "Cameroon",
+        "pop2024": 435547,
+        "latitude": 12.0769,
+        "longitude": 15.0306,
+        "region": "Far North"
+    },
+    {
+        "city": "Bamenda",
+        "country": "Cameroon",
+        "pop2024": 393835,
+        "latitude": 5.9597,
+        "longitude": 10.146,
+        "region": "Northwest"
+    },
+    {
+        "city": "Maroua",
+        "country": "Cameroon",
+        "pop2024": 319941,
+        "latitude": 10.591,
+        "longitude": 14.3159,
+        "region": "Far North"
+    },
+    {
+        "city": "Bafoussam",
+        "country": "Cameroon",
+        "pop2024": 290768,
+        "latitude": 5.47775,
+        "longitude": 10.4176,
+        "region": "West"
+    },
+    {
+        "city": "Mokolo",
+        "country": "Cameroon",
+        "pop2024": 275239,
+        "latitude": 10.7424,
+        "longitude": 13.8023,
+        "region": "Far North"
+    },
+    {
+        "city": "Ngaoundere",
+        "country": "Cameroon",
+        "pop2024": 231357,
+        "latitude": 7.32765,
+        "longitude": 13.5847,
+        "region": "Adamawa"
+    },
+    {
+        "city": "Bertoua",
+        "country": "Cameroon",
+        "pop2024": 218111,
+        "latitude": 4.57728,
+        "longitude": 13.6846,
+        "region": "East"
+    },
+    {
+        "city": "Edea",
+        "country": "Cameroon",
+        "pop2024": 203149,
+        "latitude": 3.8,
+        "longitude": 10.1333,
+        "region": "Littoral"
+    },
+    {
+        "city": "Loum",
+        "country": "Cameroon",
+        "pop2024": 177429,
+        "latitude": 4.7182,
+        "longitude": 9.7351,
+        "region": "Littoral"
+    },
+    {
+        "city": "Kumba",
+        "country": "Cameroon",
+        "pop2024": 144413,
+        "latitude": 4.6363,
+        "longitude": 9.4469,
+        "region": "Southwest"
+    },
+    {
+        "city": "Nkongsamba",
+        "country": "Cameroon",
+        "pop2024": 117063,
+        "latitude": 4.9547,
+        "longitude": 9.9404,
+        "region": "Littoral"
+    },
+    {
+        "city": "Mbouda",
+        "country": "Cameroon",
+        "pop2024": 111320,
+        "latitude": 5.62611,
+        "longitude": 10.2542,
+        "region": "West"
+    },
+    {
+        "city": "Dschang",
+        "country": "Cameroon",
+        "pop2024": 96112,
+        "latitude": 5.44397,
+        "longitude": 10.0533,
+        "region": "West"
+    },
+    {
+        "city": "Foumban",
+        "country": "Cameroon",
+        "pop2024": 92673,
+        "latitude": 5.72662,
+        "longitude": 10.8987,
+        "region": "West"
+    },
+    {
+        "city": "Ebolowa",
+        "country": "Cameroon",
+        "pop2024": 87875,
+        "latitude": 2.9,
+        "longitude": 11.15,
+        "region": "South"
+    },
+    {
+        "city": "Guider",
+        "country": "Cameroon",
+        "pop2024": 84647,
+        "latitude": 9.9333,
+        "longitude": 13.9467,
+        "region": "North"
+    },
+    {
+        "city": "Foumbot",
+        "country": "Cameroon",
+        "pop2024": 84065,
+        "latitude": 5.50803,
+        "longitude": 10.6325,
+        "region": "West"
+    },
+    {
+        "city": "Bafang",
+        "country": "Cameroon",
+        "pop2024": 80688,
+        "latitude": 5.15705,
+        "longitude": 10.1771,
+        "region": "West"
+    },
+    {
+        "city": "Yagoua",
+        "country": "Cameroon",
+        "pop2024": 80235,
+        "latitude": 10.3411,
+        "longitude": 15.2329,
+        "region": "Far North"
+    },
+    {
+        "city": "Mbalmayo",
+        "country": "Cameroon",
+        "pop2024": 80206,
+        "latitude": 3.51667,
+        "longitude": 11.5,
+        "region": "Centre"
+    },
+    {
+        "city": "Meiganga",
+        "country": "Cameroon",
+        "pop2024": 80100,
+        "latitude": 6.51667,
+        "longitude": 14.3,
+        "region": "Adamawa"
+    },
+    {
+        "city": "Bali",
+        "country": "Cameroon",
+        "pop2024": 72606,
+        "latitude": 5.88737,
+        "longitude": 10.0118,
+        "region": "Northwest"
+    },
+    {
+        "city": "Limbe",
+        "country": "Cameroon",
+        "pop2024": 72106,
+        "latitude": 4.02356,
+        "longitude": 9.20607,
+        "region": "Southwest"
+    },
+    {
+        "city": "Bafia",
+        "country": "Cameroon",
+        "pop2024": 69270,
+        "latitude": 4.75,
+        "longitude": 11.2333,
+        "region": "Centre"
+    },
+    {
+        "city": "Wum",
+        "country": "Cameroon",
+        "pop2024": 68836,
+        "latitude": 6.38333,
+        "longitude": 10.0667,
+        "region": "Northwest"
+    },
+    {
+        "city": "Bangangte",
+        "country": "Cameroon",
+        "pop2024": 65385,
+        "latitude": 5.14079,
+        "longitude": 10.5253,
+        "region": "West"
+    },
+    {
+        "city": "Tiko",
+        "country": "Cameroon",
+        "pop2024": 55914,
+        "latitude": 4.075,
+        "longitude": 9.36005,
+        "region": "Southwest"
+    },
+    {
+        "city": "Kribi",
+        "country": "Cameroon",
+        "pop2024": 55224,
+        "latitude": 2.93725,
+        "longitude": 9.90765,
+        "region": "South"
+    },
+    {
+        "city": "Mora",
+        "country": "Cameroon",
+        "pop2024": 55216,
+        "latitude": 11.0461,
+        "longitude": 14.1401,
+        "region": "Far North"
+    },
+    {
+        "city": "Sangmelima",
+        "country": "Cameroon",
+        "pop2024": 54251,
+        "latitude": 2.93333,
+        "longitude": 11.9833,
+        "region": "South"
+    },
+    {
+        "city": "Kumbo",
+        "country": "Cameroon",
+        "pop2024": 53970,
+        "latitude": 6.2,
+        "longitude": 10.6667,
+        "region": "Northwest"
+    },
+    {
+        "city": "Nkoteng",
+        "country": "Cameroon",
+        "pop2024": 50334,
+        "latitude": 4.51667,
+        "longitude": 12.0333,
+        "region": "Centre"
+    },
+    {
+        "city": "Mutengene",
+        "country": "Cameroon",
+        "pop2024": 47478,
+        "latitude": 4.0913,
+        "longitude": 9.3144,
+        "region": "Southwest"
+    },
+    {
+        "city": "Buea",
+        "country": "Cameroon",
+        "pop2024": 47300,
+        "latitude": 4.15342,
+        "longitude": 9.24231,
+        "region": "Southwest"
+    },
+    {
+        "city": "Garoua Boulai",
+        "country": "Cameroon",
+        "pop2024": 46615,
+        "latitude": 5.88333,
+        "longitude": 14.55,
+        "region": "East"
+    },
+    {
+        "city": "Batouri",
+        "country": "Cameroon",
+        "pop2024": 43821,
+        "latitude": 4.43333,
+        "longitude": 14.3667,
+        "region": "East"
+    },
+    {
+        "city": "Fundong",
+        "country": "Cameroon",
+        "pop2024": 43509,
+        "latitude": 6.25,
+        "longitude": 10.2667,
+        "region": "Northwest"
+    },
+    {
+        "city": "Fontem",
+        "country": "Cameroon",
+        "pop2024": 42689,
+        "latitude": 5.4685,
+        "longitude": 9.8818,
+        "region": "Southwest"
+    },
+    {
+        "city": "Mbanga",
+        "country": "Cameroon",
+        "pop2024": 42590,
+        "latitude": 4.5016,
+        "longitude": 9.5671,
+        "region": "Littoral"
+    },
+    {
+        "city": "Banyo",
+        "country": "Cameroon",
+        "pop2024": 40798,
+        "latitude": 6.75,
+        "longitude": 11.8167,
+        "region": "Adamawa"
+    },
+    {
+        "city": "Manjo",
+        "country": "Cameroon",
+        "pop2024": 37661,
+        "latitude": 4.8428,
+        "longitude": 9.8217,
+        "region": "Littoral"
+    },
+    {
+        "city": "Melong",
+        "country": "Cameroon",
+        "pop2024": 37086,
+        "latitude": 5.12181,
+        "longitude": 9.96143,
+        "region": "Littoral"
+    },
+    {
+        "city": "Tibati",
+        "country": "Cameroon",
+        "pop2024": 35589,
+        "latitude": 6.46504,
+        "longitude": 12.6284,
+        "region": "Adamawa"
+    },
+    {
+        "city": "Muyuka",
+        "country": "Cameroon",
+        "pop2024": 31384,
+        "latitude": 4.2898,
+        "longitude": 9.4103,
+        "region": "Southwest"
+    },
+    {
+        "city": "Obala",
+        "country": "Cameroon",
+        "pop2024": 30012,
+        "latitude": 4.16667,
+        "longitude": 11.5333,
+        "region": "Centre"
+    },
+    {
+        "city": "Nanga Eboko",
+        "country": "Cameroon",
+        "pop2024": 29909,
+        "latitude": 4.68333,
+        "longitude": 12.3667,
+        "region": "Centre"
+    },
+    {
+        "city": "Penja",
+        "country": "Cameroon",
+        "pop2024": 28406,
+        "latitude": 4.63911,
+        "longitude": 9.67987,
+        "region": "Littoral"
+    },
+    {
+        "city": "Mbandjok",
+        "country": "Cameroon",
+        "pop2024": 26947,
+        "latitude": 4.45,
+        "longitude": 11.9,
+        "region": "Centre"
+    },
+    {
+        "city": "Kaele",
+        "country": "Cameroon",
+        "pop2024": 25199,
+        "latitude": 10.1092,
+        "longitude": 14.4508,
+        "region": "Far North"
+    },
+    {
+        "city": "Bamusso",
+        "country": "Cameroon",
+        "pop2024": 24741,
+        "latitude": 4.4591,
+        "longitude": 8.9027,
+        "region": "Southwest"
+    },
+    {
+        "city": "Lagdo",
+        "country": "Cameroon",
+        "pop2024": 24596,
+        "latitude": 9.05828,
+        "longitude": 13.666,
+        "region": "North"
+    },
+    {
+        "city": "Tchollire",
+        "country": "Cameroon",
+        "pop2024": 23187,
+        "latitude": 8.4022,
+        "longitude": 14.1698,
+        "region": "North"
+    },
+    {
+        "city": "Belabo",
+        "country": "Cameroon",
+        "pop2024": 22553,
+        "latitude": 4.93333,
+        "longitude": 13.3,
+        "region": "East"
+    },
+    {
+        "city": "Lolodorf",
+        "country": "Cameroon",
+        "pop2024": 22252,
+        "latitude": 3.23333,
+        "longitude": 10.7333,
+        "region": "South"
+    },
+    {
+        "city": "Eseka",
+        "country": "Cameroon",
+        "pop2024": 22221,
+        "latitude": 3.65,
+        "longitude": 10.7667,
+        "region": "South"
+    },
+    {
+        "city": "Mamfe",
+        "country": "Cameroon",
+        "pop2024": 19472,
+        "latitude": 5.75132,
+        "longitude": 9.3137,
+        "region": "Southwest"
+    },
+    {
+        "city": "Dizangue",
+        "country": "Cameroon",
+        "pop2024": 19243,
+        "latitude": 3.76667,
+        "longitude": 9.98333,
+        "region": "Littoral"
+    },
+    {
+        "city": "Akonolinga",
+        "country": "Cameroon",
+        "pop2024": 17181,
+        "latitude": 3.76667,
+        "longitude": 12.25,
+        "region": "Centre"
+    },
+    {
+        "city": "Bogo",
+        "country": "Cameroon",
+        "pop2024": 16952,
+        "latitude": 10.7336,
+        "longitude": 14.6093,
+        "region": "Far North"
+    },
+    {
+        "city": "Tonga",
+        "country": "Cameroon",
+        "pop2024": 16036,
+        "latitude": 4.96667,
+        "longitude": 10.7,
+        "region": "West"
+    },
+    {
+        "city": "Abong Mbang",
+        "country": "Cameroon",
+        "pop2024": 14661,
+        "latitude": 3.98333,
+        "longitude": 13.1833,
+        "region": "East"
+    },
+    {
+        "city": "Yokadouma",
+        "country": "Cameroon",
+        "pop2024": 13287,
+        "latitude": 3.51667,
+        "longitude": 15.05,
+        "region": "East"
+    },
+    {
+        "city": "Bazou",
+        "country": "Cameroon",
+        "pop2024": 13058,
+        "latitude": 5.06001,
+        "longitude": 10.4675,
+        "region": "West"
+    },
+    {
+        "city": "Mundemba",
+        "country": "Cameroon",
+        "pop2024": 11912,
+        "latitude": 4.9479,
+        "longitude": 8.8724,
+        "region": "Southwest"
+    },
+    {
+        "city": "Betare Oya",
+        "country": "Cameroon",
+        "pop2024": 11866,
+        "latitude": 5.6,
+        "longitude": 14.0833,
+        "region": "East"
+    },
+    {
+        "city": "Rey Bouba",
+        "country": "Cameroon",
+        "pop2024": 11454,
+        "latitude": 8.6724,
+        "longitude": 14.1786,
+        "region": "North"
+    },
+    {
+        "city": "Pitoa",
+        "country": "Cameroon",
+        "pop2024": 11454,
+        "latitude": 9.3839,
+        "longitude": 13.5023,
+        "region": "North"
+    },
+    {
+        "city": "Mindif",
+        "country": "Cameroon",
+        "pop2024": 10538,
+        "latitude": 10.3976,
+        "longitude": 14.4363,
+        "region": "Far North"
+    },
+    {
+        "city": "Babanki",
+        "country": "Cameroon",
+        "pop2024": 9851,
+        "latitude": 6.11667,
+        "longitude": 10.25,
+        "region": "Northwest"
+    },
+    {
+        "city": "Mbengwi",
+        "country": "Cameroon",
+        "pop2024": 9734,
+        "latitude": 6.01667,
+        "longitude": 10,
+        "region": "Northwest"
+    },
+    {
+        "city": "Akom II",
+        "country": "Cameroon",
+        "pop2024": 9709,
+        "latitude": 2.78333,
+        "longitude": 10.5667,
+        "region": "South"
+    },
+    {
+        "city": "Batibo",
+        "country": "Cameroon",
+        "pop2024": 9163,
+        "latitude": 5.8358,
+        "longitude": 9.8553,
+        "region": "Northwest"
+    },
+    {
+        "city": "Belo",
+        "country": "Cameroon",
+        "pop2024": 8705,
+        "latitude": 6.13333,
+        "longitude": 10.25,
+        "region": "Northwest"
+    },
+    {
+        "city": "Dimako",
+        "country": "Cameroon",
+        "pop2024": 8476,
+        "latitude": 4.38333,
+        "longitude": 13.5667,
+        "region": "East"
+    },
+    {
+        "city": "Ambam",
+        "country": "Cameroon",
+        "pop2024": 8476,
+        "latitude": 2.38333,
+        "longitude": 11.2833,
+        "region": "South"
+    },
+    {
+        "city": "Njinikom",
+        "country": "Cameroon",
+        "pop2024": 8247,
+        "latitude": 6.23333,
+        "longitude": 10.2833,
+        "region": "Northwest"
+    },
+    {
+        "city": "Ndikinimeki",
+        "country": "Cameroon",
+        "pop2024": 8247,
+        "latitude": 4.76667,
+        "longitude": 10.8333,
+        "region": "Centre"
+    },
+    {
+        "city": "Bonaberi",
+        "country": "Cameroon",
+        "pop2024": 8091,
+        "latitude": 4.07142,
+        "longitude": 9.68177,
+        "region": "Littoral"
+    },
+    {
+        "city": "Kontcha",
+        "country": "Cameroon",
+        "pop2024": 8018,
+        "latitude": 7.96667,
+        "longitude": 12.2333,
+        "region": "Adamawa"
+    },
+    {
+        "city": "Yabassi",
+        "country": "Cameroon",
+        "pop2024": 7560,
+        "latitude": 4.45697,
+        "longitude": 9.96822,
+        "region": "Littoral"
+    },
+    {
+        "city": "Bansoa",
+        "country": "Cameroon",
+        "pop2024": 7560,
+        "latitude": 5.44836,
+        "longitude": 10.3135,
+        "region": "West"
+    },
+    {
+        "city": "Ngou",
+        "country": "Cameroon",
+        "pop2024": 7560,
+        "latitude": 5.19685,
+        "longitude": 10.386,
+        "region": "West"
+    },
+    {
+        "city": "Makary",
+        "country": "Cameroon",
+        "pop2024": 7331,
+        "latitude": 12.5753,
+        "longitude": 14.4548,
+        "region": "Far North"
+    },
+    {
+        "city": "Bekondo",
+        "country": "Cameroon",
+        "pop2024": 7331,
+        "latitude": 4.6819,
+        "longitude": 9.3214,
+        "region": "Southwest"
+    },
+    {
+        "city": "Bandjoun",
+        "country": "Cameroon",
+        "pop2024": 6872,
+        "latitude": 5.37568,
+        "longitude": 10.4133,
+        "region": "West"
+    },
+    {
+        "city": "Belel",
+        "country": "Cameroon",
+        "pop2024": 6831,
+        "latitude": 7.05,
+        "longitude": 14.4333,
+        "region": "Adamawa"
+    },
+    {
+        "city": "Bamendjou",
+        "country": "Cameroon",
+        "pop2024": 6643,
+        "latitude": 5.38988,
+        "longitude": 10.3301,
+        "region": "West"
+    },
+    {
+        "city": "Ngambe",
+        "country": "Cameroon",
+        "pop2024": 6414,
+        "latitude": 4.23343,
+        "longitude": 10.6153,
+        "region": "Littoral"
+    },
+    {
+        "city": "Ntui",
+        "country": "Cameroon",
+        "pop2024": 6185,
+        "latitude": 4.45,
+        "longitude": 11.6333,
+        "region": "Centre"
+    },
+    {
+        "city": "Mme-Bafumen",
+        "country": "Cameroon",
+        "pop2024": 6149,
+        "latitude": 6.33333,
+        "longitude": 10.2333,
+        "region": "Northwest"
+    },
+    {
+        "city": "Saa",
+        "country": "Cameroon",
+        "pop2024": 5727,
+        "latitude": 4.36667,
+        "longitude": 11.45,
+        "region": "Centre"
+    },
+    {
+        "city": "Poli",
+        "country": "Cameroon",
+        "pop2024": 5727,
+        "latitude": 8.4756,
+        "longitude": 13.241,
+        "region": "North"
+    },
+    {
+        "city": "Bankim",
+        "country": "Cameroon",
+        "pop2024": 5727,
+        "latitude": 6.08303,
+        "longitude": 11.4905,
+        "region": "Adamawa"
+    },
+    {
+        "city": "Bana",
+        "country": "Cameroon",
+        "pop2024": 5727,
+        "latitude": 5.14655,
+        "longitude": 10.2754,
+        "region": "West"
+    },
+    {
+        "city": "Doume",
+        "country": "Cameroon",
+        "pop2024": 5581,
+        "latitude": 4.23333,
+        "longitude": 13.45,
+        "region": "East"
+    },
+    {
+        "city": "Nguti",
+        "country": "Cameroon",
+        "pop2024": 5498,
+        "latitude": 5.3299,
+        "longitude": 9.4185,
+        "region": "Southwest"
+    },
+    {
+        "city": "Ndom",
+        "country": "Cameroon",
+        "pop2024": 5498,
+        "latitude": 4.4978,
+        "longitude": 9.5628,
+        "region": "Littoral"
+    },
+    {
+        "city": "Okola",
+        "country": "Cameroon",
+        "pop2024": 5390,
+        "latitude": 4.01667,
+        "longitude": 11.3833,
+        "region": "Centre"
+    },
+    {
+        "city": "Yoko",
+        "country": "Cameroon",
+        "pop2024": 5269,
+        "latitude": 5.53333,
+        "longitude": 12.3167,
+        "region": "Adamawa"
+    },
+    {
+        "city": "Jakiri",
+        "country": "Cameroon",
+        "pop2024": 5269,
+        "latitude": 6.1,
+        "longitude": 10.65,
+        "region": "Northwest"
+    },
+    {
+        "city": "Ndelele",
+        "country": "Cameroon",
+        "pop2024": 5040,
+        "latitude": 4.04065,
+        "longitude": 14.925,
+        "region": "East"
+    }
+]

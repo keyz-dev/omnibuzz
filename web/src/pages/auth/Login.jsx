@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../stateManagement/contexts/AuthContext";
 import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
@@ -7,6 +7,8 @@ import Button from "../../components/ui/Button";
 const Login = () => {
   const { login, setAuthError, handleGoogleLogin, loading, authError } =
     useAuth();
+  const navigate = useNavigate();
+  const { from } = useLocation().state || { from: "/" };
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -24,7 +26,13 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      await login(formData.email, formData.password);
+      const res = await login(formData.email, formData.password);
+      if (res.success) {
+        const { user } = res;
+        navigate("/verify-account", {
+          state: { email: user.email, from: from },
+        });
+      }
     } catch (error) {
       setAuthError(
         error.response?.data?.message || "An error occurred during login"

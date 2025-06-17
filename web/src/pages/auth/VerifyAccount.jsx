@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button, LogoVertical } from "../../components/ui";
 import { useAuth } from "../../stateManagement/contexts/AuthContext";
+import { CheckCircle2 } from "lucide-react";
+import { toast } from "react-toastify";
 
 const CODE_LENGTH = 6;
+const REDIRECT_DELAY = 3000; // 3 seconds delay
 
 const VerifyAccount = () => {
   const location = useLocation();
@@ -11,9 +14,14 @@ const VerifyAccount = () => {
   const email = location.state?.email || "";
   const [code, setCode] = useState(Array(CODE_LENGTH).fill(""));
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [resendMsg, setResendMsg] = useState("");
-  const { verifyAccount, resendVerification } = useAuth();
+  const [isValid, setIsValid] = useState(null); // null: default, true: valid, false: invalid
+  const [showSuccess, setShowSuccess] = useState(false);
+  const { verifyAccount, loading, resendVerification, redirectBasedOnRole } =
+    useAuth();
+
+  // Check if all code entries are filled
+  const isCodeComplete = code.every((digit) => digit !== "");
+
   // Handle input change for each code box
   const handleChange = (e, idx) => {
     const val = e.target.value.replace(/[^0-9]/g, "");
@@ -21,10 +29,33 @@ const VerifyAccount = () => {
     const newCode = [...code];
     newCode[idx] = val[0];
     setCode(newCode);
+    setIsValid(null); // Reset validation state on new input
     // Move to next input
     if (idx < CODE_LENGTH - 1 && val) {
       document.getElementById(`code-input-${idx + 1}`).focus();
     }
+  };
+
+  // Handle paste event
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData
+      .getData("text")
+      .replace(/[^0-9]/g, "")
+      .slice(0, CODE_LENGTH);
+    if (pastedData.length === 0) return;
+
+    const newCode = [...code];
+    for (let i = 0; i < pastedData.length; i++) {
+      newCode[i] = pastedData[i];
+    }
+    setCode(newCode);
+    setIsValid(null); // Reset validation state on paste
+
+    // Focus the next empty input or the last input
+    const nextEmptyIndex = newCode.findIndex((digit) => !digit);
+    const focusIndex = nextEmptyIndex === -1 ? CODE_LENGTH - 1 : nextEmptyIndex;
+    document.getElementById(`code-input-${focusIndex}`).focus();
   };
 
   // Handle backspace to move to previous input
@@ -38,39 +69,57 @@ const VerifyAccount = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    setLoading(true);
     try {
       const codeStr = code.join("");
       const res = await verifyAccount(email, codeStr);
+
       if (res.success) {
-        // Redirect to login or dashboard
-        navigate("/login");
+        setIsValid(true);
+        setShowSuccess(true);
+        // Delay redirection to show success state
+        setTimeout(() => {
+          if (location.state?.from && location.state.from !== "/") {
+            navigate(location.state.from);
+          } else {
+            redirectBasedOnRole(res.user);
+          }
+        }, REDIRECT_DELAY);
       } else {
+        setIsValid(false);
         setError(res.error);
       }
     } catch (err) {
+      setIsValid(false);
       setError(
         err.response?.data?.message || "Verification failed. Please try again."
       );
-    } finally {
-      setLoading(false);
     }
   };
 
   // Resend code
   const handleResend = async () => {
-    setResendMsg("");
     setError("");
+    setIsValid(null);
     try {
       const res = await resendVerification(email);
       if (res.success) {
-        setResendMsg("A new code has been sent to your email.");
+        toast.success("A new code has been sent to your email.");
       } else {
-        setError("Failed to resend code. Please try again later.");
+        toast.error("Failed to resend code. Please try again later.");
       }
     } catch {
-      setError("Failed to resend code. Please try again later.");
+      toast.error("Failed to resend code. Please try again later.");
     }
+  };
+
+  // Get input styling based on validation state
+  const getInputStyle = () => {
+    if (isValid === null) {
+      return "border-line_clr bg-white hover:border-gray-300";
+    }
+    return isValid
+      ? "border-success bg-success-bg-light text-success"
+      : "border-error bg-error-bg-light text-error";
   };
 
   return (
@@ -102,17 +151,22 @@ const VerifyAccount = () => {
                 type="text"
                 inputMode="numeric"
                 maxLength={1}
-                className="w-12 h-12 text-2xl text-center border-2 border-green-300 rounded-lg bg-green-50 focus:outline-none focus:border-accent transition"
+                className={`w-12 h-12 text-2xl text-center border-2 rounded-lg focus:outline-none transition-all duration-200 ${getInputStyle()}`}
                 value={digit}
                 onChange={(e) => handleChange(e, idx)}
                 onKeyDown={(e) => handleKeyDown(e, idx)}
+                onPaste={handlePaste}
                 autoFocus={idx === 0}
+                disabled={showSuccess}
               />
             ))}
           </div>
           {error && <p className="text-error text-sm mb-2">{error}</p>}
-          {resendMsg && (
-            <p className="text-green-600 text-sm mb-2">{resendMsg}</p>
+          {showSuccess && (
+            <div className="flex items-center gap-2 text-green-600 mb-2 animate-fade-in">
+              <CheckCircle2 className="w-5 h-5" />
+              <span>Verification successful! Redirecting...</span>
+            </div>
           )}
           <div className="mb-6 text-center text-gray-500 text-sm">
             Didn't receive the email?{" "}
@@ -120,22 +174,29 @@ const VerifyAccount = () => {
               type="button"
               className="text-accent font-medium hover:underline"
               onClick={handleResend}
-              disabled={loading}
+              disabled={loading || showSuccess}
             >
               Click to resend
             </button>
           </div>
-          <div className="flex w-full gap-4 justify-center">
+          <div className="flex w-full gap-5 justify-center">
             <Button
               type="button"
               additionalClasses="w-32 bg-white border border-gray-300 text-gray-700"
               onClick={() => navigate(-1)}
-              disabled={loading}
+              disabled={loading || showSuccess}
             >
               Back
             </Button>
-            <Button type="submit" additionalClasses="w-32" isLoading={loading}>
-              Continue
+            <Button
+              type="submit"
+              additionalClasses={`w-32 ${
+                isCodeComplete ? "primarybtn" : "bg-gray-300 cursor-not-allowed"
+              }`}
+              isLoading={loading}
+              disabled={loading || showSuccess || !isCodeComplete}
+            >
+              Verify
             </Button>
           </div>
         </form>

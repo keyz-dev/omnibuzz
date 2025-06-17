@@ -9,6 +9,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   }
 
   if (!user) {
+    console.log("User not found, redirecting to login");
     return <Navigate to="/login" />;
   }
 

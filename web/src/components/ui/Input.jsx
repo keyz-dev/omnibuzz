@@ -19,6 +19,7 @@ const Input = ({
   value,
   error,
   props,
+  autoFocus = false,
 }) => {
   // If label is a string and required, append a red asterisk unless already present
   let labelContent = label;
@@ -58,6 +59,7 @@ const Input = ({
           disabled={disabled}
           required={required}
           onChange={onChangeHandler}
+          autoFocus={autoFocus}
           {...props}
         />
         {/* Password visibility toggle icon */}

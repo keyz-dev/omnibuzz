@@ -14,7 +14,7 @@ const Button = ({
   children,
   props,
 }) => {
-  const baseButtonStyles = "btn flexbox gap-2 rounded-xs";
+  const baseButtonStyles = "btn flexbox gap-2";
   const disabledStyles = "opacity-50 cursor-not-allowed";
   const loadingStyles =
     "relative text-transparent transition-none hover:text-transparent";

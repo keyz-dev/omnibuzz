@@ -57,22 +57,27 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
+      console.log("Checking auth...");
       try {
         const storedToken = localStorage.getItem("token");
         if (storedToken) {
+          console.log("Token found, verifying...");
           // Validate token with backend
           const response = await api.get("/user/verify-token");
           if (response.data.valid) {
-            setToken(storedToken);
-            setUser(response.data.user);
+            const { user } = response.data.data;
+            setUserAndToken(user, storedToken);
           } else {
+            console.log("Token is invalid, clearing everything...");
             // Token is invalid, clear everything
             invalidateToken();
           }
+        } else {
+          console.log("No token found, clearing everything...");
+          invalidateToken();
         }
       } catch (error) {
         console.error("Auth check failed:", error);
-        // If token validation fails, clear everything
         invalidateToken();
       } finally {
         setLoading(false);
@@ -87,8 +92,8 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     try {
       const response = await api.post("/user/login", { email, password });
-      const { user } = response.data;
-      navigate("/verify-account", { state: { email: user.email } });
+      const { user } = response.data.data;
+      return { success: true, user };
     } catch (error) {
       setAuthError(
         error.response?.data?.message || error.message || "Invalid credentials"
@@ -101,10 +106,27 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     setAuthError(null);
     setLoading(true);
+
     try {
-      const response = await api.post("/user/register", userData);
-      const { user } = response.data;
-      navigate("/verify-account", { state: { email: user.email } });
+      // Create FormData object
+      const formData = new FormData();
+
+      // Append all user data
+      Object.keys(userData).forEach((key) => {
+        if (key == "avatar" && userData[key]) {
+          formData.append("avatar", userData[key]);
+        } else {
+          formData.append(key, userData[key]);
+        }
+      });
+
+      const response = await api.post("/user/register", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      const { user } = response.data.data;
+      return { success: true, user };
     } catch (error) {
       setAuthError(
         error.response?.data?.message || error.message || "Registration failed"
@@ -117,16 +139,21 @@ export const AuthProvider = ({ children }) => {
   const verifyAccount = async (email, code) => {
     setLoading(true);
     try {
-      const response = await api.post("/user/verify-email", { email, code });
+      const response = await api.post("/user/verify-email", {
+        email,
+        code,
+      });
       const { user, token } = response.data.data;
       setUserAndToken(user, token);
-      redirectBasedOnRole(user);
+
+      return { success: true, user };
     } catch (error) {
-      setAuthError(
-        error.response?.data?.message ||
-          error.message ||
-          "Account registration failed"
-      );
+      return {
+        success: false,
+        error:
+          error.response?.data?.message ||
+          "Verification failed. Please try again.",
+      };
     } finally {
       setLoading(false);
     }
@@ -190,7 +217,6 @@ export const AuthProvider = ({ children }) => {
             const { user, token } = response.data.data;
             setUserAndToken(user, token);
             setAuthError(null);
-
             redirectBasedOnRole(user);
           }
         } catch (error) {
@@ -225,6 +251,7 @@ export const AuthProvider = ({ children }) => {
     verifyAccount,
     resendVerification,
     handleGoogleLogin,
+    redirectBasedOnRole,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
