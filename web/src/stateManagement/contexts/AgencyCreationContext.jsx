@@ -11,7 +11,7 @@ const STEPS = {
 };
 
 export const AgencyCreationProvider = ({ children }) => {
-  const [activeStep, setActiveStep] = useState(STEPS.AGENCY_SETUP);
+  const [activeStep, setActiveStep] = useState(STEPS.LOCATION_SETUP);
   const [visitedSteps, setVisitedSteps] = useState([STEPS.AGENCY_SETUP]);
   const [agencyCreationData, setAgencyCreationData] = useState({
     name: "",

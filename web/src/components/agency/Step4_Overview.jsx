@@ -19,6 +19,13 @@ const Step4_Overview = () => {
   } = agencyCreationData;
 
   const handleSubmit = () => {
+    const hasBlankContact = contactInfo.some(
+      (c) => !c.value || !c.value.trim()
+    );
+    if (hasBlankContact) {
+      alert("Please fill in all contact information before submitting.");
+      return;
+    }
     console.log("submit");
     console.log(agencyCreationData);
   };
@@ -46,10 +53,7 @@ const Step4_Overview = () => {
       />
       {/* Finish Button */}
       <div className="flex justify-center mt-6">
-        <Button
-          additionalClasses="bg-accent hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-lg shadow transition-colors text-lg"
-          onClickHandler={handleSubmit}
-        >
+        <Button additionalClasses="primarybtn" onClickHandler={handleSubmit}>
           Finish
         </Button>
       </div>

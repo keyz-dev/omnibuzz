@@ -21,12 +21,15 @@ const typeMap = {
 
 const AgencyOverviewContacts = ({ contactInfo, setAgencyCreationData }) => {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [editingIdx, setEditingIdx] = useState(null);
+  const [editValue, setEditValue] = useState("");
 
   const handleRemoveContact = (idx) => {
     setAgencyCreationData((prev) => ({
       ...prev,
       contactInfo: prev.contactInfo.filter((_, i) => i !== idx),
     }));
+    if (editingIdx === idx) setEditingIdx(null);
   };
   const handleAddContact = (contactType) => {
     setAgencyCreationData((prev) => ({
@@ -36,6 +39,26 @@ const AgencyOverviewContacts = ({ contactInfo, setAgencyCreationData }) => {
         { type: contactType.type, value: "" },
       ],
     }));
+    setTimeout(() => {
+      setEditingIdx(contactInfo.length); // focus the new contact
+      setEditValue("");
+    }, 0);
+  };
+
+  const handleEdit = (idx, value) => {
+    setEditingIdx(idx);
+    setEditValue(value);
+  };
+
+  const handleEditSave = (idx) => {
+    setAgencyCreationData((prev) => ({
+      ...prev,
+      contactInfo: prev.contactInfo.map((c, i) =>
+        i === idx ? { ...c, value: editValue } : c
+      ),
+    }));
+    setEditingIdx(null);
+    setEditValue("");
   };
 
   return (
@@ -53,7 +76,20 @@ const AgencyOverviewContacts = ({ contactInfo, setAgencyCreationData }) => {
               {ICONS[typeMap[contact.type]] || (
                 <i className="fas fa-info-circle text-pending1 mr-2"></i>
               )}
-              {contact.type === "url" ? (
+              {editingIdx === idx || !contact.value ? (
+                <input
+                  className="border-b border-blue-400 outline-none bg-transparent text-purple-700 min-w-[120px]"
+                  value={editValue}
+                  autoFocus
+                  onChange={(e) => setEditValue(e.target.value)}
+                  onBlur={() => handleEditSave(idx)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleEditSave(idx);
+                    if (e.key === "Escape") setEditingIdx(null);
+                  }}
+                  placeholder={`Enter ${typeMap[contact.type] || "contact"}`}
+                />
+              ) : contact.type === "url" ? (
                 <a
                   href={contact.value}
                   target="_blank"
@@ -87,6 +123,16 @@ const AgencyOverviewContacts = ({ contactInfo, setAgencyCreationData }) => {
                 </a>
               ) : (
                 <span className="text-purple-700">{contact.value}</span>
+              )}
+              {editingIdx !== idx && contact.value && (
+                <button
+                  className="ml-1 text-gray-400 hover:text-blue-500"
+                  onClick={() => handleEdit(idx, contact.value)}
+                  title="Edit contact"
+                  type="button"
+                >
+                  <i className="fas fa-pen"></i>
+                </button>
               )}
               <button
                 className="ml-2 text-gray-400 hover:text-red-500"

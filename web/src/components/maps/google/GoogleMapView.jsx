@@ -1,6 +1,6 @@
 import React from "react";
 import { GoogleMap, Marker } from "@react-google-maps/api";
-import ConfirmationBar from "./ConfirmationBar";
+import ConfirmationBar from "../leaflet/ConfirmationBar";
 
 const GoogleMapView = ({ coordinates, address }) => {
   const mapContainerStyle = {

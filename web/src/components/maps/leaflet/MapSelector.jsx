@@ -3,10 +3,11 @@ import {
   AddressInput,
   UseCurrentLocationOption,
   SuggestionList,
-  GoogleMapView,
+  LeafletMapView,
 } from "./index";
-import { StepNavButtons } from "../agency";
+import { StepNavButtons } from "../../agency";
 
+// Main MapSelector Component
 const MapSelector = () => {
   const [address, setAddress] = useState("");
   const [coordinates, setCoordinates] = useState(null);
@@ -31,56 +32,37 @@ const MapSelector = () => {
   }, [address]);
 
   const searchPlaces = async (query) => {
-    if (!window.google) return;
-
     setLoadingSuggestions(true);
-    const service = new window.google.maps.places.AutocompleteService();
 
-    service.getPlacePredictions(
-      {
-        input: query,
-        componentRestrictions: { country: "cm" }, // Restrict to Cameroon
-      },
-      (predictions, status) => {
-        setLoadingSuggestions(false);
-        if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-          setSuggestions(predictions || []);
-        } else {
-          setSuggestions([]);
-        }
-      }
-    );
+    try {
+      // Using Nominatim API for geocoding (free, no API key required)
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          query
+        )}&countrycodes=cm&limit=5&addressdetails=1`
+      );
+      const results = await response.json();
+
+      setSuggestions(results || []);
+    } catch (error) {
+      console.error("Error searching places:", error);
+      setSuggestions([]);
+    } finally {
+      setLoadingSuggestions(false);
+    }
   };
 
-  const geocodeAddress = (address) => {
-    return new Promise((resolve, reject) => {
-      const geocoder = new window.google.maps.Geocoder();
-      geocoder.geocode({ address }, (results, status) => {
-        if (status === "OK" && results[0]) {
-          const location = results[0].geometry.location;
-          resolve({
-            lat: location.lat(),
-            lng: location.lng(),
-            address: results[0].formatted_address,
-          });
-        } else {
-          reject(new Error("Geocoding failed"));
-        }
-      });
-    });
-  };
-
-  const reverseGeocode = (lat, lng) => {
-    return new Promise((resolve, reject) => {
-      const geocoder = new window.google.maps.Geocoder();
-      geocoder.geocode({ location: { lat, lng } }, (results, status) => {
-        if (status === "OK" && results[0]) {
-          resolve(results[0].formatted_address);
-        } else {
-          reject(new Error("Reverse geocoding failed"));
-        }
-      });
-    });
+  const reverseGeocode = async (lat, lng) => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`
+      );
+      const result = await response.json();
+      return result.display_name || "Unknown location";
+    } catch (error) {
+      console.error("Error reverse geocoding:", error);
+      return "Unknown location";
+    }
   };
 
   const handleUseCurrentLocation = () => {
@@ -118,14 +100,18 @@ const MapSelector = () => {
 
   const handleSuggestionSelect = async (suggestion) => {
     try {
-      const result = await geocodeAddress(suggestion.description);
-      setAddress(result.address);
-      setCoordinates({ lat: result.lat, lng: result.lng });
+      const coords = {
+        lat: parseFloat(suggestion.lat),
+        lng: parseFloat(suggestion.lon),
+      };
+
+      setAddress(suggestion.display_name);
+      setCoordinates(coords);
       setSuggestions([]);
       setInputFocused(false);
     } catch (error) {
-      console.error("Error geocoding suggestion:", error);
-      alert("Could not get coordinates for this address");
+      console.error("Error processing suggestion:", error);
+      alert("Could not process this address");
     }
   };
 
@@ -199,7 +185,7 @@ const MapSelector = () => {
       </div>
 
       {/* Map */}
-      <GoogleMapView coordinates={coordinates} address={address} />
+      <LeafletMapView coordinates={coordinates} address={address} />
 
       {/* Navigation Buttons */}
       <StepNavButtons
