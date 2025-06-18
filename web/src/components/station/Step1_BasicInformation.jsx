@@ -1,8 +1,16 @@
-import React, { useState } from "react";
-import { Input, Button, TownSelectorModal, TownsInput } from "../ui";
+import React, { useEffect, useState } from "react";
+import {
+  Input,
+  Button,
+  TownSelectorModal,
+  TownsInput,
+  StepNavButtons,
+} from "../ui";
 import { useStation } from "../../stateManagement/contexts";
+import { useNavigate } from "react-router-dom";
 
 const Step1_BasicInformation = () => {
+  const navigate = useNavigate();
   const { stationCreationData, setStationCreationData, nextStep } =
     useStation();
   const [errors, setErrors] = useState({});
@@ -17,6 +25,19 @@ const Step1_BasicInformation = () => {
   const [destinationTowns, setDestinationTowns] = useState(
     stationCreationData.destinations || []
   );
+
+  const [canContinue, setCanContinue] = useState(false);
+
+  useEffect(() => {
+    setCanContinue(isFormValid());
+  }, [neighborhood, baseTown, destinationTowns]);
+
+  // A method to check if the form fields are not empty
+  const isFormValid = () => {
+    return (
+      neighborhood.trim() && baseTown.trim() && destinationTowns.length > 0
+    );
+  };
 
   // Validation
   const validate = () => {
@@ -34,28 +55,18 @@ const Step1_BasicInformation = () => {
   const handleContinue = (e) => {
     e.preventDefault();
     if (!validate()) return;
+
+    const formDataToSubmit = {
+      neighborhood: neighborhood,
+      baseTown: baseTown,
+      destinations: destinationTowns,
+    };
+
     setStationCreationData((prev) => ({
       ...prev,
-      neighborhood,
-      baseTown,
-      destinations: destinationTowns,
+      ...formDataToSubmit,
     }));
     nextStep();
-  };
-
-  const handleAddTown = (town) => {
-    if (!destinationTowns.includes(town)) {
-      setDestinationTowns((prev) => [...prev, town]);
-    }
-  };
-  const handleRemoveTown = (town) => {
-    setDestinationTowns((prev) => prev.filter((t) => t !== town));
-  };
-
-  // Base Town selection (single select, using TownSelectorModal)
-  const handleBaseTownSelect = (town) => {
-    setBaseTown(town);
-    setIsTownModalOpen(false);
   };
 
   return (
@@ -65,7 +76,7 @@ const Step1_BasicInformation = () => {
           Setup a station
         </h1>
         <p className="text-secondary">
-          Write down the basic information bout your station
+          Provide the basic information about your station
         </p>
       </div>
       <form className="space-y-6" onSubmit={handleContinue}>
@@ -98,9 +109,9 @@ const Step1_BasicInformation = () => {
             />
             <Button
               type="button"
-              additionalClasses="border border-accent min-h-[25px] min-w-[25px] rounded-full h-[32px] w-[32px] grid place-items-center"
+              additionalClasses="min-h-[25px] min-w-[25px] rounded-full h-[32px] w-[32px] grid place-items-center"
               onClickHandler={() => setIsBaseTownModalOpen(true)}
-              leadingIcon={"fas fa-plus text-accent text-md"}
+              leadingIcon={"fas fa-edit text-accent text-md"}
             />
           </div>
         </div>
@@ -113,11 +124,12 @@ const Step1_BasicInformation = () => {
           setIsTownModalOpen={setIsDesTownModalOpen}
         />
 
-        <div className="flex justify-end mt-8">
-          <Button type="submit" additionalClasses="primarybtn px-8 py-2">
-            Continue
-          </Button>
-        </div>
+        <StepNavButtons
+          onBack={() => navigate(-1)}
+          onContinue={handleContinue}
+          canContinue={canContinue}
+          isLoading={false}
+        />
       </form>
 
       {/* Town Selector Modal */}

@@ -26,10 +26,7 @@ const TownsInput = ({
         </label>
 
         <div className="w-full flex gap-2 justify-between items-center">
-          <div
-            className="flex flex-1 flex-wrap min-h-[40px] p-2 border border-line_clr rounded-xs gap-2 items-center"
-            onClick={() => setIsTownModalOpen(true)}
-          >
+          <div className="flex flex-1 flex-wrap min-h-[40px] p-2 border border-line_clr rounded-xs gap-2 items-center">
             {towns.length > 0 ? (
               towns.map((town, index) => (
                 <Tag key={index} onRemove={() => removeTown(town)}>

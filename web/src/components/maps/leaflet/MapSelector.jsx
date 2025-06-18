@@ -6,17 +6,16 @@ import {
   LeafletMapView,
 } from "./index";
 import { StepNavButtons } from "../../agency";
-import { useAgencyCreation } from "../../../stateManagement/contexts";
 
 // Main MapSelector Component
-const MapSelector = () => {
-  const { agencyCreationData, setAgencyCreationData, nextStep, prevStep } =
-    useAgencyCreation();
-  const [address, setAddress] = useState(agencyCreationData.headAddress);
-  const [coordinates, setCoordinates] = useState(
-    agencyCreationData.coordinates
-  );
-  const [confirmed, setConfirmed] = useState(false);
+const MapSelector = ({
+  prevStep,
+  handleConfirm,
+  coordinates,
+  setCoordinates,
+  address,
+  setAddress,
+}) => {
   const [inputFocused, setInputFocused] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [loadingLocation, setLoadingLocation] = useState(false);
@@ -120,22 +119,10 @@ const MapSelector = () => {
     }
   };
 
-  const handleConfirm = () => {
-    if (!address || !coordinates) return;
-    setAgencyCreationData({
-      ...agencyCreationData,
-      headAddress: address,
-      coordinates: coordinates,
-    });
-    setConfirmed(true);
-    nextStep();
-  };
-
   const handleBack = () => {
     prevStep();
     setAddress("");
     setCoordinates(null);
-    setConfirmed(false);
     setSuggestions([]);
   };
 

@@ -1,11 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
+import { ImageUploadStep } from "../images";
+import { useStation } from "../../stateManagement/contexts";
 
 const Step3_ImageUpload = () => {
+  const { stationCreationData, setStationCreationData, nextStep, prevStep } =
+    useStation();
+  const [stationImages, setStationImages] = useState(
+    stationCreationData.images
+  );
+
+  const handleContinue = () => {
+    const images = stationImages.map(({ file }) => file);
+
+    setStationCreationData({
+      ...stationCreationData,
+      images: images,
+    });
+    nextStep();
+  };
+
   return (
-    <div>
-      <h2 className="text-xl font-bold mb-4">Image Upload</h2>
-      <p>Add images of your station here.</p>
-    </div>
+    <section>
+      <ImageUploadStep
+        images={stationImages}
+        onImagesChange={setStationImages}
+        entityType="Station"
+        onBack={prevStep}
+        onContinue={handleContinue}
+      />
+    </section>
   );
 };
 
