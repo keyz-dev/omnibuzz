@@ -1,13 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  TownSelectorModal,
-  Input,
-  TextArea,
-  Tag,
-  FileUploader,
-  Button,
-} from "../ui";
+import { Input, TextArea, FileUploader, TownsInput } from "../ui";
 import { useAgencyCreation } from "../../stateManagement/contexts";
 import { StepNavButtons } from "./index";
 
@@ -35,22 +28,10 @@ const Step1_AgencyDetails = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
-    console.log(name, value);
     setAgencyCreationData((prev) => ({
       ...prev,
       [name]: value,
     }));
-  };
-
-  const addTown = (town) => {
-    if (town && !occupancyTowns.includes(town)) {
-      setOccupancyTowns((prev) => [...prev, town]);
-    }
-  };
-
-  const removeTown = (townToRemove) => {
-    setOccupancyTowns((prev) => prev.filter((town) => town !== townToRemove));
   };
 
   const validateForm = () => {
@@ -137,38 +118,13 @@ const Step1_AgencyDetails = () => {
             />
 
             {/* Occupancy Towns */}
-            <div className="mb-6">
-              <label className="block text-gray-700 text-sm font-medium mb-2">
-                Occupancy Towns [separate with commas (,)]{" "}
-                <span className="text-red-500">*</span>
-              </label>
-
-              <div className="w-full flex gap-2 justify-between items-center">
-                <div
-                  className="flex flex-1 flex-wrap min-h-[40px] p-2 border border-line_clr rounded-xs gap-2 items-center"
-                  onClick={() => setIsTownModalOpen(true)}
-                >
-                  {occupancyTowns.length > 0 ? (
-                    occupancyTowns.map((town, index) => (
-                      <Tag key={index} onRemove={() => removeTown(town)}>
-                        {town}
-                      </Tag>
-                    ))
-                  ) : (
-                    <span className="text-gray-400 text-sm py-1">
-                      No towns selected
-                    </span>
-                  )}
-                </div>
-
-                <Button
-                  type="button"
-                  additionalClasses="border border-accent min-h-[40px] min-w-[40px] rounded-full h-[42px] w-[42px] flex items-center justify-center"
-                  onClickHandler={() => setIsTownModalOpen(true)}
-                  leadingIcon={"fas fa-plus text-accent text-xl"}
-                />
-              </div>
-            </div>
+            <TownsInput
+              label="Occupancy Towns"
+              towns={occupancyTowns}
+              setTowns={setOccupancyTowns}
+              isTownModalOpen={isTownModalOpen}
+              setIsTownModalOpen={setIsTownModalOpen}
+            />
 
             {/* Description Fields */}
             <div className="flex flex-col gap-4 flex-1">
@@ -195,14 +151,6 @@ const Step1_AgencyDetails = () => {
           </div>
         </form>
       </div>
-
-      {/* Town Selector Modal */}
-      <TownSelectorModal
-        isOpen={isTownModalOpen}
-        onClose={() => setIsTownModalOpen(false)}
-        onAdd={addTown}
-        selectedTowns={occupancyTowns}
-      />
     </>
   );
 };

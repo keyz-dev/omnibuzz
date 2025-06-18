@@ -6,7 +6,7 @@ import { CheckCircle2 } from "lucide-react";
 import { toast } from "react-toastify";
 
 const CODE_LENGTH = 6;
-const REDIRECT_DELAY = 3000; // 3 seconds delay
+const REDIRECT_DELAY = 2000; // 3 seconds delay
 
 const VerifyAccount = () => {
   const location = useLocation();
@@ -81,6 +81,7 @@ const VerifyAccount = () => {
           if (location.state?.from && location.state.from !== "/") {
             navigate(location.state.from);
           } else {
+            console.log(res.user);
             redirectBasedOnRole(res.user);
           }
         }, REDIRECT_DELAY);
@@ -128,7 +129,7 @@ const VerifyAccount = () => {
         {/* Bus icon */}
         <div className="mb-4">
           {/* Replace with your SVG or logo */}
-          <Logo />
+          <Logo vertical={true} />
         </div>
         <h2 className="text-2xl font-semibold text-center mb-2">
           Verify Your Account

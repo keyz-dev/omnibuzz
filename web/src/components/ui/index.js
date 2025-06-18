@@ -12,3 +12,6 @@ export { default as Tag } from "./Tag";
 export { default as MapComponent } from "./MapComponent";
 export { default as AddressInput } from "./AddressInput";
 export { default as ProfileCompletionStep } from "./ProfileCompletionStep";
+export { default as StepSideBar } from "./StepSideBar";
+export { default as StepNavButtons } from "./StepNavButtons";
+export { default as TownsInput } from "./TownsInput";

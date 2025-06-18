@@ -14,7 +14,7 @@ const STEPS = {
 };
 
 export const AgencyCreationProvider = ({ children }) => {
-  const [activeStep, setActiveStep] = useState(STEPS.SUCCESS);
+  const [activeStep, setActiveStep] = useState(STEPS.AGENCY_SETUP);
   const [visitedSteps, setVisitedSteps] = useState([STEPS.AGENCY_SETUP]);
   const [isLoading, setIsLoading] = useState(false);
   const [agencyCreationData, setAgencyCreationData] = useState({
@@ -70,6 +70,8 @@ export const AgencyCreationProvider = ({ children }) => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
+
+      console.log(res.data.data);
 
       return res.data;
     } catch (error) {

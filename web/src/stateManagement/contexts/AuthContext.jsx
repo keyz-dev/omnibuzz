@@ -93,7 +93,11 @@ export const AuthProvider = ({ children }) => {
       return { success: true, user };
     } catch (error) {
       setAuthError(
-        error.response?.data?.message || error.message || "Invalid credentials"
+        error.response?.data?.error ||
+          error.response?.data?.error?.[0]?.message ||
+          error.response?.data?.message ||
+          error.message ||
+          "Invalid credentials"
       );
     } finally {
       setLoading(false);
@@ -126,7 +130,11 @@ export const AuthProvider = ({ children }) => {
       return { success: true, user };
     } catch (error) {
       setAuthError(
-        error.response?.data?.message || error.message || "Registration failed"
+        error.response?.data?.error ||
+          error.response?.data?.error?.[0]?.message ||
+          error.response?.data?.message ||
+          error.message ||
+          "Registration failed"
       );
     } finally {
       setLoading(false);
@@ -149,6 +157,7 @@ export const AuthProvider = ({ children }) => {
         success: false,
         error:
           error.response?.data?.message ||
+          error.response?.data?.error?.[0]?.message ||
           "Verification failed. Please try again.",
       };
     } finally {
@@ -186,14 +195,20 @@ export const AuthProvider = ({ children }) => {
         }, 1000);
       });
 
-      localStorage.setItem("token", response.token);
-      localStorage.setItem("userData", JSON.stringify(response.user));
-      setUser(response.user);
+      setUserAndToken(response.user, response.token);
       navigate("/agency/admin");
       return { success: true };
     } catch (error) {
       console.error("Agency registration failed:", error);
-      return { success: false, error: "Agency registration failed" };
+      return {
+        success: false,
+        error:
+          error.response?.data?.error ||
+          error.response?.data?.error?.[0]?.message ||
+          error.response?.data?.message ||
+          error.message ||
+          "Agency registration failed",
+      };
     }
   };
 
