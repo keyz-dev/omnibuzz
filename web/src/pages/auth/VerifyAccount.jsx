@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Button, LogoVertical } from "../../components/ui";
+import { Button, Logo } from "../../components/ui";
 import { useAuth } from "../../stateManagement/contexts/AuthContext";
 import { CheckCircle2 } from "lucide-react";
 import { toast } from "react-toastify";
@@ -128,7 +128,7 @@ const VerifyAccount = () => {
         {/* Bus icon */}
         <div className="mb-4">
           {/* Replace with your SVG or logo */}
-          <LogoVertical />
+          <Logo />
         </div>
         <h2 className="text-2xl font-semibold text-center mb-2">
           Verify Your Account

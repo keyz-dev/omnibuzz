@@ -1,6 +1,9 @@
-import { Route } from "react-router-dom";
-import Layout from "../components/layout/Layout";
+import { Outlet, Route } from "react-router-dom";
 import ProtectedRoute from "../components/routing/ProtectedRoute";
+import {
+  DefaultAdminHeaderLayout,
+  ProfileCompletionLayout,
+} from "../components/layout";
 
 // Agency Admin Pages
 import {
@@ -11,6 +14,9 @@ import {
   Bookings as AgencyBookings,
   Reports as AgencyReports,
   Schedule as AgencySchedules,
+  ProfileCompletion as AgencyProfileCompletion,
+  DocumentUpload as AgencyDocumentUpload,
+  StationSetup as AgencyStationSetup,
 } from "../pages/agency/admin";
 
 export const agencyAdminRoutes = [
@@ -19,16 +25,24 @@ export const agencyAdminRoutes = [
     path="/agency/admin"
     element={
       <ProtectedRoute allowedRoles={["agency_admin"]}>
-        <Layout />
+        <Outlet />
       </ProtectedRoute>
     }
   >
-    <Route index element={<AgencyDashboard />} />
-    <Route path="profile" element={<AgencyProfile />} />
-    <Route path="buses" element={<AgencyBuses />} />
-    <Route path="routes" element={<AgencyRoutesPage />} />
-    <Route path="bookings" element={<AgencyBookings />} />
-    <Route path="reports" element={<AgencyReports />} />
-    <Route path="schedules" element={<AgencySchedules />} />
+    <Route element={<DefaultAdminHeaderLayout />}>
+      <Route index element={<AgencyDashboard />} />
+      <Route path="profile" element={<AgencyProfile />} />
+      <Route path="buses" element={<AgencyBuses />} />
+      <Route path="routes" element={<AgencyRoutesPage />} />
+      <Route path="bookings" element={<AgencyBookings />} />
+      <Route path="reports" element={<AgencyReports />} />
+      <Route path="schedules" element={<AgencySchedules />} />
+    </Route>
+    <Route element={<ProfileCompletionLayout />}>
+      <Route path="profile-completion" element={<AgencyProfileCompletion />} />
+      <Route path="upload-documents" element={<AgencyDocumentUpload />} />
+    </Route>
+
+    <Route path="station-setup" element={<AgencyStationSetup />} />
   </Route>,
 ];

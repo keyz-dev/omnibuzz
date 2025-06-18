@@ -1,5 +1,5 @@
 import { BrowserRouter as Router } from "react-router-dom";
-import { AuthProvider } from "./stateManagement/contexts";
+import { AuthProvider, AgencyAdminProvider } from "./stateManagement/contexts";
 import { AppRoutes } from "./routes/";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ToastContainer } from "react-toastify";
@@ -12,8 +12,10 @@ function App() {
     <GoogleOAuthProvider clientId={clientID}>
       <Router>
         <AuthProvider>
-          <ToastContainer />
-          <AppRoutes />
+          <AgencyAdminProvider>
+            <ToastContainer />
+            <AppRoutes />
+          </AgencyAdminProvider>
         </AuthProvider>
       </Router>
     </GoogleOAuthProvider>

@@ -5,3 +5,6 @@ export { default as Routes } from "./Routes";
 export { default as Bookings } from "./Bookings";
 export { default as Reports } from "./Reports";
 export { default as Schedule } from "./Schedule";
+export { default as ProfileCompletion } from "./ProfileCompletion";
+export { default as DocumentUpload } from "./DocumentUpload";
+export { default as StationSetup } from "./StationSetup";

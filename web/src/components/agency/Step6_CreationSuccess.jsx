@@ -42,14 +42,14 @@ const Step6_CreationSuccess = () => {
       {/* Buttons */}
       <div className="flex flex-col sm:flex-row gap-[20%] justify-center">
         <Link
-          to="/agency/admin"
+          to="/agency/admin/"
           className="btn flex items-center justify-center gap-2 border border-accent text-accent font-normal min-w-fit min-h-fit bg-white hover:bg-blue-50 transition shadow-none"
         >
           <House size={20} />
           Continue to Dashboard
         </Link>
         <Link
-          to="/agency/profile"
+          to="/agency/admin/profile-completion"
           className="btn flex items-center justify-center gap-2 text-white font-normal min-w-fit min-h-fit bg-accent hover:bg-accent/80 shadow-md"
         >
           <LaptopMinimalCheck size={20} />
