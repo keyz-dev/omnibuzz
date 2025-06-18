@@ -35,6 +35,8 @@ const Step1_AgencyDetails = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+    console.log(name, value);
     setAgencyCreationData((prev) => ({
       ...prev,
       [name]: value,

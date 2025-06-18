@@ -132,6 +132,7 @@ const Step3_ContactInfo = () => {
           {contactFields.map((field, index) => (
             <div key={field.id} className="relative">
               <Input
+                key={index}
                 label={field.label}
                 name={`contact-${field.id}`}
                 type={field.type}
@@ -140,12 +141,14 @@ const Step3_ContactInfo = () => {
                 onChangeHandler={(e) =>
                   handleContactFieldChange(index, e.target.value)
                 }
-                placeholder={`Enter your ${field.label.toLowerCase()}`}
+                placeholder={`Enter your ${
+                  field?.label?.toLowerCase() || "contact information"
+                }`}
               />
               <button
                 type="button"
                 onClick={() => removeContactField(index)}
-                className="absolute top-8 right-3 text-gray-400 hover:text-red-500 transition-colors"
+                className="absolute top-1/2 -translate-y-1/2 right-3 text-gray-400 hover:text-red-500 transition-colors"
               >
                 <X size={16} />
               </button>

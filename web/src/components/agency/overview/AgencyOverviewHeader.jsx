@@ -40,8 +40,8 @@ const AgencyOverviewHeader = ({
   };
 
   return (
-    <div className="flex-col md:flex-row items-center gap-8 border-b border-line_clr pb-4 relative">
-      <div className="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center text-3xl font-bold text-white relative">
+    <div className="flex-col md:flex-row items-center gap-12 border-b border-line_clr pb-4 relative">
+      <div className="w-30 h-30 rounded-full bg-gray-300 flex items-center justify-center text-3xl border border-error mb-4 font-bold text-white relative">
         {/* Logo or fallback */}
         {logo ? (
           <img

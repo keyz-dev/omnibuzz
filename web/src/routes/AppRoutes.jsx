@@ -5,8 +5,16 @@ import { passengerRoutes } from "./PassengerRoutes";
 import { agencyAdminRoutes } from "./AgencyAdminRoutes";
 import { stationManagerRoutes } from "./StationManagerRoutes";
 import { adminRoutes } from "./AdminRoutes";
+import { useAuth } from "../stateManagement/contexts";
+import { Loader } from "../components/ui";
 
 const AppRoutes = () => {
+  const { loading } = useAuth();
+
+  if (loading) {
+    return <Loader />;
+  }
+
   return (
     <Routes>
       {publicRoutes}

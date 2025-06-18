@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { MapPin, Navigation } from "lucide-react";
+import { removeEmojis } from "../../utils/sanitize";
 
 const AddressInput = ({
   value,
@@ -37,7 +38,7 @@ const AddressInput = ({
   };
 
   const handleAddressChange = (e) => {
-    const newValue = e.target.value;
+    const newValue = removeEmojis(e.target.value);
     onChange(newValue);
     setSelectedAddress(null);
     geocodeAddress(newValue);

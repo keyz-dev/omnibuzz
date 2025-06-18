@@ -43,7 +43,7 @@ const AgencyCreationFlow = () => {
 
   // Don't show the stepper on the success page
   if (activeStep === STEPS.SUCCESS) {
-    return <Step5_CreationSuccess />;
+    return <Step6_CreationSuccess />;
   }
 
   return (

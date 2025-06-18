@@ -9,23 +9,14 @@ const Step4_ImageAddition = () => {
     agencyCreationData.agencyImages
   );
 
-  const handleBack = () => {
-    console.log("Going back...");
-    prevStep();
-  };
-
   const handleContinue = () => {
-    console.log("Continuing with images:", agencyImages);
+    const images = agencyImages.map(({ file }) => file);
+
     setAgencyCreationData({
       ...agencyCreationData,
-      agencyImages: agencyImages,
+      agencyImages: images,
     });
     nextStep();
-  };
-
-  // Helper to remove an image by index
-  const handleRemoveImage = (idx) => {
-    setAgencyImages((prev) => prev.filter((_, i) => i !== idx));
   };
 
   return (
@@ -34,28 +25,9 @@ const Step4_ImageAddition = () => {
         images={agencyImages}
         onImagesChange={setAgencyImages}
         entityType="Agency"
-        onBack={handleBack}
+        onBack={prevStep}
         onContinue={handleContinue}
       />
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-        {agencyImages.map((img, idx) => (
-          <div key={idx} className="relative group">
-            <img
-              src={typeof img === "string" ? img : URL.createObjectURL(img)}
-              alt={`Agency Image ${idx + 1}`}
-              className="w-full h-32 object-cover rounded"
-            />
-            <button
-              type="button"
-              className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-80 hover:opacity-100"
-              onClick={() => handleRemoveImage(idx)}
-              title="Remove image"
-            >
-              <i className="fas fa-trash"></i>
-            </button>
-          </div>
-        ))}
-      </div>
     </section>
   );
 };

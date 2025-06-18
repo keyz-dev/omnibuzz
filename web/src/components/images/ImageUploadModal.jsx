@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { X, ImageIcon, Plus, Trash2 } from "lucide-react";
+import { Button } from "../ui";
 
 const ImageUploadModal = ({
   isOpen,
@@ -103,26 +104,26 @@ const ImageUploadModal = ({
         <div className="p-6 max-h-96 overflow-y-auto">
           {images.length === 0 ? (
             <div
-              className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center"
+              className="border-2 border-dashed border-gray-300 rounded-sm p-12 text-center"
               onDragOver={handleDragOver}
               onDrop={handleDrop}
             >
               <div className="flex flex-col items-center gap-4">
                 <div className="w-16 h-16 bg-blue-50 rounded-lg flex items-center justify-center">
-                  <ImageIcon className="w-8 h-8 text-blue-500" />
+                  <ImageIcon className="w-8 h-8 text-accent" />
                 </div>
                 <div>
-                  <h3 className="font-medium text-gray-900">Drag and Drop</h3>
-                  <p className="text-sm text-gray-500 mt-1">
+                  <h3 className="font-medium text-primary">Drag and Drop</h3>
+                  <p className="text-sm text-secondary  mt-1">
                     or browse for photos
                   </p>
                 </div>
-                <button
-                  onClick={handleBrowseClick}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                <Button
+                  onClickHandler={handleBrowseClick}
+                  additionalClasses="primarybtn min-h-fit min-w-fit px-6 py-2"
                 >
                   Browse
-                </button>
+                </Button>
               </div>
             </div>
           ) : (
@@ -155,13 +156,13 @@ const ImageUploadModal = ({
           >
             Done
           </button>
-          <button
-            onClick={handleUpload}
-            disabled={images.length === 0}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+          <Button
+            onClickHandler={handleUpload}
+            isDisabled={images.length === 0}
+            additionalClasses="primarybtn px-6 py-2"
           >
             Upload
-          </button>
+          </Button>
         </div>
 
         <input

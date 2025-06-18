@@ -5,9 +5,16 @@ import AgencyOverviewDescription from "./overview/AgencyOverviewDescription";
 import AgencyOverviewTowns from "./overview/AgencyOverviewTowns";
 import AgencyOverviewContacts from "./overview/AgencyOverviewContacts";
 import { Button } from "../ui";
+import { toast } from "react-toastify";
 
 const Step5_Overview = () => {
-  const { agencyCreationData, setAgencyCreationData } = useAgencyCreation();
+  const {
+    agencyCreationData,
+    setAgencyCreationData,
+    createAgency,
+    isLoading,
+    nextStep,
+  } = useAgencyCreation();
   const {
     name,
     headAddress,
@@ -18,7 +25,7 @@ const Step5_Overview = () => {
     coordinates,
   } = agencyCreationData;
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const hasBlankContact = contactInfo.some(
       (c) => !c.value || !c.value.trim()
     );
@@ -26,21 +33,20 @@ const Step5_Overview = () => {
       alert("Please fill in all contact information before submitting.");
       return;
     }
-    console.log("submit");
-    const formData = new FormData();
-
-    // Add basic agency info
-    formData.append("name", name);
-    formData.append("headAddress", headAddress);
-    formData.append("description", description);
-    formData.append("coordinates", JSON.stringify(coordinates));
-    formData.append("towns", JSON.stringify(towns));
-    formData.append("contactInfo", JSON.stringify(contactInfo));
-    if (logo) {
-      formData.append("logo", logo);
+    try {
+      const res = await createAgency();
+      if (res.success) {
+        toast.success("Agency created successfully");
+        // wait for 2 seconds and navigate to the success page
+        setTimeout(() => {
+          nextStep();
+        }, 2000);
+      } else {
+        toast.error(res.error);
+      }
+    } catch (error) {
+      toast.error("Error creating agency", error);
     }
-
-    console.log(formData);
   };
 
   return (
@@ -66,7 +72,12 @@ const Step5_Overview = () => {
       />
       {/* Finish Button */}
       <div className="flex justify-center mt-6">
-        <Button additionalClasses="primarybtn" onClickHandler={handleSubmit}>
+        <Button
+          additionalClasses="primarybtn"
+          onClickHandler={handleSubmit}
+          disabled={isLoading}
+          isLoading={isLoading}
+        >
           Finish
         </Button>
       </div>

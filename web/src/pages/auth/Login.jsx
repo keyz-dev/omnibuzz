@@ -3,6 +3,7 @@ import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../stateManagement/contexts/AuthContext";
 import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
+import { removeEmojis } from "../../utils/sanitize";
 
 const Login = () => {
   const { login, setAuthError, handleGoogleLogin, loading, authError } =
@@ -18,15 +19,18 @@ const Login = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: removeEmojis(value),
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    const sanitizedData = {
+      email: removeEmojis(formData.email),
+      password: removeEmojis(formData.password),
+    };
     try {
-      const res = await login(formData.email, formData.password);
+      const res = await login(sanitizedData.email, sanitizedData.password);
       if (res.success) {
         const { user } = res;
         navigate("/verify-account", {

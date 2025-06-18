@@ -28,6 +28,9 @@ const ImageUploadStep = ({
     setIsModalOpen(true);
   };
 
+  const removeImageFromMain = (imageId) => {
+    onImagesChange((prev) => prev.filter((img) => img.id !== imageId));
+  };
   const handleContinue = () => {
     if (images.length >= 3 && onContinue) {
       onContinue();
@@ -35,7 +38,7 @@ const ImageUploadStep = ({
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
+    <div className="max-w-3xl mx-auto py-6 px-2">
       <div className="text-center mb-2">
         <h1 className="text-2xl font-semibold mb-2">
           {hasImages
@@ -91,7 +94,10 @@ const ImageUploadStep = ({
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <button className="absolute top-2 right-2 w-8 h-8 bg-black bg-opacity-50 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black hover:bg-opacity-70">
+                      <button
+                        className="absolute top-2 right-2 w-8 h-8 bg-black bg-opacity-50 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black hover:bg-opacity-70"
+                        onClick={() => removeImageFromMain(image.id)}
+                      >
                         <X className="w-4 h-4" />
                       </button>
                     </div>

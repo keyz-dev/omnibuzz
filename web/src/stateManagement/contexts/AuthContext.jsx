@@ -66,6 +66,7 @@ export const AuthProvider = ({ children }) => {
           if (response.data.valid) {
             const { user } = response.data.data;
             setUserAndToken(user, storedToken);
+            redirectBasedOnRole(user);
           } else {
             // Token is invalid, clear everything
             invalidateToken();

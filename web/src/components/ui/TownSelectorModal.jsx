@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { CAMEROON_TOWNS } from "../../constants/towns";
 import { X } from "lucide-react";
 import { Input } from "./";
+import { removeEmojis } from "../../utils/sanitize";
 
 // Town Selector Modal Component
 const TownSelectorModal = ({ isOpen, onClose, onAdd, selectedTowns }) => {
@@ -43,7 +44,7 @@ const TownSelectorModal = ({ isOpen, onClose, onAdd, selectedTowns }) => {
             type="text"
             placeholder="Search towns..."
             value={searchTerm}
-            onChangeHandler={(e) => setSearchTerm(e.target.value)}
+            onChangeHandler={(e) => setSearchTerm(removeEmojis(e.target.value))}
             autoFocus={true}
           />
         </div>

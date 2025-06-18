@@ -101,12 +101,6 @@ const AgencyCreationSidebar = ({ currentStep, visitedSteps }) => {
                 <ArrowLeft size={16} />
                 Back to home
               </a>
-              <a
-                href="/signin"
-                className="font-semibold text-secondary hover:text-accent"
-              >
-                Sign In
-              </a>
             </div>
           </div>
         )}

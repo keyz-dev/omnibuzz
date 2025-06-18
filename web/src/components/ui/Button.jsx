@@ -15,7 +15,8 @@ const Button = ({
   props,
 }) => {
   const baseButtonStyles = "btn flexbox gap-2";
-  const disabledStyles = "opacity-50 cursor-not-allowed";
+  const disabledStyles =
+    "opacity-50 bg-gray-300 cursor-not-allowed text-secondary";
   const loadingStyles =
     "relative text-transparent transition-none hover:text-transparent";
 

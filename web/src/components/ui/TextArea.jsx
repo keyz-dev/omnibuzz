@@ -24,11 +24,12 @@ const TextArea = ({
       </>
     );
   }
+
   return (
     <div className="w-full flex flex-col">
       {label && (
         <label
-          htmlFor="{{ $id }}"
+          htmlFor={id}
           className={`block transition-all duration-300 transform text-base font-normal text-primary z-0 px-2 ${labelClasses}`}
         >
           {labelContent}
