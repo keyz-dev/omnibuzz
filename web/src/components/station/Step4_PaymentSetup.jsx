@@ -1,11 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
+import { Eye, EyeOff, Shield } from "lucide-react";
+import { StepNavButtons, Input } from "../ui";
+import { PaymentMethodContainer, PaymentSetup } from "./payment";
+import { useStation } from "../../stateManagement/contexts";
 
+// Demo wrapper
 const Step4_PaymentSetup = () => {
+  const { stationCreationData, setStationCreationData, prevStep, nextStep } =
+    useStation();
+  const handleBack = () => {
+    prevStep();
+  };
+
+  const handleContinue = (stationData) => {
+    console.log("Navigate to next step with data:", stationData);
+  };
+
   return (
-    <div>
-      <h2 className="text-xl font-bold mb-4">Payment Setup</h2>
-      <p>Add payment information for your station here.</p>
-    </div>
+    <PaymentSetup
+      onBack={handleBack}
+      onContinue={handleContinue}
+      initialData={{}}
+      stationCreationData={stationCreationData}
+      setStationCreationData={setStationCreationData}
+      prevStep={prevStep}
+      nextStep={nextStep}
+    />
   );
 };
 

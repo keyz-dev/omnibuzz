@@ -6,11 +6,10 @@ const STEPS = {
   BASIC_INFORMATION: 0,
   LOCATION_VERIFICATION: 1,
   IMAGE_UPLOAD: 2,
-  IMAGE_ADDITION: 3,
-  PAYMENT_SETUP: 4,
-  CONTACT_SETUP: 5,
-  ASSIGN_MANAGER: 6,
-  SUCCESS: 7,
+  PAYMENT_SETUP: 3,
+  CONTACT_SETUP: 4,
+  ASSIGN_MANAGER: 5,
+  SUCCESS: 6,
 };
 
 export const StationProvider = ({ children }) => {
@@ -24,7 +23,7 @@ export const StationProvider = ({ children }) => {
     images: [],
     contactInfo: [],
   });
-  const [activeStep, setActiveStep] = useState(STEPS.BASIC_INFORMATION);
+  const [activeStep, setActiveStep] = useState(STEPS.PAYMENT_SETUP);
   const [visitedSteps, setVisitedSteps] = useState([STEPS.BASIC_INFORMATION]);
 
   const updateFormData = (stepData) => {
