@@ -93,8 +93,7 @@ const LandingPage = () => {
         <Loader size={20} color="blue" />
       </div>
     );
-
-  redirectBasedOnRole(user);
+  if (user) redirectBasedOnRole(user);
 
   return (
     <div>

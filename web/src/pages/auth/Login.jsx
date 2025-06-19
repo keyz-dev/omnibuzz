@@ -31,6 +31,7 @@ const Login = () => {
     };
     try {
       const res = await login(sanitizedData.email, sanitizedData.password);
+      console.log(res);
       if (res.success) {
         const { user } = res;
         navigate("/verify-account", {
@@ -38,9 +39,7 @@ const Login = () => {
         });
       }
     } catch (error) {
-      setAuthError(
-        error.response?.data?.message || "An error occurred during login"
-      );
+      setAuthError(error.response?.data?.error || error.message);
     }
   };
 

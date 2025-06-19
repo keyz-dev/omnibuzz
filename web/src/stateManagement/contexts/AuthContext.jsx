@@ -99,6 +99,7 @@ export const AuthProvider = ({ children }) => {
           error.message ||
           "Invalid credentials"
       );
+      return { success: false };
     } finally {
       setLoading(false);
     }

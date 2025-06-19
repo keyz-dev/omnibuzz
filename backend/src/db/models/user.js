@@ -37,6 +37,9 @@ module.exports = (sequelize, DataTypes) => {
 
     // Instance method to check password
     async comparePassword(candidatePassword) {
+      console.log("\n\nBefore bcrypt.compare\n");
+      console.log("\n\ncandidatePassword\n", candidatePassword);
+      console.log("\n\nthis.password\n", this.password);
       return bcrypt.compare(candidatePassword, this.password);
     }
 
