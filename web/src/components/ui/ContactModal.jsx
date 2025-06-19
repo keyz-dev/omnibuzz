@@ -1,14 +1,7 @@
 import React from "react";
 import { X } from "lucide-react";
 
-const ContactModal = ({ isOpen, onClose, onAdd }) => {
-  const contactTypes = [
-    { id: "business-email", label: "Business Email", type: "email" },
-    { id: "phone", label: "Phone Number", type: "tel" },
-    { id: "whatsapp", label: "WhatsApp", type: "tel" },
-    { id: "website", label: "Website URL", type: "url" },
-  ];
-
+const ContactModal = ({ isOpen, onClose, onAdd, contactTypes }) => {
   const handleContactTypeSelect = (contactType) => {
     onAdd(contactType);
     onClose();

@@ -4,6 +4,13 @@ import { Input, ContactModal } from "../ui";
 import { useAgencyCreation } from "../../stateManagement/contexts";
 import { StepNavButtons } from "./index";
 
+const contactTypes = [
+  { id: "business-email", label: "Business Email", type: "email" },
+  { id: "phone", label: "Phone Number", type: "tel" },
+  { id: "whatsapp", label: "WhatsApp", type: "tel" },
+  { id: "website", label: "Website URL", type: "url" },
+];
+
 const Step3_ContactInfo = () => {
   const { nextStep, agencyCreationData, updateFormData, prevStep } =
     useAgencyCreation();
@@ -178,6 +185,7 @@ const Step3_ContactInfo = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onAdd={addContactField}
+        contactTypes={contactTypes}
       />
     </div>
   );

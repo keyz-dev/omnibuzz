@@ -1,4 +1,6 @@
 import React from "react";
+import { Button } from "../../ui";
+import { Save } from "lucide-react";
 
 const PaymentMethodContainer = ({
   icon,
@@ -11,9 +13,9 @@ const PaymentMethodContainer = ({
   canSave = false,
 }) => {
   return (
-    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+    <div className="border border-light_bg rounded-md overflow-hidden shadow-sm">
       {/* Header */}
-      <div className="p-6 flex items-center justify-between">
+      <div className="p-4 flex items-center justify-between">
         <div className="flex items-center space-x-4">
           {icon}
           <div>
@@ -48,30 +50,18 @@ const PaymentMethodContainer = ({
             {children}
             {isEnabled && (
               <div className="flex justify-end pt-2">
-                <button
-                  onClick={onSave}
-                  disabled={!canSave}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all duration-200 ${
+                <Button
+                  onClickHandler={onSave}
+                  isDisabled={!canSave}
+                  text="Save"
+                  additionalClasses={`flex items-center rounded-sm min-w-fit min-h-fit px-4 py-2 ${
                     canSave
-                      ? "bg-green-500 hover:bg-green-600 text-white shadow-sm"
+                      ? "bg-success hover:bg-success/80 text-white shadow-sm"
                       : "bg-gray-100 text-gray-400 cursor-not-allowed"
                   }`}
                 >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                  <span className="font-medium">Save</span>
-                </button>
+                  <Save className="w-4 h-4" />
+                </Button>
               </div>
             )}
           </div>

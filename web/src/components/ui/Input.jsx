@@ -22,6 +22,7 @@ const Input = ({
   autoFocus = false,
   onFocusHandler,
   onBlurHandler,
+  isSecretField = false,
 }) => {
   // If label is a string and required, append a red asterisk unless already present
   let labelContent = label;
@@ -35,7 +36,7 @@ const Input = ({
 
   // Password visibility toggle state
   const [showPassword, setShowPassword] = useState(false);
-  const isPassword = type === "password";
+  const isPassword = type === "password" || isSecretField;
   const inputType = isPassword && showPassword ? "text" : type;
 
   return (

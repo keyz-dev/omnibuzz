@@ -23,7 +23,7 @@ export const StationProvider = ({ children }) => {
     images: [],
     contactInfo: [],
   });
-  const [activeStep, setActiveStep] = useState(STEPS.PAYMENT_SETUP);
+  const [activeStep, setActiveStep] = useState(STEPS.CONTACT_SETUP);
   const [visitedSteps, setVisitedSteps] = useState([STEPS.BASIC_INFORMATION]);
 
   const updateFormData = (stepData) => {

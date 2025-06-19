@@ -1,7 +1,5 @@
-import React, { useState } from "react";
-import { Eye, EyeOff, Shield } from "lucide-react";
-import { StepNavButtons, Input } from "../ui";
-import { PaymentMethodContainer, PaymentSetup } from "./payment";
+import React from "react";
+import { PaymentSetup } from "./payment";
 import { useStation } from "../../stateManagement/contexts";
 
 // Demo wrapper
@@ -12,15 +10,10 @@ const Step4_PaymentSetup = () => {
     prevStep();
   };
 
-  const handleContinue = (stationData) => {
-    console.log("Navigate to next step with data:", stationData);
-  };
-
   return (
     <PaymentSetup
       onBack={handleBack}
-      onContinue={handleContinue}
-      initialData={{}}
+      onContinue={nextStep}
       stationCreationData={stationCreationData}
       setStationCreationData={setStationCreationData}
       prevStep={prevStep}

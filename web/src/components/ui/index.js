@@ -15,3 +15,5 @@ export { default as ProfileCompletionStep } from "./ProfileCompletionStep";
 export { default as StepSideBar } from "./StepSideBar";
 export { default as StepNavButtons } from "./StepNavButtons";
 export { default as TownsInput } from "./TownsInput";
+export { default as SecurityNotice } from "./SecurityNotice";
+export { default as ContactInfo } from "./ContactInfo";

@@ -1,5 +1,10 @@
 import { removeEmojis } from "./sanitize";
 
+export const isValidCMNumber = (number) => {
+  if (!/^(?:\+?\d+|00\d+)$/.test(number)) return false;
+  return true;
+};
+
 export const validateRegisterForm = (formData, setErrors) => {
   const newErrors = {};
   // Sanitize all text fields
@@ -23,13 +28,7 @@ export const validateRegisterForm = (formData, setErrors) => {
   const phone = sanitized.phone.replace(/\s+/g, ""); // Remove spaces
   if (!phone) {
     newErrors.phone = "Phone Number is required";
-  } else if (
-    !(
-      phone.startsWith("6") ||
-      phone.startsWith("+2376") ||
-      phone.startsWith("2376")
-    )
-  ) {
+  } else if (!isValidCMNumber(phone)) {
     newErrors.phone = "Phone number must start with 6, 2376, or +2376";
   }
   // Block emojis (edge case)

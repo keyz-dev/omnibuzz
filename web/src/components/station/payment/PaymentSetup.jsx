@@ -1,29 +1,32 @@
 import React, { useState } from "react";
-import { PaymentMethodContainer } from "./PaymentMethodContainer";
-import { StepNavButtons, Input } from "../ui";
+import { PaymentMethodContainer } from "./";
+import { StepNavButtons, Input, SecurityNotice } from "../../ui";
 import { Shield } from "lucide-react";
+import { toast } from "react-toastify";
+import MTN from "../../../assets/icons/mtn-momo.png";
+import OM from "../../../assets/icons/om.png";
+import { isValidCMNumber } from "../../../utils/validateForm";
+import { normalizeNumber } from "../../../utils/normalizePhone";
 
 const PaymentSetup = ({
   onBack,
   onContinue,
-  initialData = {},
   stationCreationData,
   setStationCreationData,
   prevStep,
   nextStep,
 }) => {
-  const [paymentMethods, setPaymentMethods] = useState(
-    stationCreationData.paymentMethods
-  );
-
   const [formData, setFormData] = useState({
-    momoNumber: initialData.MOMO?.number || "",
-    momoAccountName: initialData.MOMO?.accountName || "",
-    omNumber: initialData.OM?.number || "",
-    omAccountName: initialData.OM?.accountName || "",
+    momoNumber: "",
+    momoAccountName: "",
+    omNumber: "",
+    omAccountName: "",
   });
-
   const [errors, setErrors] = useState({});
+  const [paymentMethods, setPaymentMethods] = useState({
+    OM: false,
+    MOMO: false,
+  });
 
   const togglePaymentMethod = (method) => {
     setPaymentMethods((prev) => ({
@@ -41,6 +44,16 @@ const PaymentSetup = ({
     }
   };
 
+  const handlePaymentMethodChange = (method, value, field) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    setStationCreationData((prev) => ({
+      ...prev,
+      paymentMethods: prev.paymentMethods.map((payment) =>
+        payment.type === method ? { ...payment, [field]: value } : payment
+      ),
+    }));
+  };
+
   const validatePaymentMethod = (method) => {
     const prefix = method.toLowerCase();
     const numberField = `${prefix}Number`;
@@ -51,6 +64,11 @@ const PaymentSetup = ({
     if (!formData[numberField]?.trim()) {
       newErrors[numberField] = `${method} number is required`;
     }
+    // ensure the number is a valid number
+    if (!isValidCMNumber(formData[numberField])) {
+      newErrors[numberField] = "Invalid number";
+    }
+
     if (!formData[nameField]?.trim()) {
       newErrors[nameField] = "Account name is required";
     }
@@ -73,28 +91,33 @@ const PaymentSetup = ({
       setErrors((prev) => ({ ...prev, ...validationErrors }));
       return;
     }
+    // Toggle the payment method off
+    setPaymentMethods((prev) => ({
+      ...prev,
+      [method]: !prev[method],
+    }));
 
     const prefix = method.toLowerCase();
     const numberField = `${prefix}Number`;
     const nameField = `${prefix}AccountName`;
 
-    // Update station creation data
     setStationCreationData((prev) => {
-      const existingContactInfo = prev.contactInfo.filter(
+      const existingPaymentMethods = prev.paymentMethods.filter(
         (info) => info.type !== method
       );
-      const newContactInfo = [
-        ...existingContactInfo,
+      const newPaymentMethods = [
+        ...existingPaymentMethods,
         {
           type: method,
-          number: formData[numberField],
-          accountName: formData[nameField],
+          value: {
+            number: normalizeNumber(formData[numberField]),
+            accountName: formData[nameField],
+          },
         },
       ];
-
       return {
         ...prev,
-        contactInfo: newContactInfo,
+        paymentMethods: newPaymentMethods,
       };
     });
 
@@ -107,17 +130,18 @@ const PaymentSetup = ({
   };
 
   const handleContinue = () => {
-    // Check if at least one payment method is configured
-    if (stationCreationData.contactInfo.length === 0) {
-      alert("Please configure at least one payment method before continuing.");
+    if (stationCreationData.paymentMethods.length === 0) {
+      toast.error(
+        "Please configure at least one payment method before continuing."
+      );
       return;
     }
 
-    onContinue(stationCreationData);
+    onContinue();
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="">
       <div className="max-w-3xl mx-auto px-6 py-12">
         {/* Header */}
         <div className="text-center mb-10">
@@ -134,38 +158,40 @@ const PaymentSetup = ({
         <div className="space-y-6 mb-8">
           {/* Orange Money */}
           <PaymentMethodContainer
-            icon={
-              <div className="w-16 h-16 bg-orange-500 rounded-2xl flex items-center justify-center shadow-lg">
-                <div className="text-white font-bold text-lg">OM</div>
-              </div>
-            }
+            icon={<img src={OM} alt="OM" className="w-16 h-16" />}
             title="Orange Money, OM Cameroon"
             description="Receive payments via orange money."
-            isEnabled={paymentMethods.OM}
+            isEnabled={paymentMethods["OM"]}
             onToggle={() => togglePaymentMethod("OM")}
-            onSave={() => savePaymentMethod("OM")}
+            onSave={() => {
+              savePaymentMethod("OM");
+            }}
             canSave={canSavePaymentMethod("OM")}
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
                 label="Orange Money Number"
+                type="password"
                 value={formData.omNumber}
-                onChange={(value) =>
-                  setFormData((prev) => ({ ...prev, omNumber: value }))
+                onChangeHandler={(e) =>
+                  handlePaymentMethodChange("OM", e.target.value, "omNumber")
                 }
-                placeholder="••••••"
-                required
-                showPasswordToggle
+                placeholder="Enter account number"
+                required={true}
                 error={errors.omNumber}
               />
               <Input
                 label="Account Name"
                 value={formData.omAccountName}
-                onChange={(value) =>
-                  setFormData((prev) => ({ ...prev, omAccountName: value }))
+                onChangeHandler={(e) =>
+                  handlePaymentMethodChange(
+                    "OM",
+                    e.target.value,
+                    "omAccountName"
+                  )
                 }
                 placeholder="Enter account holder name"
-                required
+                required={true}
                 error={errors.omAccountName}
               />
             </div>
@@ -173,38 +199,42 @@ const PaymentSetup = ({
 
           {/* MTN Mobile Money */}
           <PaymentMethodContainer
-            icon={
-              <div className="w-16 h-16 bg-yellow-400 rounded-2xl flex items-center justify-center shadow-lg">
-                <div className="text-white font-bold text-sm">MoMo</div>
-              </div>
-            }
+            icon={<img src={MTN} alt="MTN" className="w-16 h-16" />}
             title="MTN Mobile Money, MOMO"
             description="Receive payments via Momo."
-            isEnabled={paymentMethods.MOMO}
+            isEnabled={paymentMethods["MOMO"]}
             onToggle={() => togglePaymentMethod("MOMO")}
             onSave={() => savePaymentMethod("MOMO")}
             canSave={canSavePaymentMethod("MOMO")}
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <InputField
+              <Input
                 label="Momo Number"
                 value={formData.momoNumber}
-                onChange={(value) =>
-                  setFormData((prev) => ({ ...prev, momoNumber: value }))
+                type="password"
+                onChangeHandler={(e) =>
+                  handlePaymentMethodChange(
+                    "MOMO",
+                    e.target.value,
+                    "momoNumber"
+                  )
                 }
-                placeholder="••••••"
-                required
-                showPasswordToggle
+                placeholder="Enter account number"
+                required={true}
                 error={errors.momoNumber}
               />
-              <InputField
+              <Input
                 label="Account Name"
                 value={formData.momoAccountName}
-                onChange={(value) =>
-                  setFormData((prev) => ({ ...prev, momoAccountName: value }))
+                onChangeHandler={(e) =>
+                  handlePaymentMethodChange(
+                    "MOMO",
+                    e.target.value,
+                    "momoAccountName"
+                  )
                 }
                 placeholder="Enter account holder name"
-                required
+                required={true}
                 error={errors.momoAccountName}
               />
             </div>
@@ -215,59 +245,19 @@ const PaymentSetup = ({
         <StepNavButtons
           onBack={onBack}
           onContinue={handleContinue}
+          canContinue={stationCreationData.paymentMethods.length > 0}
           prevStep={prevStep}
           nextStep={nextStep}
         />
-        <div className="flex justify-between items-center mb-8">
-          <button
-            onClick={onBack}
-            className="px-8 py-3 border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-200 font-medium"
-          >
-            Back
-          </button>
-          <button
-            onClick={handleContinue}
-            className="px-8 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-all duration-200 font-medium shadow-lg"
-          >
-            Continue
-          </button>
-        </div>
 
         {/* Security Notice */}
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
-          <div className="flex items-start space-x-4">
-            <div className="flex-shrink-0">
-              <Shield className="text-blue-500 mt-1" size={24} />
-            </div>
-            <div>
-              <h4 className="font-semibold text-blue-900 mb-2">
-                Security Notice
-              </h4>
-              <p className="text-blue-700 leading-relaxed">
-                Your payment information is encrypted and stored securely. We
-                use industry-standard security measures to protect your
-                financial data.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Debug Info */}
-        {stationCreationData.contactInfo.length > 0 && (
-          <div className="mt-8 p-4 bg-green-50 border border-green-200 rounded-xl">
-            <h4 className="font-medium text-green-900 mb-2">
-              Configured Payment Methods:
-            </h4>
-            <div className="space-y-2">
-              {stationCreationData.contactInfo.map((info, index) => (
-                <div key={index} className="text-sm text-green-800">
-                  <span className="font-medium">{info.type}:</span>{" "}
-                  {info.accountName} - {info.number.replace(/./g, "•")}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <section className="mt-8">
+          <SecurityNotice
+            icon={<Shield className="text-blue-500 mt-1" size={24} />}
+            title="Security Notice"
+            description="Your payment information is encrypted and stored securely. We use industry-standard security measures to protect your financial data."
+          />
+        </section>
       </div>
     </div>
   );
