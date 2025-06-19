@@ -15,7 +15,11 @@ const ProfileCompletion = () => {
   const { myAgencyProfile, isLoading } = useAgencyAdmin();
   const navigate = useNavigate();
   if (isLoading || !myAgencyProfile) {
-    return <Loader size={20} color="#c2c2c2" />;
+    return (
+      <div className="flex items-center justify-center h-full m-auto">
+        <Loader size={30} color="#5E63FF" />
+      </div>
+    );
   }
 
   const { agency, completionSteps } = myAgencyProfile;
@@ -35,7 +39,8 @@ const ProfileCompletion = () => {
             description="Help us recognize your agency and connect it to your stations and staff. This keeps a secured profile for you and your passengers"
             status={completionSteps.verification.status}
             onClick={() => {
-              navigate("/agency/admin/upload-documents");
+              completionSteps.verification.status !== "approved" &&
+                navigate("/agency/admin/upload-documents");
             }}
           />
 
@@ -46,7 +51,8 @@ const ProfileCompletion = () => {
             description="Add the first station where your buses operate. This helps you manage routes and reservations right away."
             status={completionSteps.stations.status}
             onClick={() => {
-              navigate("/agency/admin/station-setup");
+              completionSteps.stations.status !== "completed" &&
+                navigate("/agency/admin/station-setup");
             }}
           />
         </div>

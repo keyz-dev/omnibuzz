@@ -1,5 +1,7 @@
-import { Link as RouterLink } from 'react-router-dom';
-import heroImg from '../assets/images/hero.jpg'
+import { Link as RouterLink } from "react-router-dom";
+import heroImg from "../assets/images/hero.jpg";
+import { useAuth } from "../stateManagement/contexts";
+import { Loader } from "../components/ui";
 
 const features = [
   {
@@ -18,8 +20,9 @@ const features = [
         />
       </svg>
     ),
-    title: 'Easy Booking',
-    description: 'Book your bus tickets in minutes with our user-friendly platform.',
+    title: "Easy Booking",
+    description:
+      "Book your bus tickets in minutes with our user-friendly platform.",
   },
   {
     icon: (
@@ -37,8 +40,9 @@ const features = [
         />
       </svg>
     ),
-    title: 'Secure Payments',
-    description: 'Your transactions are protected with state-of-the-art security.',
+    title: "Secure Payments",
+    description:
+      "Your transactions are protected with state-of-the-art security.",
   },
   {
     icon: (
@@ -56,8 +60,8 @@ const features = [
         />
       </svg>
     ),
-    title: 'Real-time Updates',
-    description: 'Get instant notifications about your journey status.',
+    title: "Real-time Updates",
+    description: "Get instant notifications about your journey status.",
   },
   {
     icon: (
@@ -75,12 +79,23 @@ const features = [
         />
       </svg>
     ),
-    title: '24/7 Support',
-    description: 'Our customer support team is always ready to help you.',
+    title: "24/7 Support",
+    description: "Our customer support team is always ready to help you.",
   },
 ];
 
 const LandingPage = () => {
+  const { user, redirectBasedOnRole, loading } = useAuth();
+
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader size={20} color="blue" />
+      </div>
+    );
+
+  redirectBasedOnRole(user);
+
   return (
     <div>
       {/* Hero Section */}
@@ -92,9 +107,9 @@ const LandingPage = () => {
                 Your Journey, Our Priority
               </h1>
               <p className="mt-6 text-xl text-secondary">
-                Book bus tickets effortlessly, manage your agency efficiently, and
-                travel with confidence. Omnibuzz is your all-in-one solution for
-                bus transportation.
+                Book bus tickets effortlessly, manage your agency efficiently,
+                and travel with confidence. Omnibuzz is your all-in-one solution
+                for bus transportation.
               </p>
               <div className="mt-8 flex gap-4">
                 <RouterLink
@@ -153,4 +168,4 @@ const LandingPage = () => {
   );
 };
 
-export default LandingPage; 
+export default LandingPage;

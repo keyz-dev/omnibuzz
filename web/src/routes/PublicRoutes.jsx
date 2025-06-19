@@ -1,6 +1,11 @@
 import { Route } from "react-router-dom";
 import LandingPage from "../pages/LandingPage";
-import { Login, Register, VerifyAccount } from "../pages/auth/";
+import {
+  Login,
+  Register,
+  VerifyAccount,
+  AcceptInvitation,
+} from "../pages/auth/";
 import AgencyCreationPage from "../pages/AgencyCreationPage";
 import { Layout, AuthLayout } from "../components/layout";
 
@@ -12,8 +17,9 @@ export const publicRoutes = [
   <Route key="login" path="/login" element={<AuthLayout />}>
     <Route index element={<Login />} />
   </Route>,
-  <Route key="register" path="/register" element={<AuthLayout />}>
-    <Route index element={<Register />} />
+  <Route key="register" element={<AuthLayout />}>
+    <Route path="/register" element={<Register />} />
+    <Route path="/accept-invitation/" element={<AcceptInvitation />} />
   </Route>,
   <Route
     key="agency-registration"

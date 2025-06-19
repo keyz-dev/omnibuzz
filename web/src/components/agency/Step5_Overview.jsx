@@ -1,5 +1,5 @@
 import React from "react";
-import { useAgencyCreation } from "../../stateManagement/contexts";
+import { useAgencyCreation, useAuth } from "../../stateManagement/contexts";
 import AgencyOverviewHeader from "./overview/AgencyOverviewHeader";
 import AgencyOverviewDescription from "./overview/AgencyOverviewDescription";
 import AgencyOverviewTowns from "./overview/AgencyOverviewTowns";
@@ -15,6 +15,9 @@ const Step5_Overview = () => {
     isLoading,
     nextStep,
   } = useAgencyCreation();
+
+  const { setUserAndToken } = useAuth();
+
   const {
     name,
     headAddress,
@@ -37,6 +40,7 @@ const Step5_Overview = () => {
       const res = await createAgency();
       if (res.success) {
         toast.success("Agency created successfully");
+        setUserAndToken(res.data.user, res.data.token);
         // wait for 2 seconds and navigate to the success page
         setTimeout(() => {
           nextStep();
