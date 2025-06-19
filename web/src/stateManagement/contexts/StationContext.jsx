@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import api from "../api";
 
 const StationContext = React.createContext();
 
@@ -9,11 +10,11 @@ const STEPS = {
   PAYMENT_SETUP: 3,
   CONTACT_SETUP: 4,
   ASSIGN_MANAGER: 5,
-  SUCCESS: 6,
 };
 
 export const StationProvider = ({ children }) => {
   const [stationCreationData, setStationCreationData] = useState({
+    name: "",
     neighborhood: "",
     baseTown: "",
     address: "",
@@ -23,8 +24,10 @@ export const StationProvider = ({ children }) => {
     images: [],
     contactInfo: [],
   });
-  const [activeStep, setActiveStep] = useState(STEPS.CONTACT_SETUP);
+  const [activeStep, setActiveStep] = useState(STEPS.BASIC_INFORMATION);
   const [visitedSteps, setVisitedSteps] = useState([STEPS.BASIC_INFORMATION]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [createdStation, setCreatedStation] = useState({});
 
   const updateFormData = (stepData) => {
     setStationCreationData((prev) => ({ ...prev, ...stepData }));
@@ -32,7 +35,7 @@ export const StationProvider = ({ children }) => {
 
   const nextStep = () => {
     setVisitedSteps((prev) => [...prev, activeStep]);
-    setActiveStep((prev) => Math.min(prev + 1, STEPS.SUCCESS));
+    setActiveStep((prev) => Math.min(prev + 1, STEPS.ASSIGN_MANAGER));
   };
 
   const prevStep = () => {
@@ -40,15 +43,94 @@ export const StationProvider = ({ children }) => {
     setActiveStep((prev) => Math.max(prev - 1, STEPS.BASIC_INFORMATION));
   };
 
+  const assignManager = async (manager) => {
+    setIsLoading(true);
+    manager.stationId = createdStation.id;
+    manager.role = "station_manager";
+
+    try {
+      const res = await api.post("/station/workers/assign", manager);
+      return res.data;
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.error ||
+          error.response?.data?.error?.[0]?.message ||
+          error.response?.data?.message ||
+          error.message ||
+          "Unknown error occured. Please try again later.",
+      };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const createStation = async (contactInfo) => {
+    try {
+      setIsLoading(true);
+
+      const stationName = `${stationCreationData.neighborhood}`;
+
+      const formData = new FormData();
+      formData.append("neighborhood", stationCreationData.neighborhood);
+      formData.append("baseTown", stationCreationData.baseTown);
+      formData.append("address", stationCreationData.address);
+      formData.append("name", stationName);
+      formData.append(
+        "coordinates",
+        JSON.stringify(stationCreationData.coordinates)
+      );
+      formData.append(
+        "destinations",
+        JSON.stringify(stationCreationData.destinations)
+      );
+      formData.append(
+        "paymentMethods",
+        JSON.stringify(stationCreationData.paymentMethods)
+      );
+      stationCreationData.images.forEach((image) => {
+        formData.append("images", image);
+      });
+      formData.append("contactInfo", JSON.stringify(contactInfo));
+
+      const res = await api.post("/station", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      console.log("res: ", res.data.data);
+      setCreatedStation(res.data.data);
+      return res.data;
+    } catch (error) {
+      return {
+        success: false,
+        error:
+          error.response?.data?.error ||
+          error.response?.data?.error?.[0]?.message ||
+          error.response?.data?.message ||
+          error.message ||
+          "Unknown error occured. Please try again later.",
+      };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const value = {
     stationCreationData,
     activeStep,
     visitedSteps,
     STEPS,
+    isLoading,
     setStationCreationData,
     updateFormData,
     nextStep,
     prevStep,
+    createStation,
+    assignManager,
   };
 
   return (

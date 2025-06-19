@@ -71,8 +71,6 @@ export const AgencyCreationProvider = ({ children }) => {
         },
       });
 
-      console.log(res.data.data);
-
       return res.data;
     } catch (error) {
       return {

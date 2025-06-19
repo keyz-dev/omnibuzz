@@ -5,14 +5,18 @@ import {
   TownSelectorModal,
   TownsInput,
   StepNavButtons,
+  FormHeader,
+  Loader,
 } from "../ui";
-import { useStation } from "../../stateManagement/contexts";
+import { useStation, useAgencyAdmin } from "../../stateManagement/contexts";
 import { useNavigate } from "react-router-dom";
 
 const Step1_BasicInformation = () => {
   const navigate = useNavigate();
   const { stationCreationData, setStationCreationData, nextStep } =
     useStation();
+  const { myAgencyProfile, isLoading: profileLoading } = useAgencyAdmin();
+
   const [errors, setErrors] = useState({});
   const [isDesTownModalOpen, setIsDesTownModalOpen] = useState(false);
   const [isBaseTownModalOpen, setIsBaseTownModalOpen] = useState(false);
@@ -39,6 +43,10 @@ const Step1_BasicInformation = () => {
     );
   };
 
+  if (profileLoading) return <Loader size={20} color="#c2c2c2" />;
+
+  const { agency } = myAgencyProfile;
+
   // Validation
   const validate = () => {
     const newErrors = {};
@@ -57,6 +65,7 @@ const Step1_BasicInformation = () => {
     if (!validate()) return;
 
     const formDataToSubmit = {
+      name: `${agency.name} ${neighborhood}`,
       neighborhood: neighborhood,
       baseTown: baseTown,
       destinations: destinationTowns,
@@ -71,14 +80,10 @@ const Step1_BasicInformation = () => {
 
   return (
     <div className="w-full md:w-lg mx-auto px-6 py-10">
-      <div className="text-center mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          Setup a station
-        </h1>
-        <p className="text-secondary">
-          Provide the basic information about your station
-        </p>
-      </div>
+      <FormHeader
+        title={"Basic Information"}
+        description={"Provide the basic information about your station"}
+      />
       <form className="space-y-6" onSubmit={handleContinue}>
         {/* Neighborhood */}
         <Input

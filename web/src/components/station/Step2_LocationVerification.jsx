@@ -1,15 +1,12 @@
 import React, { useState } from "react";
-import { useStation, useAgencyAdmin } from "../../stateManagement/contexts";
+import { useStation } from "../../stateManagement/contexts";
 import { MapSelector } from "../maps/leaflet";
 
 const Step2_LocationVerification = () => {
   const { stationCreationData, setStationCreationData, nextStep, prevStep } =
     useStation();
-  const { myAgencyProfile } = useAgencyAdmin();
 
-  const { agency } = myAgencyProfile;
-
-  const [address, setAddress] = useState(stationCreationData.address);
+  const [address, setAddress] = useState(stationCreationData.name);
 
   const [coordinates, setCoordinates] = useState(
     stationCreationData.coordinates
@@ -20,7 +17,7 @@ const Step2_LocationVerification = () => {
     if (!address || !coordinates) return;
     setStationCreationData({
       ...stationCreationData,
-      headAddress: address,
+      address: address,
       coordinates: coordinates,
     });
     nextStep();

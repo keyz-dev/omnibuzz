@@ -15,7 +15,7 @@ const ProfileCompletion = () => {
   const { myAgencyProfile, isLoading } = useAgencyAdmin();
   const navigate = useNavigate();
   if (isLoading || !myAgencyProfile) {
-    return <Loader />;
+    return <Loader size={20} color="#c2c2c2" />;
   }
 
   const { agency, completionSteps } = myAgencyProfile;

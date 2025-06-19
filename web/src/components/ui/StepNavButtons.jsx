@@ -1,17 +1,30 @@
 import React from "react";
 import { Button } from ".";
 
-const StepNavButtons = ({ onBack, onContinue, canContinue, isLoading }) => {
+const StepNavButtons = ({
+  onBack = null,
+  onContinue = null,
+  canContinue,
+  isLoading,
+  onBackText,
+  onContinueText,
+}) => {
   return (
-    <div className="flex justify-between gap-3 sm:gap-[30%] mt-8 w-full">
-      <Button
-        type="button"
-        id="back-btn"
-        additionalClasses="w-full border border-line_clr text-secondary"
-        onClickHandler={onBack}
-      >
-        Back
-      </Button>
+    <div
+      className={`flex ${
+        onBack ? "justify-center" : "justify-end"
+      } gap-3 sm:gap-[30%] mt-8 w-full`}
+    >
+      {onBack && (
+        <Button
+          type="button"
+          id="back-btn"
+          additionalClasses="w-full border border-line_clr text-secondary"
+          onClickHandler={onBack}
+        >
+          {onBackText || "Back"}
+        </Button>
+      )}
 
       <Button
         type="submit"
@@ -20,7 +33,7 @@ const StepNavButtons = ({ onBack, onContinue, canContinue, isLoading }) => {
         onClickHandler={onContinue}
         isDisabled={isLoading || !canContinue}
       >
-        Continue
+        {onContinueText || "Continue"}
       </Button>
     </div>
   );

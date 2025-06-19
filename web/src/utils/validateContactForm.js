@@ -1,3 +1,5 @@
+import { isValidCMNumber } from "./validateForm";
+
 export const validateContactForm = (contactFields, setErrors) => {
   const newErrors = {
     contactFields: "",
@@ -21,7 +23,6 @@ export const validateContactForm = (contactFields, setErrors) => {
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phoneRegex = /^\+?[\d\s-]{10,}$/;
 
     switch (field.type) {
       case "email":
@@ -32,7 +33,7 @@ export const validateContactForm = (contactFields, setErrors) => {
         break;
 
       case "tel":
-        if (!phoneRegex.test(field.value)) {
+        if (!isValidCMNumber(field.value)) {
           error.value = "Please enter a valid phone number";
           isValid = false;
         }

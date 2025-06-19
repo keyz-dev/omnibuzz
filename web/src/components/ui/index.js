@@ -17,3 +17,4 @@ export { default as StepNavButtons } from "./StepNavButtons";
 export { default as TownsInput } from "./TownsInput";
 export { default as SecurityNotice } from "./SecurityNotice";
 export { default as ContactInfo } from "./ContactInfo";
+export { default as FormHeader } from "./FormHeader";

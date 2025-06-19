@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { PaymentMethodContainer } from "./";
-import { StepNavButtons, Input, SecurityNotice } from "../../ui";
+import { StepNavButtons, Input, SecurityNotice, FormHeader } from "../../ui";
 import { Shield } from "lucide-react";
 import { toast } from "react-toastify";
 import MTN from "../../../assets/icons/mtn-momo.png";
@@ -25,7 +25,7 @@ const PaymentSetup = ({
   const [errors, setErrors] = useState({});
   const [paymentMethods, setPaymentMethods] = useState({
     OM: false,
-    MOMO: false,
+    MoMo: false,
   });
 
   const togglePaymentMethod = (method) => {
@@ -49,7 +49,7 @@ const PaymentSetup = ({
     setStationCreationData((prev) => ({
       ...prev,
       paymentMethods: prev.paymentMethods.map((payment) =>
-        payment.type === method ? { ...payment, [field]: value } : payment
+        payment.method === method ? { ...payment, [field]: value } : payment
       ),
     }));
   };
@@ -103,14 +103,14 @@ const PaymentSetup = ({
 
     setStationCreationData((prev) => {
       const existingPaymentMethods = prev.paymentMethods.filter(
-        (info) => info.type !== method
+        (info) => info.method !== method
       );
       const newPaymentMethods = [
         ...existingPaymentMethods,
         {
-          type: method,
+          method: method,
           value: {
-            number: normalizeNumber(formData[numberField]),
+            accountNumber: normalizeNumber(formData[numberField]),
             accountName: formData[nameField],
           },
         },
@@ -144,15 +144,12 @@ const PaymentSetup = ({
     <div className="">
       <div className="max-w-3xl mx-auto px-6 py-12">
         {/* Header */}
-        <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-gray-900 mb-3">
-            Payment Setup
-          </h1>
-          <p className="text-lg text-gray-600">
-            Configure how this station will receive remote payments from
-            passengers
-          </p>
-        </div>
+        <FormHeader
+          title={"Payment Setup"}
+          description={
+            "Configure how this station will receive remote payments from passengers"
+          }
+        />
 
         {/* Payment Method Containers */}
         <div className="space-y-6 mb-8">
@@ -200,12 +197,12 @@ const PaymentSetup = ({
           {/* MTN Mobile Money */}
           <PaymentMethodContainer
             icon={<img src={MTN} alt="MTN" className="w-16 h-16" />}
-            title="MTN Mobile Money, MOMO"
+            title="MTN Mobile Money, MoMo"
             description="Receive payments via Momo."
-            isEnabled={paymentMethods["MOMO"]}
-            onToggle={() => togglePaymentMethod("MOMO")}
-            onSave={() => savePaymentMethod("MOMO")}
-            canSave={canSavePaymentMethod("MOMO")}
+            isEnabled={paymentMethods["MoMo"]}
+            onToggle={() => togglePaymentMethod("MoMo")}
+            onSave={() => savePaymentMethod("MoMo")}
+            canSave={canSavePaymentMethod("MoMo")}
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input
@@ -214,7 +211,7 @@ const PaymentSetup = ({
                 type="password"
                 onChangeHandler={(e) =>
                   handlePaymentMethodChange(
-                    "MOMO",
+                    "MoMo",
                     e.target.value,
                     "momoNumber"
                   )
@@ -228,7 +225,7 @@ const PaymentSetup = ({
                 value={formData.momoAccountName}
                 onChangeHandler={(e) =>
                   handlePaymentMethodChange(
-                    "MOMO",
+                    "MoMo",
                     e.target.value,
                     "momoAccountName"
                   )

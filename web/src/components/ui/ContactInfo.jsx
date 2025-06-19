@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ContactModal from "./ContactModal";
 import { validateContactForm } from "../../utils/validateContactForm";
-import { Input, StepNavButtons } from "./index";
+import { Input, StepNavButtons, FormHeader } from "./index";
 import { X, Plus } from "lucide-react";
 
 const ContactInfo = ({
@@ -12,6 +12,7 @@ const ContactInfo = ({
   title,
   description,
   contactTypes,
+  isLoading,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [errors, setErrors] = useState({
@@ -50,15 +51,12 @@ const ContactInfo = ({
     <>
       <form className="py-4" onSubmit={handleSubmit}>
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">{title}</h1>
-          <p className="text-secondary">{description}</p>
-        </div>
+        <FormHeader title={title} description={description} />
 
         <div className="space-y-6">
           {/* Dynamic Contact Fields */}
           {contactFields.map((field, index) => (
-            <div key={field.id} className="relative">
+            <div key={index} className="relative">
               <Input
                 key={index}
                 label={field.label}
@@ -97,6 +95,7 @@ const ContactInfo = ({
             onBack={onBack}
             onContinue={handleSubmit}
             canContinue={!!contactFields.length}
+            isLoading={isLoading}
           />
         </div>
       </form>
