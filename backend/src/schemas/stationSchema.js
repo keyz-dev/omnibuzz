@@ -1,6 +1,7 @@
 const Joi = require("joi");
 const TownUtils = require("../utils/townUtils");
 const { imageArraySchema } = require("../utils/imageUtils");
+const { noEmojiString } = require("../utils/validationUtils");
 
 // Common schemas
 const townSchema = Joi.string().custom((value, helpers) => {
@@ -42,22 +43,18 @@ const coordinatesSchema = Joi.object({
   lng: Joi.number().required(),
 });
 
-const contactInfoSchema = Joi.object({
-  phone: Joi.string().required(),
-  whatsapp: Joi.string(),
-  telegram: Joi.string(),
-  email: Joi.string().email(),
-  website: Joi.string().uri().allow("", null),
-  facebook: Joi.string().uri().allow("", null),
-  twitter: Joi.string().uri().allow("", null),
-  instagram: Joi.string().uri().allow("", null),
-});
+const contactInfoSchema = Joi.array().items(
+  Joi.object({
+    type: Joi.string().required(),
+    value: Joi.string().required(),
+  })
+);
 
 const paymentMethodSchema = Joi.object({
   method: Joi.string().valid("OM", "MoMo").required(),
   value: Joi.object({
-    name: Joi.string().required(),
-    number: Joi.string().required(),
+    accountName: Joi.string().required(),
+    accountNumber: Joi.string().required(),
   }).required(),
 });
 
@@ -71,9 +68,8 @@ const createStationSchema = Joi.object({
   neighborhood: Joi.string().required(),
   baseTown: townSchema.required(),
   destinations: destinationsSchema.default([]),
-  stationImages: imageArraySchema,
-  agencyId: Joi.string().uuid().required(),
-  isActive: Joi.boolean().default(true),
+  images: imageArraySchema,
+  isActive: Joi.boolean().default(false),
   paymentMethods: Joi.array().items(paymentMethodSchema).min(1).required(),
 });
 
@@ -85,7 +81,7 @@ const updateStationSchema = Joi.object({
   neighborhood: Joi.string(),
   coordinates: coordinatesSchema,
   contactInfo: contactInfoSchema,
-  stationImages: imageArraySchema,
+  images: imageArraySchema,
   paymentMethods: Joi.array().items(paymentMethodSchema).min(1),
   baseTown: townSchema,
   destinations: destinationsSchema,

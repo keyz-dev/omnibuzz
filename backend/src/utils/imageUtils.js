@@ -2,7 +2,7 @@ const Joi = require("joi");
 
 const isLocalImageUrl = (url) => {
   // Check if it's a local file path (development)
-  return url.startsWith("src/uploads/") || url.startsWith("/uploads/");
+  return url.startsWith("/uploads/");
 };
 
 const isCloudinaryUrl = (url) => {

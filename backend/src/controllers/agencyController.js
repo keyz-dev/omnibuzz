@@ -3,43 +3,20 @@ const {
   createAgencySchema,
   updateAgencySchema,
 } = require("../schemas/agencySchema");
-const { ValidationError } = require("../utils/errors");
+const { ValidationError, NotFoundError } = require("../utils/errors");
 const { Op } = require("sequelize");
-const { cleanupImages } = require("../utils/imageCleanup");
+const {
+  cleanUpInstanceImages,
+  cleanUpFileImages,
+} = require("../utils/imageCleanup");
 const { validateRequest } = require("../utils/validation");
-const { isLocalImageUrl } = require("../utils/imageUtils");
 const emailService = require("../services/emailService");
 const { sequelize } = require("../db/models");
-
-// Helper function to format image URLs
-const formatImageUrl = (image) => {
-  if (!image) return null;
-
-  if (isLocalImageUrl(image)) {
-    return `${process.env.SERVER_URL}${image}`;
-  }
-  return image;
-};
-
-// Helper function to format agency data including owner avatar
-const formatAgencyData = (agency) => {
-  const agencyData = agency.toJSON();
-
-  // Format agency images
-  agencyData.logo = formatImageUrl(agencyData.logo);
-  if (agencyData.agencyImages) {
-    agencyData.agencyImages = agencyData.agencyImages.map((img) =>
-      formatImageUrl(img)
-    );
-  }
-
-  // Format owner avatar if present
-  if (agencyData.owner && agencyData.owner.avatar) {
-    agencyData.owner.avatar = formatImageUrl(agencyData.owner.avatar);
-  }
-
-  return agencyData;
-};
+const {
+  getStationCompletionStatus,
+  getVerificationCompletionStatus,
+  formatAgencyData,
+} = require("../utils/agencyProfileUtils");
 
 class AgencyController {
   // Get all agencies with pagination and filters
@@ -118,14 +95,18 @@ class AgencyController {
 
   // Create a new agency
   async create(req, res, next) {
+    let fileData = {};
     try {
+      req.body.contactInfo = JSON.parse(req.body.contactInfo);
+      req.body.towns = JSON.parse(req.body.towns);
+      req.body.coordinates = JSON.parse(req.body.coordinates);
+
       const { error, value } = validateRequest(req.body, createAgencySchema);
       if (error) {
         throw new ValidationError(error.details[0].message);
       }
 
       // Handle file uploads
-      const fileData = {};
       if (req.files) {
         if (req.files.logo && req.files.logo[0]) {
           fileData.logo = req.files.logo[0].path;
@@ -133,6 +114,20 @@ class AgencyController {
         if (req.files.agencyImages) {
           fileData.images = req.files.agencyImages.map((file) => file.path);
         }
+      }
+
+      // check if agency already exists
+      const existingAgency = await Agency.findOne({
+        where: { name: value.name },
+      });
+      if (existingAgency) {
+        throw new ValidationError("Agency already exists");
+      }
+
+      // check if user is already an agency admin
+      const user = await User.findByPk(req.user.id);
+      if (user.role.includes("agency_admin")) {
+        throw new ValidationError("User is already an agency admin");
       }
 
       // Start transaction
@@ -147,14 +142,7 @@ class AgencyController {
           { transaction: t }
         );
 
-        // Update user role to agency_admin
-        await User.update(
-          { role: "agency_admin" },
-          {
-            where: { id: req.user.id },
-            transaction: t,
-          }
-        );
+        await user.update({ role: "agency_admin" }, { transaction: t });
 
         // Return created agency with owner details
         const agencyWithOwner = await Agency.findByPk(agency.id, {
@@ -167,7 +155,6 @@ class AgencyController {
           ],
           transaction: t,
         });
-
         return agencyWithOwner;
       });
 
@@ -190,7 +177,52 @@ class AgencyController {
 
       res.status(201).json({
         success: true,
-        data: formattedAgency,
+        data: { agency: formattedAgency, user: user.toJSON() },
+      });
+    } catch (error) {
+      // Delete any uploaded images
+      if (req.files || req.file) {
+        await cleanUpFileImages(req);
+      }
+      next(error);
+    }
+  }
+
+  // GET /api/agencies/:agencyId/profile - Get agency profile completion status
+  async getByUserId(req, res, next) {
+    try {
+      const agency = req.agency;
+      if (!agency) {
+        throw new NotFoundError("Agency not found");
+      }
+      const isPublishable = await agency.canBePublished();
+
+      // New completion step statuses
+      const stationStatus = getStationCompletionStatus(agency.stations);
+      const verificationStatus = getVerificationCompletionStatus(
+        agency.verificationDocuments
+      );
+
+      const profileData = {
+        agency: formatAgencyData(agency),
+        isPublishable,
+        completionSteps: {
+          verification: {
+            status: verificationStatus,
+            completed: verificationStatus === "completed",
+            documentsCount: agency.verificationDocuments.length,
+          },
+          stations: {
+            status: stationStatus,
+            completed: stationStatus === "completed",
+            stationsCount: agency.stations.length,
+          },
+        },
+      };
+
+      res.json({
+        success: true,
+        data: profileData,
       });
     } catch (error) {
       next(error);
@@ -224,7 +256,6 @@ class AgencyController {
           message: "Agency not found",
         });
       }
-
       // Format agency data including owner avatar
       const formattedAgency = formatAgencyData(agency);
 
@@ -323,7 +354,7 @@ class AgencyController {
       }
 
       // Clean up images before deleting
-      await cleanupImages(agency);
+      await cleanUpInstanceImages(agency);
 
       // Delete the agency
       await agency.destroy();

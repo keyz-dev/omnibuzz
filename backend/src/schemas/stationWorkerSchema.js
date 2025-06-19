@@ -1,5 +1,6 @@
 const Joi = require("joi");
 const { singleImageSchema } = require("../utils/imageUtils");
+const { noEmojiString } = require("../utils/validationUtils");
 
 // Assign worker schema
 const passwordSchema = Joi.string().min(6).max(100);

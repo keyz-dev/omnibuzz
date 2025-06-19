@@ -43,7 +43,7 @@ const storage = inProduction
             ? "avatars"
             : file.fieldname === "logo" || file.fieldname === "agencyImages"
               ? "agencies"
-              : file.fieldname === "stationImages"
+              : file.fieldname === "images"
                 ? "stations"
                 : file.fieldname === "document"
                   ? "documents"
@@ -83,7 +83,7 @@ const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
+    fileSize: 10 * 1024 * 1024, // 10MB limit
   },
 });
 
@@ -142,7 +142,7 @@ const getCloudinaryFolder = (fieldname) => {
     case "agencyLogo":
     case "agencyImages":
       return "agencies";
-    case "stationImages":
+    case "images":
       return "stations";
     case "document":
       return "documents";

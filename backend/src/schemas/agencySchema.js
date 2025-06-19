@@ -1,6 +1,7 @@
 const Joi = require("joi");
 const TownUtils = require("../utils/townUtils");
 const { singleImageSchema, imageArraySchema } = require("../utils/imageUtils");
+const { noEmojiString } = require("../utils/validationUtils");
 
 // Common schemas
 const contactInfoSchema = Joi.array().items(
@@ -29,7 +30,6 @@ const createAgencySchema = Joi.object({
       }
       return value;
     }),
-  ownerId: Joi.string().guid().required(),
   coordinates: Joi.object({
     lat: Joi.number().required(),
     lng: Joi.number().required(),

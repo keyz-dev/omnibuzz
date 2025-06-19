@@ -2,7 +2,10 @@
 const { Model } = require("sequelize");
 const TownUtils = require("../../utils/townUtils");
 const { isLocalImageUrl, isCloudinaryUrl } = require("../../utils/imageUtils");
-const { cleanupImages, cleanupOldImages } = require("../../utils/imageCleanup");
+const {
+  cleanUpInstanceImages,
+  cleanupOldImages,
+} = require("../../utils/imageCleanup");
 
 module.exports = (sequelize, DataTypes) => {
   class Station extends Model {
@@ -68,30 +71,6 @@ module.exports = (sequelize, DataTypes) => {
 
       return this.isActive;
     }
-
-    // Method to validate payment information
-    validatePaymentInfo() {
-      if (!this.paymentMethods || !Array.isArray(this.paymentMethods)) {
-        throw new Error("Payment methods must be an array");
-      }
-
-      // Validate each payment method
-      this.paymentMethods.forEach((method) => {
-        if (
-          !method.method ||
-          !method.value ||
-          !method.value.name ||
-          !method.value.number
-        ) {
-          throw new Error(
-            "Each payment method must have method and value (with name and number)"
-          );
-        }
-        if (!["OM", "MoMo"].includes(method.method)) {
-          throw new Error("Payment method must be either 'OM' or 'MoMo'");
-        }
-      });
-    }
   }
   Station.init(
     {
@@ -133,12 +112,12 @@ module.exports = (sequelize, DataTypes) => {
               throw new Error("Destinations must be an array");
             }
 
-            const station = this;
+            const baseTown = this.baseTown;
             const invalidTowns = value.filter((town) => {
               const townInfo = TownUtils.getTownByName(town);
               return (
                 !townInfo ||
-                townInfo.name.toLowerCase() === station.baseTown.toLowerCase()
+                townInfo.name.toLowerCase() === baseTown.toLowerCase()
               );
             });
 
@@ -186,6 +165,10 @@ module.exports = (sequelize, DataTypes) => {
           key: "id",
         },
       },
+      contactInfo: {
+        type: DataTypes.ARRAY(DataTypes.JSONB),
+        defaultValue: [],
+      },
       isActive: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
@@ -229,19 +212,24 @@ module.exports = (sequelize, DataTypes) => {
               throw new Error("Payment methods must be an array");
             }
 
-            value.forEach((method) => {
+            value.forEach((item, idx) => {
               if (
-                !method.method ||
-                !method.value ||
-                !method.value.name ||
-                !method.value.number
+                !item ||
+                typeof item !== "object" ||
+                !item.method ||
+                !item.value ||
+                !item.value.accountNumber ||
+                !item.value.accountName
               ) {
                 throw new Error(
-                  "Each payment method must have method and value (with name and number)"
+                  `Payment method #${idx + 1} is invalid – requires { method:'OM|MoMo', value:{ accountNumber, accountName } }`
                 );
               }
-              if (!["OM", "MoMo"].includes(method.method)) {
-                throw new Error("Payment method must be either 'OM' or 'MoMo'");
+
+              if (!["OM", "MoMo"].includes(item.method)) {
+                throw new Error(
+                  `Payment method #${idx + 1}: method must be 'OM' or 'MoMo'`
+                );
               }
             });
           },
@@ -264,13 +252,10 @@ module.exports = (sequelize, DataTypes) => {
               await cleanupOldImages(station, { images: removedImages });
             }
           }
-
-          // Validate payment information
-          station.validatePaymentInfo();
         },
         beforeDestroy: async (station) => {
           // Clean up all images when station is deleted
-          await cleanupImages(station);
+          await cleanUpInstanceImages(station);
         },
       },
     }

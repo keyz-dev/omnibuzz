@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       });
       StationWorker.belongsTo(models.User, {
         foreignKey: "userId",
-        as: "worker",
+        as: "user",
       });
       StationWorker.belongsTo(models.User, {
         foreignKey: "invitedBy",

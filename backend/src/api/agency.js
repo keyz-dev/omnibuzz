@@ -13,6 +13,9 @@ const {
 // Get all agencies (public)
 router.get("/", agencyController.getAll);
 
+// Get agency by user ID
+router.get("/me", authenticate, isAgencyOwner, agencyController.getByUserId);
+
 // Create agency
 router.post(
   "/",

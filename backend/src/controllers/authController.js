@@ -57,6 +57,7 @@ const register = async (req, res) => {
   const verificationCode = Math.floor(
     100000 + Math.random() * 900000
   ).toString();
+
   await user.update({
     emailVerificationCode: verificationCode,
     emailVerificationExpires: new Date(Date.now() + 30 * 60 * 1000), // 30 mins
@@ -220,6 +221,7 @@ const verifyToken = async (req, res) => {
 
   res.json({
     status: "success",
+    valid: true,
     data: {
       user: {
         id: user.id,

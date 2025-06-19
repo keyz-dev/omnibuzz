@@ -51,8 +51,10 @@ const extractImagePaths = (instance) => {
 
   // Handle single image fields
   if (instance.avatar) paths.push(instance.avatar);
-  if (instance.logoURL) paths.push(instance.logoURL);
-  if (instance.url) paths.push(instance.url);
+  if (instance.logo) paths.push(instance.logo);
+  if (instance.agencyImages) paths.push(instance.agencyImages);
+  if (instance.stationImages) paths.push(instance.stationImages);
+  if (instance.document) paths.push(instance.document);
 
   // Handle array of images
   if (Array.isArray(instance.images)) {
@@ -67,9 +69,30 @@ const extractImagePaths = (instance) => {
  * @param {Object} instance - Model instance being deleted
  * @returns {Promise<void>}
  */
-const cleanupImages = async (instance) => {
+const cleanUpInstanceImages = async (instance) => {
   const imagePaths = extractImagePaths(instance);
   await deleteImages(imagePaths);
+};
+
+const cleanUpFileImages = async (req) => {
+  if (!req.file && !req.files) return;
+  let imagePaths = [];
+
+  if (req.file) {
+    imagePaths.push(req.file.path);
+    await deleteImages(imagePaths);
+  }
+
+  if (req.files && Object.keys(req.files).length > 0) {
+    Object.keys(req.files).forEach((key) => {
+      if (Array.isArray(req.files[key])) {
+        imagePaths.push(...req.files[key].map((file) => file.path));
+      } else {
+        imagePaths.push(req.files[key].path);
+      }
+    });
+    await deleteImages(imagePaths);
+  }
 };
 
 /**
@@ -90,6 +113,7 @@ const cleanupOldImages = async (instance, previousValues) => {
 module.exports = {
   deleteImage,
   deleteImages,
-  cleanupImages,
+  cleanUpFileImages,
+  cleanUpInstanceImages,
   cleanupOldImages,
 };

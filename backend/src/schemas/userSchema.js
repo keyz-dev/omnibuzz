@@ -1,5 +1,6 @@
 const Joi = require("joi");
 const { singleImageSchema } = require("../utils/imageUtils");
+const { noEmojiString } = require("../utils/validationUtils");
 
 // Common schemas
 const emailSchema = Joi.string().email().required();

@@ -1,7 +1,10 @@
 "use strict";
 const { Model } = require("sequelize");
 const TownUtils = require("../../utils/townUtils");
-const { cleanupImages, cleanupOldImages } = require("../../utils/imageCleanup");
+const {
+  cleanUpInstanceImages,
+  cleanupOldImages,
+} = require("../../utils/imageCleanup");
 
 module.exports = (sequelize, DataTypes) => {
   class Agency extends Model {
@@ -211,7 +214,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         beforeDestroy: async (agency) => {
           // Clean up all images when agency is deleted
-          await cleanupImages(agency);
+          await cleanUpInstanceImages(agency);
         },
       },
     }

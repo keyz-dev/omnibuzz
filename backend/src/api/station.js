@@ -16,15 +16,12 @@ router.get("/", stationController.getAll);
 // Get station by ID
 router.get("/:id", stationController.getById);
 
-// Get station destinations
-router.get("/:id/destinations", stationController.getDestinations);
-
 // Create new station (requires authentication)
 router.post(
   "/",
   authenticate,
-  isAgencyAdmin,
-  upload.fields([{ name: "stationImages", maxCount: 5 }]),
+  isAgencyOwner,
+  upload.fields([{ name: "images", maxCount: 10 }]),
   handleCloudinaryUpload,
   handleUploadError,
   formatFilePaths,
@@ -35,7 +32,7 @@ router.post(
 router.put(
   "/:id",
   authenticate,
-  upload.fields([{ name: "stationImages", maxCount: 5 }]),
+  upload.fields([{ name: "images", maxCount: 5 }]),
   handleCloudinaryUpload,
   handleUploadError,
   formatFilePaths,
@@ -44,20 +41,6 @@ router.put(
 
 // Delete station (requires authentication)
 router.delete("/:id", authenticate, stationController.remove);
-
-// Add destination to station (requires authentication)
-router.post(
-  "/:id/destinations",
-  authenticate,
-  stationController.addDestination
-);
-
-// Remove destination from station (requires authentication)
-router.delete(
-  "/:id/destinations",
-  authenticate,
-  stationController.removeDestination
-);
 
 // Worker management routes
 router.post(

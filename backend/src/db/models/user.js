@@ -1,7 +1,10 @@
 "use strict";
 const { Model } = require("sequelize");
 const bcrypt = require("bcryptjs");
-const { cleanupImages, cleanupOldImages } = require("../../utils/imageCleanup");
+const {
+  cleanUpInstanceImages,
+  cleanupOldImages,
+} = require("../../utils/imageCleanup");
 
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
@@ -158,7 +161,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         beforeDestroy: async (user) => {
           // Clean up avatar when user is deleted
-          await cleanupImages(user);
+          await cleanUpInstanceImages(user);
         },
       },
     }

@@ -193,12 +193,14 @@ const updateProfile = async (req, res) => {
 };
 
 // Accept worker invitation
-const acceptInvitation = async (req, res) => {
+const acceptInvitation = async (req, res, next) => {
   const { error, value } = validateRequest(req.body, acceptInvitationSchema);
 
   if (error) {
     throw new ValidationError(error.details[0].message);
   }
+
+  console.log("\n\nvalue\n", value);
 
   const { token, password } = value;
 
@@ -232,16 +234,11 @@ const acceptInvitation = async (req, res) => {
 
   // Update user profile
   const user = worker.user;
-  user.password = await bcrypt.hash(password, 10);
-
   // Handle avatar upload
   let avatar = null;
   if (req.file) {
     avatar = req.file.path;
   }
-
-  user.isActive = true;
-  await user.save();
 
   // Update worker status
   worker.isActive = true;
@@ -249,24 +246,36 @@ const acceptInvitation = async (req, res) => {
   worker.invitationExpires = null;
   await worker.save();
 
-  // Generate new auth token
-  const authToken = generateToken({
-    id: user.id,
-    email: user.email,
-    role: worker.role,
+  // Generate verification code
+  const verificationCode = Math.floor(
+    100000 + Math.random() * 900000
+  ).toString();
+
+  await user.update({
+    avatar,
+    password: await bcrypt.hash(password, 10),
+    emailVerificationCode: verificationCode,
+    emailVerificationExpires: new Date(Date.now() + 30 * 60 * 1000), // 30 mins
   });
 
-  res.json({
-    success: true,
-    message: "Invitation accepted successfully",
+  // Send verification email
+  await emailService.sendEmail({
+    to: user.email,
+    subject: "Verify your email",
+    template: "emailVerification",
     data: {
-      token: authToken,
+      name: user.fullName,
+      verificationCode,
+    },
+  });
+
+  res.status(201).json({
+    status: "success",
+    message: "Profile completed. Please verify your email.",
+    data: {
       user: {
         id: user.id,
         email: user.email,
-        fullName: user.fullName,
-        role: worker.role,
-        avatar: formatAvatarUrl(user.avatar),
       },
     },
   });
