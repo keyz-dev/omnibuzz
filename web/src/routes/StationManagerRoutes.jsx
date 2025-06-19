@@ -18,18 +18,16 @@ export const stationManagerRoutes = [
   <Route
     key={"station-manager"}
     path="/agency/manager"
-    element={
-      <ProtectedRoute allowedRoles={["station_manager"]}>
-        <Layout />
-      </ProtectedRoute>
-    }
+    element={<ProtectedRoute allowedRoles={["station_manager"]} />}
   >
-    <Route index element={<ManagerDashboard />} />
-    <Route path="bookings" element={<ManagerBookings />} />
-    <Route path="buses" element={<ManagerBuses />} />
-    <Route path="routes" element={<ManagerRoutes />} />
-    <Route path="profile" element={<ManagerProfile />} />
-    <Route path="reports" element={<ManagerReports />} />
-    <Route path="schedules" element={<ManagerSchedules />} />
+    <Route element={<Layout />}>
+      <Route index element={<ManagerDashboard />} />
+      <Route path="bookings" element={<ManagerBookings />} />
+      <Route path="buses" element={<ManagerBuses />} />
+      <Route path="routes" element={<ManagerRoutes />} />
+      <Route path="profile" element={<ManagerProfile />} />
+      <Route path="reports" element={<ManagerReports />} />
+      <Route path="schedules" element={<ManagerSchedules />} />
+    </Route>
   </Route>,
 ];

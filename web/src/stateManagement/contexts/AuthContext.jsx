@@ -249,6 +249,41 @@ export const AuthProvider = ({ children }) => {
     navigate("/");
   };
 
+  const acceptInvitation = async (userData) => {
+    setAuthError(null);
+    setLoading(true);
+
+    try {
+      const formData = new FormData();
+      // Append all user data
+      Object.keys(userData).forEach((key) => {
+        if (key == "avatar" && userData[key]) {
+          formData.append("avatar", userData[key]);
+        } else {
+          formData.append(key, userData[key]);
+        }
+      });
+
+      const response = await api.post("/user/accept-invitation", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      const { user } = response.data.data;
+      return { success: true, user };
+    } catch (error) {
+      setAuthError(
+        error.response?.data?.error ||
+          error.response?.data?.error?.[0]?.message ||
+          error.response?.data?.message ||
+          error.message ||
+          "Profile completion failed"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
   const value = {
     user,
     loading,
@@ -264,6 +299,7 @@ export const AuthProvider = ({ children }) => {
     resendVerification,
     handleGoogleLogin,
     redirectBasedOnRole,
+    acceptInvitation,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

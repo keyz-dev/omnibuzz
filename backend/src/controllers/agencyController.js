@@ -17,6 +17,7 @@ const {
   getVerificationCompletionStatus,
   formatAgencyData,
 } = require("../utils/agencyProfileUtils");
+const { generateToken } = require("../utils/jwt");
 
 class AgencyController {
   // Get all agencies with pagination and filters
@@ -175,9 +176,12 @@ class AgencyController {
         },
       });
 
+      // generate a new token for the user
+      const token = await generateToken({ userId: user.id }, "7d");
+
       res.status(201).json({
         success: true,
-        data: { agency: formattedAgency, user: user.toJSON() },
+        data: { agency: formattedAgency, user: user.toJSON(), token },
       });
     } catch (error) {
       // Delete any uploaded images

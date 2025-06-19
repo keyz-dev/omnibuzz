@@ -1,5 +1,5 @@
 import { Route } from "react-router-dom";
-import Layout from "../components/layout/Layout";
+import { Layout } from "../components/layout";
 import ProtectedRoute from "../components/routing/ProtectedRoute";
 import {
   Dashboard as PassengerDashboard,
@@ -12,15 +12,13 @@ export const passengerRoutes = [
   <Route
     key="passenger"
     path="/passenger"
-    element={
-      <ProtectedRoute allowedRoles={["passenger"]}>
-        <Layout />
-      </ProtectedRoute>
-    }
+    element={<ProtectedRoute allowedRoles={["passenger"]} />}
   >
-    <Route index element={<PassengerDashboard />} />
-    <Route path="profile" element={<PassengerProfile />} />
-    <Route path="bookings" element={<PassengerBookings />} />
-    <Route path="search" element={<PassengerSearch />} />
+    <Route element={<Layout />}>
+      <Route index element={<PassengerDashboard />} />
+      <Route path="profile" element={<PassengerProfile />} />
+      <Route path="bookings" element={<PassengerBookings />} />
+      <Route path="search" element={<PassengerSearch />} />
+    </Route>
   </Route>,
 ];

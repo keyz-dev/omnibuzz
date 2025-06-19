@@ -332,14 +332,16 @@ class StationController {
       }
       // Check if user already exists
       let user = await User.findOne({ where: { email } });
+      let existingWorker = null;
       if (user) {
         // Check if user is already assigned to this station
-        const existingWorker = await StationWorker.findOne({
+        existingWorker = await StationWorker.findOne({
           where: { stationId, userId: user.id },
         });
 
         if (existingWorker) {
-          throw new ValidationError("User is already assigned to this station");
+          // update user role
+          await user.update({ role });
         }
       } else {
         user = await User.create({
@@ -355,15 +357,17 @@ class StationController {
       const invitationExpiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 1 day
 
       // Create station worker record
-      const worker = await StationWorker.create({
-        stationId,
-        userId: user.id,
-        role,
-        isActive: false,
-        invitationToken,
-        invitationExpires: invitationExpiresAt,
-        invitedBy: req.user.id,
-      });
+      const worker = existingWorker || new StationWorker();
+      if (!existingWorker) {
+        worker.stationId = stationId;
+        worker.userId = user.id;
+        worker.role = role;
+        worker.isActive = false;
+        worker.invitationToken = invitationToken;
+        worker.invitationExpires = invitationExpiresAt;
+        worker.invitedBy = req.user.id;
+      }
+      await worker.save();
 
       // Send invitation email
       await emailService.sendEmail({

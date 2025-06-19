@@ -1,6 +1,6 @@
 // routes/AdminRoutes.jsx
 import { Route } from "react-router-dom";
-import Layout from "../components/layout/Layout";
+import { Layout } from "../components/layout";
 import ProtectedRoute from "../components/routing/ProtectedRoute";
 import {
   Dashboard as AdminDashboard,
@@ -13,15 +13,13 @@ export const adminRoutes = [
   <Route
     key="admin"
     path="/admin"
-    element={
-      <ProtectedRoute allowedRoles={["system_admin"]}>
-        <Layout />
-      </ProtectedRoute>
-    }
+    element={<ProtectedRoute allowedRoles={["system_admin"]} />}
   >
-    <Route index element={<AdminDashboard />} />
-    <Route path="agencies" element={<AdminAgencies />} />
-    <Route path="users" element={<AdminUsers />} />
-    <Route path="settings" element={<AdminSettings />} />
-  </Route>
+    <Route element={<Layout />}>
+      <Route index element={<AdminDashboard />} />
+      <Route path="agencies" element={<AdminAgencies />} />
+      <Route path="users" element={<AdminUsers />} />
+      <Route path="settings" element={<AdminSettings />} />
+    </Route>
+  </Route>,
 ];

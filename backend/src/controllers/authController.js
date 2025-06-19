@@ -103,6 +103,9 @@ const login = async (req, res) => {
     throw new UnauthorizedError("Incorrect email or password");
   }
 
+  // console.log("\n\nuser\n", user);
+  // console.log("\n\nuser.role\n", user.role);
+
   if (user.role === "station_manager" || user.role === "ticket_agent") {
     await user.reload({
       include: [

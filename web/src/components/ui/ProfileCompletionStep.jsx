@@ -1,5 +1,5 @@
 import React from "react";
-import { CheckCircle, AlertCircle, ChevronRight } from "lucide-react";
+import { CheckLine, AlertCircle, Clock4, ChevronRight } from "lucide-react";
 
 const STATUS_COLORS = {
   required: "text-error",
@@ -17,7 +17,7 @@ const ProfileCompletionStep = ({
 }) => {
   const colorClass = STATUS_COLORS[status] || "text-gray-400";
   const showWarning = status === "required" || status === "rejected";
-  const showCheck = status === "completed";
+  const showCheck = status === "completed" || "approved";
 
   return (
     <div
@@ -44,13 +44,17 @@ const ProfileCompletionStep = ({
         )}
         {status === "pending_processing" && (
           <div className="flex items-center gap-1 text-yellow-500 text-xs mt-2">
-            <AlertCircle size={16} /> Pending
+            <Clock4 size={16} /> Pending
+          </div>
+        )}
+        {showCheck && !showWarning && (
+          <div className="flex items-center gap-1 text-success text-xs mt-2">
+            <CheckLine size={16} /> Completed
           </div>
         )}
       </div>
       <div className="flex items-center gap-2">
         <ChevronRight className="text-gray-400" size={25} />
-        {showCheck && <CheckCircle className="text-success" size={25} />}
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import {
   DefaultAdminHeaderLayout,
   ProfileCompletionLayout,
 } from "../components/layout";
+import { AgencyAdminProvider } from "../stateManagement/contexts";
 
 // Agency Admin Pages
 import {
@@ -21,28 +22,40 @@ import {
 
 export const agencyAdminRoutes = [
   <Route
-    key={"agency-admin"}
+    key="agency-admin"
     path="/agency/admin"
-    element={
-      <ProtectedRoute allowedRoles={["agency_admin"]}>
-        <Outlet />
-      </ProtectedRoute>
-    }
+    element={<ProtectedRoute allowedRoles={["agency_admin"]} />}
   >
-    <Route element={<DefaultAdminHeaderLayout />}>
-      <Route index element={<AgencyDashboard />} />
-      <Route path="profile" element={<AgencyProfile />} />
-      <Route path="buses" element={<AgencyBuses />} />
-      <Route path="routes" element={<AgencyRoutesPage />} />
-      <Route path="bookings" element={<AgencyBookings />} />
-      <Route path="reports" element={<AgencyReports />} />
-      <Route path="schedules" element={<AgencySchedules />} />
-    </Route>
-    <Route element={<ProfileCompletionLayout />}>
-      <Route path="profile-completion" element={<AgencyProfileCompletion />} />
-      <Route path="upload-documents" element={<AgencyDocumentUpload />} />
-    </Route>
+    {/* Context provider wraps all subroutes */}
+    <Route
+      element={
+        <AgencyAdminProvider>
+          <Outlet />
+        </AgencyAdminProvider>
+      }
+    >
+      {/* Pages using the main admin layout */}
+      <Route element={<DefaultAdminHeaderLayout />}>
+        <Route index element={<AgencyDashboard />} />
+        <Route path="profile" element={<AgencyProfile />} />
+        <Route path="buses" element={<AgencyBuses />} />
+        <Route path="routes" element={<AgencyRoutesPage />} />
+        <Route path="bookings" element={<AgencyBookings />} />
+        <Route path="reports" element={<AgencyReports />} />
+        <Route path="schedules" element={<AgencySchedules />} />
+      </Route>
 
-    <Route path="station-setup" element={<AgencyStationSetup />} />
+      {/* Pages using the profile completion layout */}
+      <Route element={<ProfileCompletionLayout />}>
+        <Route
+          path="profile-completion"
+          element={<AgencyProfileCompletion />}
+        />
+        <Route path="upload-documents" element={<AgencyDocumentUpload />} />
+      </Route>
+
+      {/* Standalone setup page (no special layout) */}
+      <Route path="station-setup" element={<AgencyStationSetup />} />
+    </Route>
   </Route>,
 ];

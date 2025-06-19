@@ -81,7 +81,6 @@ const VerifyAccount = () => {
           if (location.state?.from && location.state.from !== "/") {
             navigate(location.state.from);
           } else {
-            console.log(res.user);
             redirectBasedOnRole(res.user);
           }
         }, REDIRECT_DELAY);

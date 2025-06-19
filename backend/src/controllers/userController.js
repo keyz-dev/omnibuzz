@@ -31,15 +31,6 @@ const formatAvatarUrl = (avatar) => {
 const verifyEmail = async (req, res) => {
   const { email, code, option } = req.body;
 
-  let role = "passenger";
-  if (option && option === "update-role") {
-    // Check if user is already an agency admin
-    if (req.user.role === "agency_admin") {
-      throw new BadRequestError("You are already an agency admin");
-    }
-    role = "agency_admin";
-  }
-
   // Find user by email and verification code
   const user = await User.findOne({
     where: {
@@ -53,14 +44,24 @@ const verifyEmail = async (req, res) => {
     throw new BadRequestError("Invalid or expired verification code");
   }
 
-  // Update user verification status
-  await user.update({
+  // Prepare update object
+  const updateObj = {
     isActive: true,
     emailVerified: true,
     emailVerificationCode: null,
     emailVerificationExpires: null,
-    role,
-  });
+  };
+
+  if (option && option === "update-role") {
+    // Check if user is already an agency admin
+    if (user.role === "agency_admin") {
+      throw new BadRequestError("You are already an agency admin");
+    }
+    updateObj.role = "agency_admin";
+  }
+
+  // Update user verification status
+  await user.update(updateObj);
 
   // Generate token after successful verification
   const token = generateToken({ userId: user.id }, "7d");
