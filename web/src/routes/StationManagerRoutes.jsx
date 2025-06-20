@@ -2,6 +2,7 @@
 import { Route } from "react-router-dom";
 import Layout from "../components/layout/Layout";
 import ProtectedRoute from "../components/routing/ProtectedRoute";
+import { DashboardContextWrapper } from "../stateManagement/contexts";
 
 // Station Manager Pages
 import {
@@ -20,14 +21,25 @@ export const stationManagerRoutes = [
     path="/agency/manager"
     element={<ProtectedRoute allowedRoles={["station_manager"]} />}
   >
-    <Route element={<Layout />}>
-      <Route index element={<ManagerDashboard />} />
-      <Route path="bookings" element={<ManagerBookings />} />
-      <Route path="buses" element={<ManagerBuses />} />
-      <Route path="routes" element={<ManagerRoutes />} />
-      <Route path="profile" element={<ManagerProfile />} />
-      <Route path="reports" element={<ManagerReports />} />
-      <Route path="schedules" element={<ManagerSchedules />} />
+    {/* Context provider wraps all subroutes */}
+    <Route
+      path="*"
+      element={
+        <DashboardContextWrapper>
+          <Outlet />
+        </DashboardContextWrapper>
+      }
+    >
+
+      <Route element={<Layout />}>
+        <Route index element={<ManagerDashboard />} />
+        <Route path="bookings" element={<ManagerBookings />} />
+        <Route path="buses" element={<ManagerBuses />} />
+        <Route path="routes" element={<ManagerRoutes />} />
+        <Route path="profile" element={<ManagerProfile />} />
+        <Route path="reports" element={<ManagerReports />} />
+        <Route path="schedules" element={<ManagerSchedules />} />
+      </Route>
     </Route>
   </Route>,
 ];

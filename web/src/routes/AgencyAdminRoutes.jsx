@@ -4,7 +4,7 @@ import {
   DefaultAdminHeaderLayout,
   ProfileCompletionLayout,
 } from "../components/layout";
-import { AgencyAdminProvider } from "../stateManagement/contexts";
+import { DashboardContextWrapper } from "../stateManagement/contexts";
 
 // Agency Admin Pages
 import {
@@ -28,10 +28,11 @@ export const agencyAdminRoutes = [
   >
     {/* Context provider wraps all subroutes */}
     <Route
+      path="*"
       element={
-        <AgencyAdminProvider>
+        <DashboardContextWrapper>
           <Outlet />
-        </AgencyAdminProvider>
+        </DashboardContextWrapper>
       }
     >
       {/* Pages using the main admin layout */}

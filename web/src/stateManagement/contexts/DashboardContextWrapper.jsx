@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from './AuthContext';
 import { AdminProvider, BaseDashboardProvider, StationManagerProvider, AADProvider } from './dashboard';
-import { USER_ROLES } from '../config/userRoles';
+import { USER_ROLES } from '../../config/userRoles';
 
 const DashboardContextWrapper = ({ children }) => {
   const { user } = useAuth();

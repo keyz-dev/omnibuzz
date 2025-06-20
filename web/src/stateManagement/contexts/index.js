@@ -5,3 +5,4 @@ export {
 } from "./AgencyCreationContext";
 export { AgencyAdminProvider, useAgencyAdmin } from "./AgencyAdminContext";
 export { StationProvider, useStation } from "./StationContext";
+export { default as DashboardContextWrapper } from "./DashboardContextWrapper";
