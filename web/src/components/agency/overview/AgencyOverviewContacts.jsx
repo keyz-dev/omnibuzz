@@ -19,7 +19,7 @@ const typeMap = {
   whatsapp: "whatsapp",
 };
 
-const AgencyOverviewContacts = ({ contactInfo, setAgencyCreationData }) => {
+const AgencyOverviewContacts = ({ contactInfo, setAgencyCreationData, isEditable = true }) => {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [editingIdx, setEditingIdx] = useState(null);
   const [editValue, setEditValue] = useState("");
@@ -124,7 +124,7 @@ const AgencyOverviewContacts = ({ contactInfo, setAgencyCreationData }) => {
               ) : (
                 <span className="text-purple-700">{contact.value}</span>
               )}
-              {editingIdx !== idx && contact.value && (
+              {isEditable && editingIdx !== idx && contact.value && (
                 <button
                   className="ml-1 text-gray-400 hover:text-blue-500"
                   onClick={() => handleEdit(idx, contact.value)}
@@ -134,34 +134,40 @@ const AgencyOverviewContacts = ({ contactInfo, setAgencyCreationData }) => {
                   <i className="fas fa-pen"></i>
                 </button>
               )}
-              <button
-                className="ml-2 text-gray-400 hover:text-red-500"
-                onClick={() => handleRemoveContact(idx)}
-                title="Remove contact"
-                type="button"
-              >
-                <i className="fas fa-times"></i>
-              </button>
+              {isEditable && (
+                <button
+                  className="ml-2 text-gray-400 hover:text-red-500"
+                  onClick={() => handleRemoveContact(idx)}
+                  title="Remove contact"
+                  type="button"
+                >
+                  <i className="fas fa-times"></i>
+                </button>
+              )}
             </div>
           ))
         ) : (
           <span className="text-gray-400">No contact information provided</span>
         )}
         {/* Add contact button */}
-        <button
-          className="mt-2 text-purple-600 hover:text-purple-800 bg-purple-100 rounded-full p-2 flex items-center w-fit"
-          onClick={() => setIsContactModalOpen(true)}
-          title="Add contact"
-          type="button"
-        >
-          <i className="fas fa-plus"></i>
-        </button>
+        {isEditable && (
+          <button
+            className="mt-2 text-purple-600 hover:text-purple-800 bg-purple-100 rounded-full p-2 flex items-center w-fit"
+            onClick={() => setIsContactModalOpen(true)}
+            title="Add contact"
+            type="button"
+          >
+            <i className="fas fa-plus"></i>
+          </button>
+        )}
       </div>
-      <ContactModal
-        isOpen={isContactModalOpen}
-        onClose={() => setIsContactModalOpen(false)}
-        onAdd={handleAddContact}
-      />
+      {isEditable && (
+        <ContactModal
+          isOpen={isContactModalOpen}
+          onClose={() => setIsContactModalOpen(false)}
+          onAdd={handleAddContact}
+        />
+      )}
     </div>
   );
 };

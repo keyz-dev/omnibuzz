@@ -126,10 +126,10 @@ export const stationAPI = {
     const wsUrl = `${API_BASE_URL.replace("http", "ws")}/station/ws`;
     const ws = new WebSocket(wsUrl);
 
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      callback(data);
-    };
+    // ws.onmessage = (event) => {
+    //   const data = JSON.parse(event.data);
+    //   callback(data);
+    // };
 
     return ws;
   },

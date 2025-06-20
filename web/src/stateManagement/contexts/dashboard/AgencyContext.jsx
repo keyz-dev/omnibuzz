@@ -12,7 +12,15 @@ export const useAgency = () => {
 };
 
 export const AgencyProvider = ({ children }) => {
-  const [agencyProfile, setAgencyProfile] = useState(null);
+  const [agencyProfile, setAgencyProfile] = useState(() => {
+    try {
+      const saved = localStorage.getItem("myAgency");
+      return saved ? JSON.parse(saved) : null;
+    } catch (error) {
+      console.error("Failed to parse agency profile from localStorage", error);
+      return null;
+    }
+  });
   const [bookings, setBookings] = useState([]);
   const [buses, setBuses] = useState([]);
   const [routes, setRoutes] = useState([]);

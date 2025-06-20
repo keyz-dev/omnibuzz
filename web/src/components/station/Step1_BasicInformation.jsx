@@ -128,6 +128,7 @@ const Step1_BasicInformation = () => {
           setTowns={setDestinationTowns}
           isTownModalOpen={isDesTownModalOpen}
           setIsTownModalOpen={setIsDesTownModalOpen}
+          multipleSelection={true}
         />
 
         <StepNavButtons
@@ -144,6 +145,7 @@ const Step1_BasicInformation = () => {
         onClose={() => setIsBaseTownModalOpen(false)}
         onAdd={setBaseTown}
         selectedTowns={[]}
+        multipleSelection={false}
       />
     </div>
   );
