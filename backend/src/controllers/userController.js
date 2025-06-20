@@ -200,9 +200,6 @@ const acceptInvitation = async (req, res, next) => {
   if (error) {
     throw new ValidationError(error.details[0].message);
   }
-
-  console.log("\n\nvalue\n", value);
-
   const { token, password } = value;
 
   // Verify the token and get the user ID
@@ -246,6 +243,11 @@ const acceptInvitation = async (req, res, next) => {
   worker.invitationToken = null;
   worker.invitationExpires = null;
   await worker.save();
+
+  // Update station status
+  const station = await Station.findByPk(worker.stationId);
+  station.isActive = true;
+  await station.save();
 
   // Generate verification code
   const verificationCode = Math.floor(

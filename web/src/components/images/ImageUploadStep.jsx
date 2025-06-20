@@ -65,7 +65,7 @@ const ImageUploadStep = ({
             Add Image
           </Button>
         </div>
-        <div className="bg-light_bg rounded-lg border-[1px] border-dashed border-line_clr [border-style:dashed] [border-spacing:1rem] [border-width:2px] max-h-[60vh] overflow-y-auto">
+        <div className="bg-light_bg rounded-lg border-[1px] border-dashed border-line_clr [border-style:dashed] [border-spacing:1rem] [border-width:2px] h-[60vh] overflow-y-auto">
           {hasImages ? (
             <div className="space-y-6">
               {/* Primary Image */}

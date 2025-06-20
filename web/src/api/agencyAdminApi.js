@@ -111,8 +111,8 @@ export const agencyAPI = {
   },
 
   // Stations management
-  getStations: async () => {
-    const response = await api.get("/stations");
+  getStations: async (agencyId) => {
+    const response = await api.get(`/station/by-agency/${agencyId}`);
     return response.data;
   },
 

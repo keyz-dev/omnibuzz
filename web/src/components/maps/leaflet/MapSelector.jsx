@@ -163,7 +163,9 @@ const MapSelector = ({
       </div>
 
       {/* Map */}
+      <div className="h-[300px] md:h-[450px] overflow-hidden">
       <LeafletMapView coordinates={coordinates} address={address} />
+      </div>
 
       {/* Navigation Buttons */}
       <StepNavButtons

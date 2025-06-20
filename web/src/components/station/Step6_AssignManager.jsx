@@ -5,9 +5,11 @@ import { isValidCMNumber } from "../../utils/validateForm";
 import { normalizeNumber } from "../../utils/normalizePhone";
 import { useStation } from "../../stateManagement/contexts";
 import { toast } from "react-toastify";
+import { useAgency } from "../../stateManagement/contexts/dashboard";
 
 const Step6_AssignManager = () => {
   const { isLoading, assignManager } = useStation();
+  const { fetchAgencyProfile } = useAgency();
   const navigate = useNavigate();
   const [manager, setManager] = useState({
     fullName: "",
@@ -42,6 +44,10 @@ const Step6_AssignManager = () => {
     const res = await assignManager(manager);
     if (res.success) {
       toast.success("The assignment request has been sent to the manager");
+
+      // Force select the agency profile
+      await fetchAgencyProfile();
+
       setTimeout(() => {
         navigate("/agency/admin/profile-completion");
       }, 2000);

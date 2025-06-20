@@ -17,11 +17,11 @@ const ProfileCompletionStep = ({
 }) => {
   const colorClass = STATUS_COLORS[status] || "text-gray-400";
   const showWarning = status === "required" || status === "rejected";
-  const showCheck = status === "completed" || "approved";
+  const showCheck = status === "completed" || status === "approved";
 
   return (
     <div
-      className="flex items-center gap-4 p-4 cursor-pointer hover:bg-gray-50 rounded-lg"
+      className={`flex items-center gap-4 p-4 ${!showCheck ? "cursor-pointer hover:bg-gray-50" : ""} rounded-lg`}
       onClick={onClick}
     >
       <div className="flex-1 flex flex-col gap-4">
@@ -47,7 +47,7 @@ const ProfileCompletionStep = ({
             <Clock4 size={16} /> Pending
           </div>
         )}
-        {showCheck && !showWarning && (
+        {showCheck && (
           <div className="flex items-center gap-1 text-success text-xs mt-2">
             <CheckLine size={16} /> Completed
           </div>

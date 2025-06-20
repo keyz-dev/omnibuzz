@@ -1,4 +1,5 @@
 const { Station, Agency, User, StationWorker } = require("../db/models");
+const sequelize = require("../config/config");
 const {
   createStationSchema,
   updateStationSchema,
@@ -10,7 +11,7 @@ const {
   cleanUpFileImages,
 } = require("../utils/imageCleanup");
 const { validateRequest } = require("../utils/validation");
-const { formatStationData } = require("../utils/agencyProfileUtils");
+const { formatStationData, formatImageUrl } = require("../utils/agencyProfileUtils");
 const { assignWorkerSchema } = require("../schemas/stationWorkerSchema");
 const { generateToken } = require("../utils/jwt");
 const emailService = require("../services/emailService");
@@ -114,6 +115,7 @@ class StationController {
       const station = await Station.create({
         ...value,
         ...fileData,
+        isActive: false,
         createdBy: req.user.id,
         agencyId: req.agency.id,
       });
@@ -348,6 +350,7 @@ class StationController {
           email,
           fullName,
           phone,
+          role,
           isActive: false,
         });
       }
@@ -449,6 +452,56 @@ class StationController {
             user: worker.user,
           })),
         },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Get station by agency ID
+  async getByAgencyId(req, res, next) {
+    try {
+      const { agencyId } = req.params;
+
+      const stations = await Station.findAll({
+        where: { agencyId },
+        include: [
+          {
+            model: StationWorker,
+            as: "workers",
+            required: false,
+            where: { role: "station_manager" },
+            include: [
+              {
+                model: User,
+                as: "user",
+                attributes: ["fullName", "email", "avatar"],
+              },
+            ],
+          },
+        ],
+      });
+
+      stations.forEach((station) => {
+        if (station.workers && station.workers.length > 0) {
+          const manager = station.workers[0].user.toJSON();
+          if (manager.avatar) {
+            manager.avatar = formatImageUrl(manager.avatar);
+          }
+          station.dataValues.manager = manager;
+        } else {
+          station.dataValues.manager = null;
+        }
+        // add mockup data for routes and total bookings
+        station.dataValues.activeRoutes = 12
+        station.dataValues.totalBookings = 102
+
+        delete station.dataValues.workers;
+      }); 
+
+      res.json({
+        success: true,
+        data: stations.map((station) => formatStationData(station)),
       });
     } catch (error) {
       next(error);

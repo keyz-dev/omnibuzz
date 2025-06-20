@@ -51,4 +51,11 @@ router.post(
 );
 router.get("/:id/workers", authenticate, stationController.getWorkers);
 
+// Get station by agency ID
+router.get(
+  "/by-agency/:agencyId",
+  authenticate,
+  stationController.getByAgencyId
+);
+
 module.exports = router;

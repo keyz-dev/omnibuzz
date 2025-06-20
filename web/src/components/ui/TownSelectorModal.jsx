@@ -86,7 +86,7 @@ const TownSelectorModal = ({ isOpen, onClose, onAdd, selectedTowns, multipleSele
                 <button
                   key={town}
                   onClick={() => handleTownToggle(town)}
-                  className={`w-full text-left px-4 py-2 rounded-lg transition-all duration-200 border flex items-center justify-between ${
+                  className={`w-full text-left px-4 py-2 rounded-sm transition-all duration-200 border flex items-center justify-between ${
                     isSelected
                       ? "bg-blue-50 border-blue-300 text-blue-700"
                       : "hover:bg-gray-50 hover:border-blue-300 border-transparent"
@@ -107,19 +107,19 @@ const TownSelectorModal = ({ isOpen, onClose, onAdd, selectedTowns, multipleSele
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-3 pt-3 border-t">
+        <div className="flex gap-3 pt-3 border-t border-line_clr">
           <button
             onClick={handleClose}
-            className="flex-1 px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            className="flex-1 px-4 py-2 text-secondary border border-gray-300 rounded-sm hover:bg-gray-50 transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleAddSelected}
             disabled={tempSelectedTowns.length === 0}
-            className={`flex-1 px-4 py-2 rounded-lg transition-colors ${
+            className={`flex-1 px-4 py-2 rounded-sm transition-colors ${
               tempSelectedTowns.length > 0
-                ? "bg-blue-600 text-white hover:bg-blue-700"
+                ? "bg-accent text-white hover:bg-accent/80"
                 : "bg-gray-200 text-gray-400 cursor-not-allowed"
             }`}
           >

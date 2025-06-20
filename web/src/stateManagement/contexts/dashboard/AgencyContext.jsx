@@ -41,7 +41,6 @@ export const AgencyProvider = ({ children }) => {
   };
 
   useEffect(()=>{
-    console.log('called')
     fetchAgencyProfile()
   }, [])
 
@@ -57,6 +56,24 @@ export const AgencyProvider = ({ children }) => {
       }
     } catch (err) {
       unsetAgencyProfile()
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchStations = async () => {
+    setLoading(true);
+    const agencyId = agencyProfile.agency.id
+    try {
+      const response = await agencyAPI.getStations(agencyId);
+      if (response.success) {
+        setStations(response.data);
+      } else {
+        setStations([]);
+        setError(response.message || 'Failed to fetch stations');
+      }
+    } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
@@ -160,6 +177,7 @@ export const AgencyProvider = ({ children }) => {
     
     // Actions
     fetchAgencyProfile,
+    fetchStations,
     fetchBookings,
     fetchBuses,
     addBus,

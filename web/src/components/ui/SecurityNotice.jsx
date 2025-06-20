@@ -11,7 +11,7 @@ const SecurityNotice = ({ icon, title, description, additionalClasses, action })
   };
 
   return (
-    <div className="bg-blue-50 border border-blue-200 rounded-xl overflow-hidden">
+    <div className="bg-blue-50 border border-blue-200 rounded-sm overflow-hidden">
       {/* Clickable Header */}
       <div
         className="p-4 cursor-pointer hover:bg-blue-100 transition-colors duration-200"
