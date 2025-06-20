@@ -35,44 +35,48 @@ createUploadDirs();
 const storage = inProduction
   ? multer.memoryStorage() // Use memory storage for production (Cloudinary)
   : multer.diskStorage({
-      // Use disk storage for development
-      destination: (req, file, cb) => {
-        // Determine subdirectory based on file fieldname
-        const subDir =
-          file.fieldname === "avatar"
-            ? "avatars"
-            : file.fieldname === "logo" || file.fieldname === "agencyImages"
-              ? "agencies"
-              : file.fieldname === "images"
-                ? "stations"
-                : file.fieldname === "document"
-                  ? "documents"
-                  : "others";
+    // Use disk storage for development
+    destination: (req, file, cb) => {
+      // Determine subdirectory based on file fieldname
+      const subDir =
+        file.fieldname === "avatar"
+          ? "avatars"
+          : file.fieldname === "logo" || file.fieldname === "agencyImages"
+            ? "agencies"
+            : file.fieldname === "images"
+              ? "stations"
+              : file.fieldname === "documents"
+                ? "documents"
+                : "others";
 
-        // Set the folderName on the file object
-        file.folderName = subDir;
+      // Set the folderName on the file object
+      file.folderName = subDir;
 
-        const uploadDir = path.join(__dirname, "../uploads", subDir);
+      const uploadDir = path.join(__dirname, "../uploads", subDir);
 
-        // Create uploads directory if it doesn't exist
-        if (!fs.existsSync(uploadDir)) {
-          fs.mkdirSync(uploadDir, { recursive: true });
-        }
+      // Create uploads directory if it doesn't exist
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
 
-        cb(null, uploadDir);
-      },
-      filename: (req, file, cb) => {
-        // Generate unique filename with UUID for better uniqueness
-        const uniqueId = uuidv4();
-        const ext = path.extname(file.originalname);
-        cb(null, `${uniqueId}${ext}`);
-      },
-    });
+      cb(null, uploadDir);
+    },
+    filename: (req, file, cb) => {
+      // Generate unique filename with UUID for better uniqueness
+      const uniqueId = uuidv4();
+      const ext = path.extname(file.originalname);
+      cb(null, `${uniqueId}${ext}`);
+    },
+  });
 
 // File filter
 const fileFilter = (req, file, cb) => {
-  // Accept images only
-  if (!file.originalname.match(/\.(jpg|jpeg|png|gif|webp|svg|ico|avif)$/)) {
+  if (file.fieldname == "documents") {
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif|webp|svg|ico|avif|pdf)$/)) {
+      return cb(new BadRequestError("Only valid documents are allowed!"), false);
+    }
+  }
+  else if (!file.originalname.match(/\.(jpg|jpeg|png|gif|webp|svg|ico|avif)$/)) {
     return cb(new BadRequestError("Only image files are allowed!"), false);
   }
   cb(null, true);
@@ -144,7 +148,7 @@ const getCloudinaryFolder = (fieldname) => {
       return "agencies";
     case "images":
       return "stations";
-    case "document":
+    case "documents":
       return "documents";
     default:
       return "misc";
@@ -170,7 +174,7 @@ const formatFilePaths = (req, res, next) => {
           return file;
         });
       } else {
-        req.files[key].path = req.files[key].path.replace(/\\/g, "/");
+        req.files[key].path = `/uploads/${req.files[key].folderName}/${path.basename(req.files[key].path)}`
       }
     });
   }

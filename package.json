@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "classnames": "^2.5.1"
+    "classnames": "^2.5.1",
+    "react-dropzone": "^14.3.8"
   }
 }

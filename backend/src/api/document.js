@@ -13,7 +13,7 @@ router.post(
   "/",
   authenticate,
   isAgencyAdmin,
-  upload.array("document", 10),
+  upload.array("documents", 10),
   handleCloudinaryUpload,
   formatFilePaths,
   documentController.uploadDocument

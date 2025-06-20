@@ -149,4 +149,19 @@ export const agencyAPI = {
     const response = await api.delete(`/schedules/${scheduleId}`);
     return response.data;
   },
+
+  uploadDocuments: async (documents, agencyId) => {
+    const formData = new FormData();
+    documents.forEach(doc => {
+      formData.append('documents', doc.file);
+      formData.append('types', doc.type);
+    });
+    formData.append("agencyId", agencyId)
+
+    return api.post('/document', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
 };

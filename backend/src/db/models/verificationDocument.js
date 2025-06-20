@@ -67,6 +67,13 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
+      fileName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: true,
+        },
+      },
       status: {
         type: DataTypes.ENUM(["pending", "approved", "rejected"]),
         defaultValue: "pending",

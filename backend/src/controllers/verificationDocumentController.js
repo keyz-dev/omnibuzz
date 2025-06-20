@@ -8,6 +8,9 @@ const {
   createVerificationDocumentSchema,
 } = require("../schemas/verificationDocumentSchema");
 
+const { cleanUpFileImages } = require('../utils/imageCleanup');
+const { formatImageUrl } = require("../utils/agencyProfileUtils");
+
 // Helper function to get file type string from mimetype
 const getFileTypeFromMimetype = (mimetype) => {
   const mimeTypeMap = {
@@ -23,143 +26,43 @@ class VerificationDocumentController {
   async uploadDocument(req, res, next) {
     try {
       const files = req.files;
-      const documentTypesJson = req.body.documentTypes;
+      const { types, agencyId } = req.body;
 
-      if (!files || files.length === 0) {
-        return res.status(400).json({
-          success: false,
-          error: "No files uploaded",
-        });
+      const typesArray = Array.isArray(types) ? types : [types];
+
+      // Basic validation
+      if (!files || !typesArray || files.length === 0 || files.length !== typesArray.length || !agencyId) {
+        throw new BadRequestError("Invalid data. A file and a type are required for each document.")
       }
 
-      if (!documentTypesJson) {
-        // Clean up uploaded files
-        files.forEach((file) => fs.unlinkSync(file.path));
-        return res.status(400).json({
-          success: false,
-          error: "Document types are required",
-        });
-      }
+      const documentsToCreate = await Promise.all(files.map(async (file, index) => {
+        const documentType = typesArray[index];
+        const isAllowedFileType = VerificationDocument.isAllowedFileType(file.mimetype)
 
-      let documentTypes;
-      try {
-        documentTypes = JSON.parse(documentTypesJson);
-      } catch (e) {
-        files.forEach((file) => fs.unlinkSync(file.path));
-        return res.status(400).json({
-          success: false,
-          error: "Invalid document types format",
-        });
-      }
+        if (!isAllowedFileType) {
+          throw new BadRequestError("Invalid file type. Allowed types: PDF, JPEG, PNG")
+        }
 
-      if (files.length !== documentTypes.length) {
-        files.forEach((file) => fs.unlinkSync(file.path));
-        return res.status(400).json({
-          success: false,
-          error: "Mismatch between uploaded files and document types",
-        });
-      }
-
-      const savedDocuments = [];
-      const validationErrors = [];
-
-      // Process each document
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const docData = documentTypes[i];
-
-        // Validate each document
-        const validationPayload = {
-          type: docData.type,
-          fileType: file.mimetype,
-          file: {
-            filename: file.filename,
-            originalname: file.originalname,
-            mimetype: file.mimetype,
-            size: file.size,
-            path: file.path,
-          },
+        return {
+          agencyId: agencyId,
+          fileName: file.originalname,
+          url: file.path,
+          type: documentType,
+          fileType: getFileTypeFromMimetype(file.mimetype),
+          status: 'pending',
         };
+      }));
 
-        const { error } = documentSchema.validate(validationPayload);
-        if (error) {
-          validationErrors.push({
-            file: file.originalname,
-            error: error.details[0].message,
-          });
-          continue;
-        }
+      const newDocuments = await VerificationDocument.bulkCreate(documentsToCreate);
 
-        try {
-          // Generate URL for the uploaded file
-          const fileUrl = `/uploads/verification-documents/${file.filename}`;
-
-          // Save to database using your model
-          const document = await VerificationDocument.create({
-            type: docData.type,
-            fileType: getFileTypeFromMimetype(file.mimetype),
-            url: fileUrl,
-            agencyId: req.user.agencyId, // Assuming you have user context from middleware
-            status: "pending", // Default status
-          });
-
-          savedDocuments.push({
-            id: document.id,
-            type: document.type,
-            fileType: document.fileType,
-            status: document.status,
-            url: document.url,
-            createdAt: document.createdAt,
-          });
-        } catch (dbError) {
-          console.error("Database error:", dbError);
-          validationErrors.push({
-            file: file.originalname,
-            error: "Failed to save document to database",
-          });
-        }
-      }
-
-      // If there were validation errors, clean up files and return errors
-      if (validationErrors.length > 0) {
-        files.forEach((file) => {
-          try {
-            fs.unlinkSync(file.path);
-          } catch (e) {
-            console.error("Error cleaning up file:", e);
-          }
-        });
-
-        return res.status(400).json({
-          success: false,
-          error: "Validation failed",
-          details: validationErrors,
-        });
-      }
-
-      res.json({
+      res.status(201).json({
         success: true,
-        message: `${savedDocuments.length} documents uploaded successfully`,
-        documents: savedDocuments,
+        message: 'Documents uploaded successfully!',
+        data: newDocuments,
       });
     } catch (error) {
-      console.error("Upload error:", error);
-
-      // Clean up uploaded files on error
-      if (req.files) {
-        req.files.forEach((file) => {
-          try {
-            fs.unlinkSync(file.path);
-          } catch (e) {
-            console.error("Error cleaning up file:", e);
-          }
-        });
-      }
-
-      res.status(500).json({
-        success: false,
-        error: "Internal server error during upload",
-      });
+      if (req.files) cleanUpFileImages(req);
+      next(error)
     }
   }
 

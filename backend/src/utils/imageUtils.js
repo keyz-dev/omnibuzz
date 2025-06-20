@@ -1,7 +1,6 @@
 const Joi = require("joi");
 
 const isLocalImageUrl = (url) => {
-  // Check if it's a local file path (development)
   return url.startsWith("/uploads/");
 };
 

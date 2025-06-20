@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import {agencyAPI} from '../../../api/agencyAdminApi';
+import { agencyAPI } from '../../../api/agencyAdminApi';
 
 const AgencyAdminContext = createContext();
 
@@ -40,7 +40,7 @@ export const AgencyProvider = ({ children }) => {
     localStorage.removeItem("myAgency");
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchAgencyProfile()
   }, [])
 
@@ -49,9 +49,9 @@ export const AgencyProvider = ({ children }) => {
     setLoading(true);
     try {
       const profile = await agencyAPI.getProfile();
-      if (profile.success){
+      if (profile.success) {
         saveAgencyProfile(profile.data);
-      } else{
+      } else {
         unsetAgencyProfile()
       }
     } catch (err) {
@@ -79,6 +79,22 @@ export const AgencyProvider = ({ children }) => {
       setLoading(false);
     }
   };
+
+  const saveDocuments = async (documents) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await agencyAPI.uploadDocuments(documents, agencyProfile.agency.id);
+      await fetchAgencyProfile();
+      return response;
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to upload documents.');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   const fetchBookings = async (filters = {}) => {
     setLoading(true);
@@ -115,7 +131,7 @@ export const AgencyProvider = ({ children }) => {
   const updateBus = async (busId, busData) => {
     try {
       const updatedBus = await agencyAPI.updateBus(busId, busData);
-      setBuses(prev => 
+      setBuses(prev =>
         prev.map(bus => bus.id === busId ? updatedBus : bus)
       );
       return updatedBus;
@@ -174,7 +190,7 @@ export const AgencyProvider = ({ children }) => {
     revenue,
     loading,
     error,
-    
+
     // Actions
     fetchAgencyProfile,
     fetchStations,
@@ -186,7 +202,8 @@ export const AgencyProvider = ({ children }) => {
     fetchStaff,
     addStaffMember,
     fetchRevenue,
-    setError
+    setError,
+    saveDocuments
   };
 
   return (

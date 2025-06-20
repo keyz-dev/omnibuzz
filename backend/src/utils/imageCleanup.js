@@ -11,7 +11,6 @@ const { isLocalImageUrl, isCloudinaryUrl } = require("./imageUtils");
 const deleteImage = async (imagePath) => {
   try {
     if (isLocalImageUrl(imagePath)) {
-      // Extract the file path from the URL
       const filePath = path.join(
         process.cwd(),
         "src",
@@ -36,7 +35,6 @@ const deleteImage = async (imagePath) => {
  */
 const deleteImages = async (imagePaths) => {
   if (!Array.isArray(imagePaths)) return;
-
   const deletePromises = imagePaths.map((path) => deleteImage(path));
   await Promise.all(deletePromises);
 };
@@ -93,6 +91,7 @@ const cleanUpFileImages = async (req) => {
     });
     await deleteImages(imagePaths);
   }
+
 };
 
 /**

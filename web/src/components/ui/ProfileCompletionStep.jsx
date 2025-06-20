@@ -43,7 +43,7 @@ const ProfileCompletionStep = ({
           </div>
         )}
         {status === "pending_processing" && (
-          <div className="flex items-center gap-1 text-yellow-500 text-xs mt-2">
+          <div className="flex items-center gap-1 text-pending1 text-xs mt-2">
             <Clock4 size={16} /> Pending
           </div>
         )}
