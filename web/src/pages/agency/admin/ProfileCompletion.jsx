@@ -1,5 +1,5 @@
 import React from "react";
-import { useAAD } from "../../../stateManagement/contexts/dashboard";
+import { useAgency } from "../../../stateManagement/contexts/dashboard";
 import { Loader, ProfileCompletionStep } from "../../../components/ui";
 import {
   CheckCircle,
@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../../../components/ui";
 
 const ProfileCompletion = () => {
-  const { agencyProfile, isLoading } = useAAD();
+  const { agencyProfile, isLoading } = useAgency();
   const navigate = useNavigate();
   if (isLoading || !agencyProfile) {
     return (

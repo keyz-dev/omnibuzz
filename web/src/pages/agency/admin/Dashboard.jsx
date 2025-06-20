@@ -1,4 +1,4 @@
-import { AADProvider } from "../../../stateManagement/contexts/dashboard";
+import { AgencyProvider } from "../../../stateManagement/contexts/dashboard";
 
 const AgencyDashboard = () => {
 

@@ -17,10 +17,10 @@ const DashboardLayout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      <DashboardSidebar />
-      <div className="flex-1 flex flex-col">
-        <DashboardHeader />
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <DashboardHeader />
+      <div className="flex-1 flex">
+        <DashboardSidebar />
         <main className="flex-1 p-6">
           <Outlet />
         </main>

@@ -69,15 +69,14 @@ export const AgencyCreationProvider = ({ children }) => {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      });
-
+      });      
       return res.data;
     } catch (error) {
       return {
         success: false,
         error:
-          error.response?.data?.error ||
           error.response?.data?.error?.[0]?.message ||
+          error.response?.data?.error ||
           error.response?.data?.message ||
           error.message ||
           "Unknown error occured. Please try again later.",

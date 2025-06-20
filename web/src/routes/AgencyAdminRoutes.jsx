@@ -9,15 +9,19 @@ import { DashboardContextWrapper } from "../stateManagement/contexts";
 // Agency Admin Pages
 import {
   Dashboard as AgencyDashboard,
-  Profile as AgencyProfile,
   Buses as AgencyBuses,
   Routes as AgencyRoutesPage,
   Bookings as AgencyBookings,
+  Stations as AgencyStations,
   Reports as AgencyReports,
   Schedule as AgencySchedules,
   ProfileCompletion as AgencyProfileCompletion,
   DocumentUpload as AgencyDocumentUpload,
   StationSetup as AgencyStationSetup,
+  Staff as AgencyStaff,
+  Notifications as AgencyNotifications,
+  AgencyProfile,
+  Profile,
 } from "../pages/agency/admin";
 
 export const agencyAdminRoutes = [
@@ -38,12 +42,16 @@ export const agencyAdminRoutes = [
       {/* Pages using the main admin layout */}
       <Route element={<DashboardLayout />}>
         <Route index element={<AgencyDashboard />} />
-        <Route path="profile" element={<AgencyProfile />} />
+        <Route path="agency-profile" element={<AgencyProfile />} />
         <Route path="buses" element={<AgencyBuses />} />
         <Route path="routes" element={<AgencyRoutesPage />} />
         <Route path="bookings" element={<AgencyBookings />} />
+        <Route path="stations" element={<AgencyStations />} />
+        <Route path="notifications" element={<AgencyNotifications />} />
         <Route path="reports" element={<AgencyReports />} />
+        <Route path="staff" element={<AgencyStaff />} />
         <Route path="schedules" element={<AgencySchedules />} />
+        <Route path="profile" element={<Profile />} />
       </Route>
 
       {/* Pages using the profile completion layout */}

@@ -9,14 +9,14 @@ import {
   Loader,
 } from "../ui";
 import { useStation } from "../../stateManagement/contexts";
-import { useAAD } from '../../stateManagement/contexts/dashboard'
+import { useAgency } from '../../stateManagement/contexts/dashboard'
 import { useNavigate } from "react-router-dom";
 
 const Step1_BasicInformation = () => {
   const navigate = useNavigate();
   const { stationCreationData, setStationCreationData, nextStep } =
     useStation();
-  const { agencyProfile, isLoading: profileLoading } = useAAD();
+  const { agencyProfile, isLoading: profileLoading } = useAgency();
 
   const [errors, setErrors] = useState({});
   const [isDesTownModalOpen, setIsDesTownModalOpen] = useState(false);

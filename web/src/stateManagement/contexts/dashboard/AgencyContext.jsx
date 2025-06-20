@@ -3,15 +3,15 @@ import {agencyAPI} from '../../../api/agencyAdminApi';
 
 const AgencyAdminContext = createContext();
 
-export const useAAD = () => {
+export const useAgency = () => {
   const context = useContext(AgencyAdminContext);
   if (!context) {
-    throw new Error('useAAD must be used within AADProvider');
+    throw new Error('useAgency must be used within AgencyProvider');
   }
   return context;
 };
 
-export const AADProvider = ({ children }) => {
+export const AgencyProvider = ({ children }) => {
   const [agencyProfile, setAgencyProfile] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [buses, setBuses] = useState([]);
@@ -33,6 +33,7 @@ export const AADProvider = ({ children }) => {
   };
 
   useEffect(()=>{
+    console.log('called')
     fetchAgencyProfile()
   }, [])
 
@@ -42,7 +43,7 @@ export const AADProvider = ({ children }) => {
     try {
       const profile = await agencyAPI.getProfile();
       if (profile.success){
-        saveAgencyProfile(profile);
+        saveAgencyProfile(profile.data);
       } else{
         unsetAgencyProfile()
       }

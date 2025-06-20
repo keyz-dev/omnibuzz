@@ -36,12 +36,12 @@ export const BaseDashboardProvider = ({ children }) => {
   const value = {
     user,
     roleConfig,
-    activeNavItem,
-    setActiveNavItem,
-    sidebarCollapsed,
-    setSidebarCollapsed,
     pageTitle,
+    activeNavItem,
+    sidebarCollapsed,
     setPageTitle,
+    setActiveNavItem,
+    setSidebarCollapsed,
     updateActiveNavFromPath
   };
 
