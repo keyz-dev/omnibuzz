@@ -1,5 +1,5 @@
 import React from "react";
-import { useAgencyAdmin } from "../../../stateManagement/contexts";
+import { useAAD } from "../../../stateManagement/contexts/dashboard";
 import { Loader, ProfileCompletionStep } from "../../../components/ui";
 import {
   CheckCircle,
@@ -12,9 +12,9 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../../../components/ui";
 
 const ProfileCompletion = () => {
-  const { myAgencyProfile, isLoading } = useAgencyAdmin();
+  const { agencyProfile, isLoading } = useAAD();
   const navigate = useNavigate();
-  if (isLoading || !myAgencyProfile) {
+  if (isLoading || !agencyProfile) {
     return (
       <div className="flex items-center justify-center h-full m-auto">
         <Loader size={30} color="#5E63FF" />
@@ -22,7 +22,7 @@ const ProfileCompletion = () => {
     );
   }
 
-  const { agency, completionSteps } = myAgencyProfile;
+  const { agency, completionSteps } = agencyProfile;
 
   return (
     <div className="flex flex-col-reverse md:flex-row gap-8 justify-center items-start w-full min-h-[70vh] px-4 py-12">
@@ -85,7 +85,7 @@ const ProfileCompletion = () => {
         <Button
           additionalClasses="bg-light_bg text-secondary font-placeholder px-4"
           text="Publish Agency"
-          isDisabled={myAgencyProfile.isPublishable}
+          isDisabled={agencyProfile.isPublishable}
         />
       </div>
     </div>

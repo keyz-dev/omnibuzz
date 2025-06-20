@@ -1,8 +1,8 @@
 import { Outlet, Route } from "react-router-dom";
 import ProtectedRoute from "../components/routing/ProtectedRoute";
 import {
-  DefaultAdminHeaderLayout,
   ProfileCompletionLayout,
+  DashboardLayout
 } from "../components/layout";
 import { DashboardContextWrapper } from "../stateManagement/contexts";
 
@@ -36,7 +36,7 @@ export const agencyAdminRoutes = [
       }
     >
       {/* Pages using the main admin layout */}
-      <Route element={<DefaultAdminHeaderLayout />}>
+      <Route element={<DashboardLayout />}>
         <Route index element={<AgencyDashboard />} />
         <Route path="profile" element={<AgencyProfile />} />
         <Route path="buses" element={<AgencyBuses />} />

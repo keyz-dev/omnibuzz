@@ -5,3 +5,4 @@ export { default as AgencyCreationSidebar } from "./AgencyCreationSidebar";
 export { default as DefaultAdminHeaderLayout } from "./DefaultAdminHeaderLayout";
 export { default as ProfileCompletionLayout } from "./ProfileCompletionLayout";
 export { default as StationCreationSideBar } from "./StationCreation";
+export { default as DashboardLayout } from "./DashboardLayout";

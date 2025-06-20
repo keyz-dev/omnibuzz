@@ -1,8 +1,9 @@
 // routes/AgencyRoutes.jsx
-import { Route } from "react-router-dom";
+import { Outlet, Route } from "react-router-dom";
 import Layout from "../components/layout/Layout";
 import ProtectedRoute from "../components/routing/ProtectedRoute";
 import { DashboardContextWrapper } from "../stateManagement/contexts";
+import { DashboardLayout } from "../components/layout";
 
 // Station Manager Pages
 import {
@@ -30,8 +31,7 @@ export const stationManagerRoutes = [
         </DashboardContextWrapper>
       }
     >
-
-      <Route element={<Layout />}>
+      <Route element={<DashboardLayout />}>
         <Route index element={<ManagerDashboard />} />
         <Route path="bookings" element={<ManagerBookings />} />
         <Route path="buses" element={<ManagerBuses />} />

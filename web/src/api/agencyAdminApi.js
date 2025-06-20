@@ -4,7 +4,7 @@ const API_BASE_URL = "/api/admin";
 export const agencyAPI = {
   // Profile management
   getProfile: async () => {
-    const response = await api.get("/profile");
+    const response = await api.get("/agency/me");
     return response.data;
   },
 

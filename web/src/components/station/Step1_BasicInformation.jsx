@@ -8,14 +8,15 @@ import {
   FormHeader,
   Loader,
 } from "../ui";
-import { useStation, useAgencyAdmin } from "../../stateManagement/contexts";
+import { useStation } from "../../stateManagement/contexts";
+import { useAAD } from '../../stateManagement/contexts/dashboard'
 import { useNavigate } from "react-router-dom";
 
 const Step1_BasicInformation = () => {
   const navigate = useNavigate();
   const { stationCreationData, setStationCreationData, nextStep } =
     useStation();
-  const { myAgencyProfile, isLoading: profileLoading } = useAgencyAdmin();
+  const { agencyProfile, isLoading: profileLoading } = useAAD();
 
   const [errors, setErrors] = useState({});
   const [isDesTownModalOpen, setIsDesTownModalOpen] = useState(false);
@@ -45,7 +46,7 @@ const Step1_BasicInformation = () => {
 
   if (profileLoading) return <Loader size={20} color="#c2c2c2" />;
 
-  const { agency } = myAgencyProfile;
+  const { agency } = agencyProfile;
 
   // Validation
   const validate = () => {

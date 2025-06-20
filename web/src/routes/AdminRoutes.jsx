@@ -1,7 +1,8 @@
 // routes/AdminRoutes.jsx
-import { Route } from "react-router-dom";
-import { Layout } from "../components/layout";
+import { Outlet, Route } from "react-router-dom";
+import { DashboardLayout } from "../components/layout";
 import ProtectedRoute from "../components/routing/ProtectedRoute";
+import { DashboardContextWrapper } from "../stateManagement/contexts";
 import {
   Dashboard as AdminDashboard,
   Agencies as AdminAgencies,
@@ -15,11 +16,21 @@ export const adminRoutes = [
     path="/admin"
     element={<ProtectedRoute allowedRoles={["system_admin"]} />}
   >
-    <Route element={<Layout />}>
-      <Route index element={<AdminDashboard />} />
-      <Route path="agencies" element={<AdminAgencies />} />
-      <Route path="users" element={<AdminUsers />} />
-      <Route path="settings" element={<AdminSettings />} />
+    {/* Context provider wraps all subroutes */}
+    <Route
+      path="*"
+      element={
+        <DashboardContextWrapper>
+          <Outlet />
+        </DashboardContextWrapper>
+      }
+    >
+      <Route element={<DashboardLayout />}>
+        <Route index element={<AdminDashboard />} />
+        <Route path="agencies" element={<AdminAgencies />} />
+        <Route path="users" element={<AdminUsers />} />
+        <Route path="settings" element={<AdminSettings />} />
+      </Route>
     </Route>
   </Route>,
 ];

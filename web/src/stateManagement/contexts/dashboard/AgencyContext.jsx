@@ -22,13 +22,32 @@ export const AADProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const saveAgencyProfile = async (agency) => {
+    setAgencyProfile(agency);
+    localStorage.setItem("myAgency", JSON.stringify(agency));
+  };
+
+  const unsetAgencyProfile = () => {
+    setAgencyProfile(null);
+    localStorage.removeItem("myAgency");
+  };
+
+  useEffect(()=>{
+    fetchAgencyProfile()
+  }, [])
+
   // Agency-specific data fetching
   const fetchAgencyProfile = async () => {
     setLoading(true);
     try {
       const profile = await agencyAPI.getProfile();
-      setAgencyProfile(profile);
+      if (profile.success){
+        saveAgencyProfile(profile);
+      } else{
+        unsetAgencyProfile()
+      }
     } catch (err) {
+      unsetAgencyProfile()
       setError(err.message);
     } finally {
       setLoading(false);
