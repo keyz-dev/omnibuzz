@@ -32,13 +32,11 @@ const ProfileEditView = ({
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setPublishStatus(!publishStatus)}
-                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                  publishStatus ? 'bg-blue-600' : 'bg-gray-300'
-                }`}
+                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${publishStatus ? 'bg-blue-600' : 'bg-gray-300'
+                  }`}
               >
-                <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                  publishStatus ? 'translate-x-5' : 'translate-x-1'
-                }`} />
+                <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${publishStatus ? 'translate-x-5' : 'translate-x-1'
+                  }`} />
               </button>
             </div>
           </div>
@@ -64,16 +62,15 @@ const ProfileEditView = ({
           <label className="block text-sm font-medium text-gray-900 mb-3">
             Occupancy Towns ({editData.towns.length.toString().padStart(2, '0')})
           </label>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {agency.towns.map((town) => (
               <button
                 key={town}
                 onClick={() => toggleTown(town)}
-                className={`px-3 py-2 text-sm rounded-md border transition-colors ${
-                  editData.towns.includes(town)
-                    ? 'bg-blue-50 border-blue-200 text-blue-700'
-                    : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'
-                }`}
+                className={`px-3 py-2 text-sm rounded-md border transition-colors ${editData.towns.includes(town)
+                  ? 'bg-blue-50 border-blue-200 text-blue-700'
+                  : 'bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100'
+                  }`}
               >
                 {town}
               </button>
@@ -123,11 +120,10 @@ const ProfileEditView = ({
           <button
             onClick={handleSave}
             disabled={!hasUnsavedChanges}
-            className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              hasUnsavedChanges
-                ? 'bg-blue-600 text-white hover:bg-blue-700'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-            }`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${hasUnsavedChanges
+              ? 'bg-blue-600 text-white hover:bg-blue-700'
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
           >
             <Save size={16} />
             Save Changes

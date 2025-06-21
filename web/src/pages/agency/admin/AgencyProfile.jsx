@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import ProfileMapView from '../../../components/dashboard/agency_admin/ProfileMapView';
 import ProfileEditView from '../../../components/dashboard/agency_admin/ProfileEditView';
-import {SecurityNotice} from '../../../components/ui';
+import { SecurityNotice } from '../../../components/ui';
 
 const AgencyProfile = () => {
   // View state
@@ -23,7 +23,7 @@ const AgencyProfile = () => {
       navigate("/agency/admin");
     }
     if (agencyProfile) {
-        setEditData(agencyProfile.agency);
+      setEditData(agencyProfile.agency);
     }
   }, [loading, agencyProfile, navigate]);
 
@@ -90,38 +90,38 @@ const AgencyProfile = () => {
 
   return (
     <section>
-    {!agencyProfile.isPublishable && (
-      <button className="mb-4">
-        <SecurityNotice
-          title="Complete Required Steps"
-          description="Complete all required steps to publish your agency profile"
-          action={() => navigate("/agency/admin/profile-completion")}
-        />
-      </button>
-    )}
-    <div className="">
-      {currentView === 'map' ? (
-        <ProfileMapView 
-          agency={agency}
-          publishStatus={publishStatus}
-          handlePublishStatusChange={handlePublishStatusChange}
-          handleEdit={handleEdit}
-        />
-      ) : (
-        <ProfileEditView 
-          agency={agency}
-          editData={editData}
-          publishStatus={publishStatus}
-          setPublishStatus={setPublishStatus}
-          handleInputChange={handleInputChange}
-          toggleTown={toggleTown}
-          handleContactChange={handleContactChange}
-          handleSave={handleSave}
-          hasUnsavedChanges={hasUnsavedChanges}
-          handleCancel={handleCancel}
-        />
+      {!agencyProfile.isPublishable && (
+        <button className="mb-4 w-full md:w-auto">
+          <SecurityNotice
+            title="Complete Required Steps"
+            description="Complete all required steps to publish your agency profile"
+            action={() => navigate("/agency/admin/profile-completion")}
+          />
+        </button>
       )}
-    </div>
+      <div className="">
+        {currentView === 'map' ? (
+          <ProfileMapView
+            agency={agency}
+            publishStatus={publishStatus}
+            handlePublishStatusChange={handlePublishStatusChange}
+            handleEdit={handleEdit}
+          />
+        ) : (
+          <ProfileEditView
+            agency={agency}
+            editData={editData}
+            publishStatus={publishStatus}
+            setPublishStatus={setPublishStatus}
+            handleInputChange={handleInputChange}
+            toggleTown={toggleTown}
+            handleContactChange={handleContactChange}
+            handleSave={handleSave}
+            hasUnsavedChanges={hasUnsavedChanges}
+            handleCancel={handleCancel}
+          />
+        )}
+      </div>
     </section>
   );
 };

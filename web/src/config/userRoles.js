@@ -1,5 +1,5 @@
 export const USER_ROLES = {
-  ADMIN: "admin",
+  ADMIN: "system_admin",
   AGENCY_ADMIN: "agency_admin",
   STATION_MANAGER: "station_manager",
   PASSENGER: "passenger",
@@ -10,7 +10,7 @@ export const ROLE_CONFIGS = {
     basePath: "/admin",
     displayName: "Administrator",
     navItems: [
-      { path: "overview", label: "Overview", icon: "LayoutDashboard" },
+      { path: "", label: "Overview", icon: "LayoutDashboard" },
       { path: "agencies", label: "Agencies", icon: "Building2" },
       { path: "documents", label: "Documents", icon: "FileText" },
       { path: "notifications", label: "Notifications", icon: "Bell" },

@@ -5,27 +5,27 @@ import { LeafletMapView } from '../../maps/leaflet';
 
 const ProfileMapView = ({ agency, publishStatus, handlePublishStatusChange, handleEdit }) => {
   return (
-    <div className="flex gap-6">
+    <div className="flex flex-col lg:flex-row gap-6">
       {/* Agency Info Card */}
-      <div className="w-80 bg-white rounded-lg shadow-sm border border-gray-200">
+      <div className="w-full lg:w-80 bg-white rounded-lg shadow-sm border border-gray-200">
         {/* Header */}
         <div className="p-6 border-b border-gray-100">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center text-3xl font-bold text-white mb-4">
-          {agency.logo ? (
-            <img
-              src={
-                typeof agency.logo === "string"
-                  ? agency.logo
-                  : URL.createObjectURL(agency.logo)
-              }
-              alt="Agency Logo"
-              className="w-full h-full object-cover rounded-full"
-            />
-          ) : (
-            <span>{agency.name ? agency.name[0] : "A"}</span>
-          )}
-        </div>
+              {agency.logo ? (
+                <img
+                  src={
+                    typeof agency.logo === "string"
+                      ? agency.logo
+                      : URL.createObjectURL(agency.logo)
+                  }
+                  alt="Agency Logo"
+                  className="w-full h-full object-cover rounded-full"
+                />
+              ) : (
+                <span>{agency.name ? agency.name[0] : "A"}</span>
+              )}
+            </div>
             <div>
               <h2 className="text-xl font-semibold text-gray-900">{agency.name}</h2>
               <p className="text-sm text-gray-500 max-w-[150px] overflow-hidden text-ellipsis whitespace-nowrap">{agency.id}</p>
@@ -37,13 +37,11 @@ const ProfileMapView = ({ agency, publishStatus, handlePublishStatusChange, hand
               <div className="flex items-center gap-2">
                 <button
                   onClick={handlePublishStatusChange}
-                  className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                    publishStatus ? 'bg-blue-600' : 'bg-gray-300'
-                  }`}
+                  className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${publishStatus ? 'bg-blue-600' : 'bg-gray-300'
+                    }`}
                 >
-                  <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                    publishStatus ? 'translate-x-5' : 'translate-x-1'
-                  }`} />
+                  <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${publishStatus ? 'translate-x-5' : 'translate-x-1'
+                    }`} />
                 </button>
               </div>
             </div>
@@ -79,19 +77,19 @@ const ProfileMapView = ({ agency, publishStatus, handlePublishStatusChange, hand
 
         {/* Contact Information */}
         <div className="p-6">
-          <AgencyOverviewContacts 
+          <AgencyOverviewContacts
             contactInfo={Object.entries(agency.contactInfo).map(([key, value]) => {
               let type;
               switch (key) {
-                  case 'website': type = 'url'; break;
-                  case 'phone': type = 'tel'; break;
-                  case 'email': type = 'email'; break;
-                  case 'whatsapp': type = 'whatsapp'; break;
-                  default: return null;
+                case 'website': type = 'url'; break;
+                case 'phone': type = 'tel'; break;
+                case 'email': type = 'email'; break;
+                case 'whatsapp': type = 'whatsapp'; break;
+                default: return null;
               }
               return { type, value };
             }).filter(Boolean).filter(c => c.value)}
-            isEditable={false} 
+            isEditable={false}
           />
         </div>
       </div>

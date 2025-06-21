@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState} from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { useAuth } from '../AuthContext';
 import { ROLE_CONFIGS } from '../../../config/userRoles';
 
@@ -23,10 +23,10 @@ export const BaseDashboardProvider = ({ children }) => {
 
   const updateActiveNavFromPath = (currentPath) => {
     if (!roleConfig) return;
-    
+
     const relativePath = currentPath.replace(roleConfig.basePath, '').replace(/^\//, '');
     const navItem = roleConfig.navItems.find(item => item.path === relativePath);
-    
+
     if (navItem) {
       setActiveNavItem(relativePath);
       setPageTitle(navItem.label);

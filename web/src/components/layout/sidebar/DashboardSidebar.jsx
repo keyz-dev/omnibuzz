@@ -15,27 +15,24 @@ const DashboardSidebar = () => {
   };
 
   return (
-    <div className={`bg-white shadow-lg transition-all duration-300 ${
-      sidebarCollapsed ? 'w-16' : 'w-64'
-    }`}>
+    <div className={`bg-white shadow-lg transition-all duration-300 ${sidebarCollapsed ? 'w-20' : 'w-64'
+      }`}>
 
       {/* Navigation */}
-      <nav className="p-4 space-y-2">
+      <nav className="p-3 space-y-3">
         {roleConfig.navItems.map((item) => {
           const IconComponent = Icons[item.icon] || Icons.Circle;
           const fullPath = item.path ? `${roleConfig.basePath}/${item.path}` : roleConfig.basePath;
-          
+
           return (
             <Link
               key={item.path}
               to={fullPath}
-              className={`flex items-center space-x-3 p-3 rounded-md transition-colors ${
-                isActive(item.path)
-                  ? 'bg-blue-50 text-accent border-r-4 border-accent' 
-                    : 'text-gray-600 hover:bg-gray-50'
-              }`}
+              className={` ${sidebarCollapsed ? 'grid place-items-center' : 'flex items-center'} space-x-3 p-3 rounded-md transition-colors ${isActive(item.path)
+                ? sidebarCollapsed ? 'bg-blue-50 text-accent' : 'bg-blue-50 text-accent border-r-4 border-accent' : 'text-secondary hover:bg-light_bg'
+                }`}
             >
-              <IconComponent className="w-5 h-5" />
+              <IconComponent className="w-6 h-6" />
               {!sidebarCollapsed && <span>{item.label}</span>}
             </Link>
           );
