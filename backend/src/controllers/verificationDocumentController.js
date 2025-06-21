@@ -1,4 +1,4 @@
-const { VerificationDocument, Agency } = require("../db/models");
+const { VerificationDocument, Agency, User } = require("../db/models");
 const {
   BadRequestError,
   NotFoundError,
@@ -73,10 +73,6 @@ class VerificationDocumentController {
         throw new NotFoundError("Document not found");
       }
 
-      if (document.status !== "pending") {
-        throw new BadRequestError("Document is not in pending status");
-      }
-
       document.status = "approved";
       await document.save();
 
@@ -102,10 +98,6 @@ class VerificationDocumentController {
         throw new NotFoundError("Document not found");
       }
 
-      if (document.status !== "pending") {
-        throw new BadRequestError("Document is not in pending status");
-      }
-
       document.status = "rejected";
       document.rejectionReason = reason;
       await document.save();
@@ -120,44 +112,123 @@ class VerificationDocumentController {
     }
   }
 
-  async getVerificationStatus(req, res, next) {
+  // Get all documents with filtering and pagination
+  async getDocuments(req, res) {
     try {
-      const { agencyId } = req.params;
+      const { page = 1, limit = 8, status, agencyId, search } = req.query;
+      const offset = (page - 1) * limit;
 
-      const agency = await Agency.findByPk(agencyId);
-      if (!agency) {
-        throw new NotFoundError("Agency not found");
+      let where = {};
+      if (status) where.status = status;
+      if (agencyId) where.agencyId = agencyId;
+      if (search) {
+        where[Op.or] = [
+          { fileName: { [Op.iLike]: `%${search}%` } },
+          { type: { [Op.iLike]: `%${search}%` } },
+        ];
       }
-      const status = await agency.getVerificationStatus();
-      res.json({
-        success: true,
-        data: status,
+
+      const { count, rows } = await VerificationDocument.findAndCountAll({
+        where,
+        include: [
+          {
+            model: Agency,
+            as: 'agency',
+            attributes: ['name', 'logo'],
+            include: [
+              {
+                model: User,
+                as: 'owner',
+                attributes: ['fullName', 'email'],
+              },
+            ],
+          },
+        ],
+        limit,
+        offset,
+        order: [['createdAt', 'DESC']],
+      });
+
+      const formattedDocuments = rows.map(doc => {
+        const docJSON = doc.toJSON();
+        // Format the main document URL
+        if (docJSON.url) {
+          docJSON.url = formatImageUrl(docJSON.url);
+        }
+        // Format the agency logo URL
+        if (docJSON.agency && docJSON.agency.logo) {
+          docJSON.agency.logo = formatImageUrl(docJSON.agency.logo);
+        }
+        return docJSON;
+      });
+
+      res.status(200).json({
+        totalPages: Math.ceil(count / limit),
+        currentPage: parseInt(page, 10),
+        totalDocuments: count,
+        documents: formattedDocuments,
       });
     } catch (error) {
-      next(error);
+      res.status(500).json({ message: 'Error fetching documents', error: error.message });
     }
   }
 
-  async updateRemark(req, res, next) {
+  // Get document statistics
+  async getDocumentStats(req, res) {
     try {
-      const { remark } = req.body;
-      if (!remark) {
-        throw new BadRequestError("Remark is required");
+      const total = await VerificationDocument.count();
+      const pending = await VerificationDocument.count({ where: { status: 'pending' } });
+      const approved = await VerificationDocument.count({ where: { status: 'approved' } });
+      const rejected = await VerificationDocument.count({ where: { status: 'rejected' } });
+
+      res.status(200).json({ all: total, pending, approved, rejected });
+    } catch (error) {
+      res.status(500).json({ message: 'Error fetching document stats', error: error.message });
+    }
+  }
+
+  // Update document status
+  async updateDocumentStatus(req, res) {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+
+      if (!['approved', 'rejected'].includes(status)) {
+        return res.status(400).json({ message: 'Invalid status value' });
       }
 
-      const document = await VerificationDocument.findByPk(req.params.id);
+      const document = await VerificationDocument.findByPk(id);
       if (!document) {
-        throw new NotFoundError("Document not found");
+        return res.status(404).json({ message: 'Document not found' });
       }
 
-      document.remark = remark;
+      document.status = status;
       await document.save();
 
-      res.json({
-        success: true,
-        message: "Remark updated successfully",
-        data: document,
-      });
+      res.status(200).json(document);
+    } catch (error) {
+      res.status(500).json({ message: 'Error updating document status', error: error.message });
+    }
+  }
+
+  // Add a remark to a document
+  async addRemark(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { remark } = req.body;
+
+      console.log("\n\nRemark: ", remark)
+
+      const document = await VerificationDocument.findByPk(id);
+      if (!document || !remark) {
+        throw new NotFoundError("Document not found")
+      }
+
+      await document.update({ remark });
+
+      console.log("\n\nDocument: ", document)
+
+      res.status(200).json({ success: true, message: "Remark added successfully", data: document });
     } catch (error) {
       next(error);
     }

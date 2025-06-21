@@ -16,6 +16,7 @@ export const ROLE_CONFIGS = {
       { path: "notifications", label: "Notifications", icon: "Bell" },
       { path: "reports", label: "Reports", icon: "BarChart3" },
       { path: "profile", label: "My Profile", icon: "User" },
+      { path: "settings", label: "Settings", icon: "Settings" },
     ],
   },
   [USER_ROLES.AGENCY_ADMIN]: {

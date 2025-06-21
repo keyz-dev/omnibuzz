@@ -79,6 +79,10 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: "pending",
         allowNull: false,
       },
+      remark: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       url: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -100,7 +104,6 @@ module.exports = (sequelize, DataTypes) => {
       modelName: "VerificationDocument",
       hooks: {
         afterSave: async (document) => {
-          // Update agency's publishing status when document status changes
           const agency = await document.getAgency();
           await agency.updatePublishingStatus();
         },

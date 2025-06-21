@@ -8,6 +8,8 @@ import DropdownMenu from '../../../ui/DropdownMenu';
 const StationsListView = ({ stations }) => {
   const navigate = useNavigate();
 
+  const imagePlaceholder = 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541'
+
   const columns = [
     {
       Header: 'Name',
@@ -25,20 +27,21 @@ const StationsListView = ({ stations }) => {
           </div>
         </div>
       ),
-    },  
+    },
     {
       Header: 'Manager',
       accessor: 'manager',
       Cell: ({ row }) => {
         return (
-        <div className="flex items-center">
-          <img className="h-8 w-8 rounded-full" src={row.manager?.avatar || 'https://via.placeholder.com/32'} alt="Manager" />
-          <div className="ml-3">
-            <div className="text-sm font-medium text-gray-900">{row.manager?.name || 'N/A'}</div>
-            <div className="text-sm text-gray-500">{row.manager?.email || ''}</div>
+          <div className="flex items-center">
+            <img className="h-8 w-8 rounded-full" src={row.manager?.avatar || imagePlaceholder} alt="Manager" />
+            <div className="ml-3">
+              <div className="text-sm font-medium text-gray-900">{row.manager?.name || 'N/A'}</div>
+              <div className="text-sm text-gray-500">{row.manager?.email || ''}</div>
+            </div>
           </div>
-        </div>
-      )},
+        )
+      },
     },
     {
       Header: 'Active Routes',
@@ -46,9 +49,9 @@ const StationsListView = ({ stations }) => {
       Cell: ({ row }) => <div className="text-center">{row?.activeRoutes || 0}</div>,
     },
     {
-        Header: 'Total Bookings',
-        accessor: 'totalBookings',
-        Cell: ({ row }) => <div className="text-center">{row?.totalBookings || 0}</div>,
+      Header: 'Total Bookings',
+      accessor: 'totalBookings',
+      Cell: ({ row }) => <div className="text-center">{row?.totalBookings || 0}</div>,
     },
     {
       Header: 'Status',

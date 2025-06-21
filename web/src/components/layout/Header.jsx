@@ -9,7 +9,7 @@ const Header = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { user, logout } = useAuth();
   const profileRef = useRef(null);
-
+  const imagePlaceholder = 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541'
   const navItems = [
     { label: "Home", path: "/" },
     { label: "About", path: "/about" },
@@ -60,7 +60,7 @@ const Header = () => {
                     <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
                       {user.avatar ? (
                         <img
-                          src={user.avatar}
+                          src={user.avatar || imagePlaceholder}
                           alt={user.fullName}
                           className="w-full h-full rounded-full object-cover"
                         />
