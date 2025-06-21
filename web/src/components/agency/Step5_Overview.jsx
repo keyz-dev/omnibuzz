@@ -38,6 +38,7 @@ const Step5_Overview = () => {
     }
     try {
       const res = await createAgency();
+
       if (res.success) {
         toast.success("Agency created successfully");
         setUserAndToken(res.data.user, res.data.token);
@@ -49,7 +50,7 @@ const Step5_Overview = () => {
         toast.error(res.error);
       }
     } catch (error) {
-      toast.error("Error creating agency", error);
+      toast.error("Error creating agency", error.message);
     }
   };
 

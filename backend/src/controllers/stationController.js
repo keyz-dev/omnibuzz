@@ -342,9 +342,15 @@ class StationController {
         });
 
         if (existingWorker) {
-          // update user role
-          await user.update({ role });
+          // Verify the user's role
+          if (user.role == role) {
+            throw new ValidationError(
+              `${user.fullName} is already assigned to this station as the manager`
+            );
+          }
         }
+        // update user role
+        await user.update({ role });
       } else {
         user = await User.create({
           email,
@@ -497,7 +503,7 @@ class StationController {
         station.dataValues.totalBookings = 102
 
         delete station.dataValues.workers;
-      }); 
+      });
 
       res.json({
         success: true,

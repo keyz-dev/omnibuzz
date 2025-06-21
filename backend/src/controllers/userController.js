@@ -16,21 +16,11 @@ const { isLocalImageUrl } = require("../utils/imageUtils");
 const bcrypt = require("bcryptjs");
 const { ValidationError } = require("../utils/errors");
 const { verifyToken } = require("../utils/jwt");
-
-// Helper function to format avatar URL
-const formatAvatarUrl = (avatar) => {
-  if (!avatar) return null;
-
-  if (isLocalImageUrl(avatar)) {
-    return `${process.env.SERVER_URL}${avatar}`;
-  }
-  return avatar;
-};
+const { formatImageUrl } = require("../utils/agencyProfileUtils");
 
 // Verify email
 const verifyEmail = async (req, res) => {
-  const { email, code, option } = req.body;
-
+  const { email, code } = req.body;
   // Find user by email and verification code
   const user = await User.findOne({
     where: {
@@ -52,14 +42,6 @@ const verifyEmail = async (req, res) => {
     emailVerificationExpires: null,
   };
 
-  if (option && option === "update-role") {
-    // Check if user is already an agency admin
-    if (user.role === "agency_admin") {
-      throw new BadRequestError("You are already an agency admin");
-    }
-    updateObj.role = "agency_admin";
-  }
-
   // Update user verification status
   await user.update(updateObj);
 
@@ -75,7 +57,7 @@ const verifyEmail = async (req, res) => {
         fullName: user.fullName,
         email: user.email,
         role: user.role,
-        avatar: formatAvatarUrl(user.avatar),
+        avatar: formatImageUrl(user.avatar),
         emailVerified: true,
       },
       token, // Only send token after successful verification

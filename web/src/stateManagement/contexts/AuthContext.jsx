@@ -94,10 +94,10 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       setAuthError(
         error.response?.data?.error ||
-          error.response?.data?.error?.[0]?.message ||
-          error.response?.data?.message ||
-          error.message ||
-          "Invalid credentials"
+        error.response?.data?.error?.[0]?.message ||
+        error.response?.data?.message ||
+        error.message ||
+        "Invalid credentials"
       );
       return { success: false };
     } finally {
@@ -132,10 +132,10 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       setAuthError(
         error.response?.data?.error ||
-          error.response?.data?.error?.[0]?.message ||
-          error.response?.data?.message ||
-          error.message ||
-          "Registration failed"
+        error.response?.data?.error?.[0]?.message ||
+        error.response?.data?.message ||
+        error.message ||
+        "Registration failed"
       );
     } finally {
       setLoading(false);
@@ -235,7 +235,7 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
           setAuthError(
             error.response?.data?.message ||
-              "Google login failed. Please try again."
+            "Google login failed. Please try again."
           );
         }
       }
@@ -276,10 +276,10 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       setAuthError(
         error.response?.data?.error ||
-          error.response?.data?.error?.[0]?.message ||
-          error.response?.data?.message ||
-          error.message ||
-          "Profile completion failed"
+        error.response?.data?.error?.[0]?.message ||
+        error.response?.data?.message ||
+        error.message ||
+        "Profile completion failed"
       );
     } finally {
       setLoading(false);
@@ -298,6 +298,7 @@ export const AuthProvider = ({ children }) => {
     setAuthError,
     verifyAccount,
     resendVerification,
+    setUserAndToken,
     handleGoogleLogin,
     redirectBasedOnRole,
     acceptInvitation,
