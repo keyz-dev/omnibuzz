@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const agencyController = require("../controllers/agencyController");
-const { authenticate } = require("../middleware/auth");
+const { authenticate, authorize } = require("../middleware/auth");
 const { isAgencyAdmin, isAgencyOwner } = require("../middleware/agencyAuth");
 const {
   upload,
@@ -37,7 +37,7 @@ router.get("/:id", authenticate, agencyController.getById);
 router.put(
   "/:id",
   authenticate,
-  isAgencyOwner,
+  authorize(["agency_owner"]),
   upload.fields([
     { name: "logo", maxCount: 1 },
     { name: "agencyImages", maxCount: 10 },
@@ -48,7 +48,15 @@ router.put(
   agencyController.update
 );
 
+// Publish and agency
+router.patch(
+  "/:id/publish",
+  authenticate,
+  authorize(["agency_admin"]),
+  agencyController.publish
+);
+
 // Remove agency
-router.delete("/:id", authenticate, isAgencyAdmin, agencyController.remove);
+router.delete("/:id", authenticate, authorize(["agency_admin", "system_admin"]), agencyController.remove);
 
 module.exports = router;

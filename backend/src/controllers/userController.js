@@ -20,7 +20,7 @@ const { formatImageUrl } = require("../utils/agencyProfileUtils");
 
 // Verify email
 const verifyEmail = async (req, res) => {
-  const { email, code } = req.body;
+  const { email, code, origin } = req.body;
   // Find user by email and verification code
   const user = await User.findOne({
     where: {
@@ -44,6 +44,25 @@ const verifyEmail = async (req, res) => {
 
   // Update user verification status
   await user.update(updateObj);
+
+  if (origin === "accept-invitation") {
+    const stationWorker = await StationWorker.findOne({
+      where: {
+        userId: user.id,
+      },
+      include: [
+        {
+          model: Station,
+          as: "station",
+        },
+      ],
+    });
+    if (!stationWorker) {
+      throw new BadRequestError("No worker found");
+    }
+    await stationWorker.station.update({ isActive: true });
+    await stationWorker.update({ isActive: true });
+  }
 
   // Generate token after successful verification
   const token = generateToken({ userId: user.id }, "7d");

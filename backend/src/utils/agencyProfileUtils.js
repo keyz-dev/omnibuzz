@@ -9,28 +9,15 @@ function getStationCompletionStatus(stations) {
 }
 
 function getVerificationCompletionStatus(
-  verificationDocuments,
-  requiredTypes = [
-    "business_registration",
-    "tax_clearance",
-    "operating_license",
-  ]
+  verificationDocuments
 ) {
   if (!verificationDocuments || verificationDocuments.length === 0) {
     return "required";
   }
-  // Only required types
-  const requiredDocs = verificationDocuments.filter((doc) =>
-    requiredTypes.includes(doc.type)
-  );
-  if (requiredDocs.length === 0) {
-    return "required";
-  }
-  const allApproved = requiredDocs.every((doc) => doc.status === "approved");
+  const allApproved = verificationDocuments.every((doc) => doc.status === "approved");
   if (allApproved) return "completed";
-  const allRejected = requiredDocs.every((doc) => doc.status === "rejected");
+  const allRejected = verificationDocuments.every((doc) => doc.status === "rejected");
   if (allRejected) return "rejected";
-  // If any are pending or a mix
   return "pending_processing";
 }
 

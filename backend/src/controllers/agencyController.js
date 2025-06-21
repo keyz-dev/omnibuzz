@@ -201,7 +201,6 @@ class AgencyController {
       }
       const isPublishable = await agency.canBePublished();
 
-      // New completion step statuses
       const stationStatus = getStationCompletionStatus(agency.stations);
       const verificationStatus = getVerificationCompletionStatus(
         agency.verificationDocuments
@@ -223,6 +222,8 @@ class AgencyController {
           },
         },
       };
+
+      console.log("\n\nProfile Data: ", profileData)
 
       res.json({
         success: true,
@@ -331,6 +332,22 @@ class AgencyController {
       res.json({
         success: true,
         data: formattedAgency,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async publish(req, res, next) {
+    try {
+      const agency = await Agency.findByPk(req.params.id);
+
+      // Publish agency
+      await agency.update({ isPublished: true, isVerified: true, isActive: true });
+
+      res.json({
+        success: true,
+        message: "Agency published successfully",
       });
     } catch (error) {
       next(error);
