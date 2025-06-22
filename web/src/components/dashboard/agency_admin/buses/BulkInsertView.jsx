@@ -13,10 +13,12 @@ import ErrorMessages from './ErrorMessages';
 import FileUploadSection from './FileUploadSection';
 
 const BulkInsertView = ({ setView }) => {
-    const { bulkImportBuses, loading, error, successMessage } = useAgency();
+    const { bulkInsertBuses, loading, error, stations } = useAgency();
     const [buses, setBuses] = useState([]);
     const [file, setFile] = useState(null);
     const [validationError, setValidationError] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+    const [selectedStation, setSelectedStation] = useState('');
 
     const handleFileDrop = (acceptedFiles) => {
         const selectedFile = acceptedFiles[0];
@@ -43,10 +45,22 @@ const BulkInsertView = ({ setView }) => {
     };
 
     const handleImport = async () => {
-        if (buses.length > 0) {
-            const result = await bulkImportBuses(buses);
+        if (buses.length > 0 && selectedStation) {
+            const busesWithStation = buses.map(bus => ({
+                ...bus,
+                baseStationId: selectedStation
+            }));
+
+            const result = await bulkInsertBuses(busesWithStation);
             if (result.success) {
-                setView();
+                setSuccessMessage(result.message || 'Buses imported successfully!');
+                setBuses([]);
+                setSelectedStation('');
+                setFile(null);
+                setValidationError('');
+                setTimeout(() => {
+                    setSuccessMessage('');
+                }, 3000);
             }
         }
     };
@@ -55,6 +69,7 @@ const BulkInsertView = ({ setView }) => {
         setFile(null);
         setBuses([]);
         setValidationError('');
+        setSelectedStation('');
     };
 
     return (
@@ -94,6 +109,9 @@ const BulkInsertView = ({ setView }) => {
                     buses={buses}
                     handleImport={handleImport}
                     loading={loading}
+                    stations={stations}
+                    selectedStation={selectedStation}
+                    onStationChange={setSelectedStation}
                 />
             )}
         </div>

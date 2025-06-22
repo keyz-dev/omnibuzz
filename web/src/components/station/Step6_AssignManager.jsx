@@ -8,8 +8,8 @@ import { toast } from "react-toastify";
 import { useAgency } from "../../stateManagement/contexts/dashboard";
 
 const Step6_AssignManager = () => {
-  const { isLoading, assignManager } = useStation();
-  const { fetchAgencyProfile } = useAgency();
+  const { isLoading, assignWorker } = useStation();
+  const { fetchAgencyProfile, agencyProfile, fetchStations } = useAgency();
   const navigate = useNavigate();
   const [manager, setManager] = useState({
     fullName: "",
@@ -41,19 +41,32 @@ const Step6_AssignManager = () => {
     if (!validate()) return;
 
     manager.phone = normalizeNumber(manager.phone);
-    const res = await assignManager(manager);
+    manager.role = "station_manager";
+
+    const res = await assignWorker(manager);
     if (res.success) {
       toast.success("The assignment request has been sent to the manager");
 
       // Force select the agency profile
       await fetchAgencyProfile();
+      await fetchStations();
 
       setTimeout(() => {
-        navigate("/agency/admin/profile-completion");
+        if (agencyProfile.agency.isPublished || agencyProfile.isPublishable) {
+          navigate("/agency/admin/stations");
+        } else {
+          navigate("/agency/admin/profile-completion");
+        }
       }, 2000);
     } else {
       toast.error(res.error);
     }
+  };
+
+  const handleOnBack = async () => {
+    await fetchAgencyProfile();
+    await fetchStations();
+    navigate("/agency/admin/stations");
   };
 
   return (
@@ -105,7 +118,7 @@ const Step6_AssignManager = () => {
         />
 
         <StepNavButtons
-          onBack={() => navigate("/agency/admin")}
+          onBack={handleOnBack}
           onBackText="Later"
           onContinueText="Assign Manager"
           onContinue={handleSubmit}

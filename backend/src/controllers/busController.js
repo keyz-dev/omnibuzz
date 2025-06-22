@@ -250,3 +250,36 @@ exports.getBusStatsByAgency = async (req, res, next) => {
         next(error);
     }
 };
+
+// @desc    Bulk insert buses
+// @route   POST /api/bus/agency/bulk-insert
+// @access  Private (Agency Admin)
+exports.bulkInsertBuses = async (req, res, next) => {
+    const { agencyId } = req.params;
+    const buses = req.body;
+
+    if (!buses || !Array.isArray(buses) || buses.length === 0) {
+        return res.status(400).json({ success: false, message: 'No bus data provided.' });
+    }
+
+    const transaction = await sequelize.transaction();
+    try {
+        const busesToCreate = buses.map(bus => ({
+            ...bus,
+            agencyId: agencyId,
+            status: bus.status || 'Available'
+        }));
+
+        const createdBuses = await Bus.bulkCreate(busesToCreate, { transaction, validate: true });
+        await transaction.commit();
+
+        res.status(201).json({
+            success: true,
+            message: `${createdBuses.length} buses imported successfully!`,
+            data: createdBuses
+        });
+    } catch (error) {
+        await transaction.rollback();
+        next(error);
+    }
+};

@@ -24,4 +24,4 @@ export { default as StatusPill } from "./StatusPill";
 export { default as DropdownMenu } from "./DropdownMenu";
 export { default as Table } from "./Table";
 export { default as StatCard } from "./StatCard";
-// export { default as Pagination } from "./Pagination";
+export { default as Select } from './Select';

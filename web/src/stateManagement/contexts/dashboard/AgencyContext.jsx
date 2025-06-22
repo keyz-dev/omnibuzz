@@ -170,11 +170,11 @@ export const AgencyProvider = ({ children }) => {
     }
   };
 
-  const bulkImportBuses = async (busesData) => {
+  const bulkInsertBuses = async (busesData) => {
     setLoading(true);
     clearMessages();
     try {
-      const response = await agencyAPI.bulkImportBuses(busesData);
+      const response = await agencyAPI.bulkInsertBuses(agencyProfile.agency.id, busesData);
       setSuccessMessage(response.message || 'Buses imported successfully!');
       await Promise.all([fetchBuses(), fetchBusStats()]);
       return { success: true };
@@ -289,7 +289,7 @@ export const AgencyProvider = ({ children }) => {
     fetchBusStats,
     addBus,
     deleteBus,
-    bulkImportBuses,
+    bulkInsertBuses,
     updateBus,
     fetchRoutes,
     fetchStaff,

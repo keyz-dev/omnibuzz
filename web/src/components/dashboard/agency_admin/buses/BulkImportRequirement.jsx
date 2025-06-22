@@ -17,9 +17,10 @@ const BulkImportRequirement = () => {
                 <div className="p-4 border-t border-line_clr">
                     <ul className="list-disc list-inside space-y-2 text-gray-600">
                         <li>Upload a CSV or Excel file with bus data</li>
-                        <li>Required columns: plateNumber, busType, capacity, seatLayout, baseStationId, and amenities</li>
+                        <li>Required columns: plateNumber, busType, capacity, seatLayout, and amenities</li>
                         <li>Capacity should be numeric</li>
                         <li>Amenities should be comma-separated</li>
+                        <li>After upload, you'll select which station to assign all buses to</li>
                         <li>Download the template below for the correct format</li>
                     </ul>
                 </div>

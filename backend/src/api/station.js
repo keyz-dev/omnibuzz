@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const stationController = require("../controllers/stationController");
 const { authenticate } = require("../middleware/auth");
-const { isAgencyAdmin, isAgencyOwner } = require("../middleware/agencyAuth");
+const { isAgencyOwner } = require("../middleware/agencyAuth");
 const {
   upload,
   handleCloudinaryUpload,

@@ -10,8 +10,6 @@ export class FileProcessor {
             skipEmptyLines: true,
             transformHeader: (header) => header.trim(), // Clean headers
             complete: (results) => {
-                console.log('CSV Parse Results:', results.data);
-
                 const validation = FileValidator.validateFileStructure(results.data);
                 if (!validation.isValid) {
                     onError(validation.error);

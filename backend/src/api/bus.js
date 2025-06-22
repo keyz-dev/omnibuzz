@@ -13,9 +13,9 @@ router.get('/by-agency/:agencyId', busController.getAgencyBuses);
 router.get('/stats/by-agency/:agencyId', busController.getBusStatsByAgency);
 router.get('/:id', busController.getBusById);
 router.post('/bulk-import', bulkUpload.single('file'), busController.bulkImportBuses);
+router.post('/bulk-insert/:agencyId', busController.bulkInsertBuses);
 router.post('/', busController.createBus);
 router.put('/:id', busController.updateBus);
 router.delete('/:id', busController.deleteBus);
-
 
 module.exports = router;

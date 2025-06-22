@@ -65,6 +65,11 @@ export const agencyAPI = {
     return response.data;
   },
 
+  bulkInsertBuses: async (agencyId, buses) => {
+    const response = await api.post(`/bus/bulk-insert/${agencyId}`, buses);
+    return response.data;
+  },
+
   updateBus: async (busId, busData) => {
     const response = await api.put(`/bus/${busId}`, busData);
     return response.data;

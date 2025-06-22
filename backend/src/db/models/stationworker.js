@@ -96,31 +96,6 @@ module.exports = (sequelize, DataTypes) => {
             ); // 7 days
           }
         },
-        afterSave: async (worker) => {
-          // Update station active status when worker is assigned/removed
-          if (worker.changed("stationId")) {
-            const oldStationId = worker.previous("stationId");
-            const newStationId = worker.stationId;
-
-            // Update old station if exists
-            if (oldStationId) {
-              const oldStation =
-                await worker.sequelize.models.Station.findByPk(oldStationId);
-              if (oldStation) {
-                await oldStation.updateActiveStatus();
-              }
-            }
-
-            // Update new station if exists
-            if (newStationId) {
-              const newStation =
-                await worker.sequelize.models.Station.findByPk(newStationId);
-              if (newStation) {
-                await newStation.updateActiveStatus();
-              }
-            }
-          }
-        },
         afterDestroy: async (worker) => {
           // Update station active status when worker is deleted
           if (worker.stationId) {

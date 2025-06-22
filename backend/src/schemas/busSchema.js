@@ -38,7 +38,7 @@ const updateBusSchema = Joi.object({
     seatLayout: Joi.string().trim(),
     baseStationId: Joi.string().uuid(),
     status: Joi.string().valid('Active', 'Available', 'Under Maintenance', 'Inactive'),
-    amenities: Joi.object(),
+    amenities: Joi.array(),
     agencyId: Joi.string().uuid().optional().messages({
         'string.guid': 'Agency ID must be a valid UUID.',
     }),

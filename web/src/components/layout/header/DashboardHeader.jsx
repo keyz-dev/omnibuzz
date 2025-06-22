@@ -59,7 +59,7 @@ const Header = () => {
   if (!roleConfig) return null;
 
   return (
-    <header className="bg-white shadow-sm p-4 flex items-center justify-between px-[3%]">
+    <header className="bg-white shadow-sm p-2 flex items-center justify-between px-[3%]">
       {/* Left Side */}
       <div className="flex items-center gap-4">
 

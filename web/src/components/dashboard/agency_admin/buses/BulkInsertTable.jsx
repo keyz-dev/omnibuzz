@@ -1,20 +1,18 @@
 import React from 'react'
-import { Card, Table, Button } from '../../../ui';
+import { Card, Table, Button, StatusPill } from '../../../ui';
+import { StationSelector } from './';
 
-const BulkInsertTable = ({ buses, handleImport, loading }) => {
+
+const BulkInsertTable = ({ buses, handleImport, loading, stations = [],
+    selectedStation,
+    onStationChange }) => {
     const columns = [
         {
             Header: 'Plate Number',
             accessor: 'plateNumber',
             Cell: ({ row }) => {
-                console.log("Plate Number: ", row)
                 return <span className="font-medium">{row.plateNumber}</span>
             }
-        },
-        {
-            Header: 'Base Station',
-            accessor: 'baseStationId',
-            Cell: ({ row }) => <span className="text-gray-600">{row.baseStationId}</span>
         },
         {
             Header: 'Type',
@@ -32,13 +30,15 @@ const BulkInsertTable = ({ buses, handleImport, loading }) => {
             Cell: ({ row }) => <span className="text-gray-600">{row.seatLayout}</span>
         },
         {
+            Header: 'Amenities',
+            accessor: 'amenities',
+            Cell: ({ row }) => <span className="text-gray-600">{row.amenities.join(', ')}</span>
+        },
+        {
             Header: 'Status',
             accessor: 'status',
             Cell: ({ row }) => (
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    <div className="w-1.5 h-1.5 bg-green-400 rounded-full mr-1.5"></div>
-                    {row.status}
-                </span>
+                <StatusPill status={row.status || 'inactive'} />
             )
         },
     ];
@@ -51,21 +51,30 @@ const BulkInsertTable = ({ buses, handleImport, loading }) => {
                 </div>
 
                 <div className="overflow-x-auto">
-                    <Table columns={columns} data={buses.slice(0, 10)} />
+                    <Table columns={columns} data={buses.slice(0, 5)} />
                 </div>
 
-                {buses.length > 10 && (
+                {buses.length > 5 && (
                     <p className="text-sm text-gray-500 mt-2 text-center">
-                        ... and {buses.length - 10} more buses
+                        ... and {buses.length - 5} more buses
                     </p>
                 )}
 
+                {/* Station Selector */}
+                <div className="mt-6">
+                    <StationSelector
+                        stations={stations}
+                        selectedStation={selectedStation}
+                        onStationChange={onStationChange}
+                        loading={loading}
+                    />
+                </div>
                 <div className="flex justify-end mt-6">
                     <Button
                         onClickHandler={handleImport}
                         isLoading={loading}
-                        isDisabled={loading || buses.length === 0}
-                        additionalClasses="bg-blue-600 text-white hover:bg-blue-700 px-6 py-2"
+                        isDisabled={loading || buses.length === 0 || !selectedStation}
+                        additionalClasses="primarybtn"
                     >
                         {loading ? 'Importing...' : `Import ${buses.length} Buses`}
                     </Button>

@@ -1,16 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Eye, Edit, Trash2, MapPin } from 'lucide-react';
-import Table from '../../../ui/Table';
-import StatusPill from '../../../ui/StatusPill';
-import DropdownMenu from '../../../ui/DropdownMenu';
+import { Eye, Edit, Trash2, MapPin, UserPlus } from 'lucide-react';
+import { Table, StatusPill, DropdownMenu } from '../../../ui';
 
-const StationsListView = ({ stations }) => {
+const StationsListView = ({ stations, setView, setStation, onAddWorker }) => {
   const navigate = useNavigate();
-
   const imagePlaceholder = 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541'
-
-  const columns = [
+  const columns = React.useMemo(() => [
     {
       Header: 'Name',
       accessor: 'name',
@@ -36,7 +32,7 @@ const StationsListView = ({ stations }) => {
           <div className="flex items-center">
             <img className="h-8 w-8 rounded-full" src={row.manager?.avatar || imagePlaceholder} alt="Manager" />
             <div className="ml-3">
-              <div className="text-sm font-medium text-gray-900">{row.manager?.name || 'N/A'}</div>
+              <div className="text-sm font-medium text-gray-900">{row.manager?.fullName || 'N/A'}</div>
               <div className="text-sm text-gray-500">{row.manager?.email || ''}</div>
             </div>
           </div>
@@ -56,7 +52,7 @@ const StationsListView = ({ stations }) => {
     {
       Header: 'Status',
       accessor: 'status',
-      Cell: ({ row }) => <StatusPill status={row.status || 'inactive'} />,
+      Cell: ({ row }) => <StatusPill status={row.isActive ? 'active' : 'inactive'} />,
     },
     {
       Header: 'Actions',
@@ -66,12 +62,20 @@ const StationsListView = ({ stations }) => {
           {
             label: 'View Details',
             icon: <Eye size={16} />,
-            onClick: () => navigate(`/agency/admin/stations/${row.id}`),
+            onClick: () => {
+              setStation(row);
+              setView()
+            },
+          },
+          {
+            label: 'Add worker',
+            icon: <UserPlus size={16} />,
+            onClick: () => onAddWorker(row),
           },
           {
             label: 'Edit',
             icon: <Edit size={16} />,
-            onClick: () => navigate(`/agency/admin/stations/${row.id}/edit`),
+            onClick: () => navigate(`/agency/admin/stations`),
           },
           {
             label: 'Invalidate',
@@ -85,9 +89,15 @@ const StationsListView = ({ stations }) => {
         return <DropdownMenu items={menuItems} />;
       },
     },
-  ];
+  ], []);
 
-  return <Table columns={columns} data={stations} />;
+  return (
+    <Table
+      columns={columns}
+      data={stations}
+      emptyStateMessage="No stations found. Try adjusting your filters."
+    />
+  );
 };
 
 export default StationsListView;

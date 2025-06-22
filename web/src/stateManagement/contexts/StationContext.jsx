@@ -43,13 +43,14 @@ export const StationProvider = ({ children }) => {
     setActiveStep((prev) => Math.max(prev - 1, STEPS.BASIC_INFORMATION));
   };
 
-  const assignManager = async (manager) => {
+  const assignWorker = async (worker) => {
     setIsLoading(true);
-    manager.stationId = createdStation.id;
-    manager.role = "station_manager";
+    if (!worker.stationId) {
+      worker.stationId = createdStation.id;
+    }
 
     try {
-      const res = await api.post("/station/workers/assign", manager);
+      const res = await api.post("/station/workers/assign", worker);
       return res.data;
     } catch (error) {
       return {
@@ -100,8 +101,6 @@ export const StationProvider = ({ children }) => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-
-      console.log("res: ", res.data.data);
       setCreatedStation(res.data.data);
       return res.data;
     } catch (error) {
@@ -130,7 +129,7 @@ export const StationProvider = ({ children }) => {
     nextStep,
     prevStep,
     createStation,
-    assignManager,
+    assignWorker,
   };
 
   return (
@@ -139,5 +138,9 @@ export const StationProvider = ({ children }) => {
 };
 
 export const useStation = () => {
-  return useContext(StationContext);
+  const context = useContext(StationContext);
+  if (!context) {
+    throw new Error("useStation must be used within a StationProvider");
+  }
+  return context;
 };
