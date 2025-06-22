@@ -34,6 +34,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "agencyId",
         as: "workers",
       });
+
+      Agency.hasMany(models.Bus, {
+        foreignKey: 'agencyId',
+        as: 'buses',
+      });
     }
 
     // Method to check if agency can be published

@@ -223,8 +223,6 @@ class AgencyController {
         },
       };
 
-      console.log("\n\nProfile Data: ", profileData)
-
       res.json({
         success: true,
         data: profileData,

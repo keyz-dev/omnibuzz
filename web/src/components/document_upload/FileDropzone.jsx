@@ -3,17 +3,19 @@ import { useDropzone } from 'react-dropzone';
 import { UploadCloud } from 'lucide-react';
 import { Button } from '../ui';
 
-const FileDropzone = ({ onDrop }) => {
+const defaultAccept = {
+    'image/jpeg': [],
+    'image/png': [],
+    'image/gif': [],
+    'image/webp': [],
+    'application/pdf': []
+};
+
+const FileDropzone = ({ onDrop, accept = defaultAccept, maxSize = 10485760 }) => {
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
-        accept: {
-            'image/jpeg': [],
-            'image/png': [],
-            'image/gif': [],
-            'image/webp': [],
-            'application/pdf': []
-        },
-        maxSize: 10485760 // 10MB
+        accept,
+        maxSize
     });
 
     return (

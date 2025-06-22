@@ -21,6 +21,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "stationId",
         as: "workers",
       });
+
+      Station.hasMany(models.Bus, {
+        foreignKey: 'baseStationId',
+        as: 'buses',
+      });
     }
 
     // Method to add a destination

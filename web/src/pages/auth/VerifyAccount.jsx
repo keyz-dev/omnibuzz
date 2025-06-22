@@ -12,6 +12,7 @@ const VerifyAccount = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const email = location.state?.email || "";
+  const origin = location.state?.origin || null;
   const [code, setCode] = useState(Array(CODE_LENGTH).fill(""));
   const [error, setError] = useState("");
   const [isValid, setIsValid] = useState(null); // null: default, true: valid, false: invalid
@@ -71,7 +72,7 @@ const VerifyAccount = () => {
     setError("");
     try {
       const codeStr = code.join("");
-      const res = await verifyAccount(email, codeStr);
+      const res = await verifyAccount(email, codeStr, origin);
 
       if (res.success) {
         setIsValid(true);
@@ -190,9 +191,8 @@ const VerifyAccount = () => {
             </Button>
             <Button
               type="submit"
-              additionalClasses={`w-32 ${
-                isCodeComplete ? "primarybtn" : "bg-gray-300 cursor-not-allowed"
-              }`}
+              additionalClasses={`w-32 ${isCodeComplete ? "primarybtn" : "bg-gray-300 cursor-not-allowed"
+                }`}
               isLoading={loading}
               disabled={loading || showSuccess || !isCodeComplete}
             >

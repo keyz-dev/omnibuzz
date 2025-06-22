@@ -142,12 +142,13 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const verifyAccount = async (email, code) => {
+  const verifyAccount = async (email, code, origin) => {
     setLoading(true);
     try {
       const response = await api.post("/user/verify-email", {
         email,
         code,
+        origin,
       });
       const { user, token } = response.data.data;
       setUserAndToken(user, token);

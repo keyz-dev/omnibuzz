@@ -10,9 +10,8 @@ import { SecurityNotice } from '../../../components/ui';
 const AgencyProfile = () => {
   // View state
   const navigate = useNavigate()
-  const { agencyProfile, loading } = useAgency();
+  const { agencyProfile, loading, publishStatus, isPublishable, publishAgency } = useAgency();
   const [currentView, setCurrentView] = useState('map');
-  const [publishStatus, setPublishStatus] = useState(false);
 
   // Form state
   const [editData, setEditData] = useState(null);
@@ -45,11 +44,20 @@ const AgencyProfile = () => {
     // You might want to update the main agencyProfile state here
   };
 
-  const handlePublishStatusChange = () => {
-    if (agencyProfile.isPublishable) {
-      setPublishStatus(!publishStatus);
+  const handlePublishStatusChange = async () => {
+    if (isPublishable && !publishStatus) {
+      try {
+        await publishAgency(agency.id);
+        toast.success("👍Congratulations 👍, your agency is now active");
+      } catch (error) {
+        toast.error("Failed to publish agency");
+      }
     } else {
-      toast.error("Agency is not publishable");
+      if (isPublishable && publishStatus) {
+        toast.error("Agency is already published");
+      } else {
+        toast.error("Agency is not publishable");
+      }
     }
   };
 
@@ -90,7 +98,7 @@ const AgencyProfile = () => {
 
   return (
     <section>
-      {!agencyProfile.isPublishable && (
+      {!isPublishable && (
         <button className="mb-4 w-full md:w-auto">
           <SecurityNotice
             title="Complete Required Steps"

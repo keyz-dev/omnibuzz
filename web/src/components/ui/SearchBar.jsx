@@ -3,7 +3,7 @@ import { Search } from 'lucide-react';
 
 const SearchBar = ({ placeholder, searchTerm, setSearchTerm }) => {
   return (
-    <div className="relative w-full">
+    <div className="relative w-full rounded-sm bg-white">
       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
         <Search size={18} className="text-gray-400" />
       </div>

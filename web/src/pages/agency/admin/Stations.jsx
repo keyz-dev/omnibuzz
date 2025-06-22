@@ -29,10 +29,10 @@ const Stations = () => {
     const stationStatus = station.status || '';
 
     const matchesSearch = stationName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          stationAddress.toLowerCase().includes(searchTerm.toLowerCase());
+      stationAddress.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesLocation = locationFilter ? stationTown === locationFilter : true;
     const matchesStatus = statusFilter ? stationStatus === statusFilter : true;
-    
+
     return matchesSearch && matchesLocation && matchesStatus;
   });
 
@@ -47,7 +47,7 @@ const Stations = () => {
     <div className="min-h-screen">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-end md:items-center mb-6 gap-4">
-        
+
         <Button
           onClickHandler={() => navigate('/agency/admin/station-setup')}
           additionalClasses="bg-accent text-white"
@@ -58,10 +58,10 @@ const Stations = () => {
       </div>
 
       {/* Toolbar */}
-      <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
+      <div className="mb-6">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="w-full md:w-auto md:flex-1">
-             <SearchBar placeholder="Search Stations..." searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+            <SearchBar placeholder="Search Stations..." searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
           </div>
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
             <FilterDropdown label="Location" options={locationOptions} selected={locationFilter} setSelected={setLocationFilter} />

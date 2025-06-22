@@ -60,12 +60,12 @@ const AcceptInvitation = () => {
         confirmPassword: formData.confirmPassword,
       });
       if (success) {
-        navigate("/verify-account", { state: { email: user.email } });
+        navigate("/verify-account", { state: { email: user.email, origin: "accept-invitation" } });
       }
     } catch (error) {
       setAuthError(
         error.response?.data?.message ||
-          "An error occurred during profile completion"
+        "An error occurred during profile completion"
       );
     }
   };

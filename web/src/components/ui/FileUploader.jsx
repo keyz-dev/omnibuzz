@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { UploadCloud } from "lucide-react";
 
-const FileUploader = ({ preview, onChange, className = "", text = null }) => {
+const FileUploader = ({ preview, onChange, className = "", text = null, accept = "image/*" }) => {
   const fileInputRef = useRef();
 
   const handleFileChange = (e) => {
@@ -44,14 +44,13 @@ const FileUploader = ({ preview, onChange, className = "", text = null }) => {
           <span className="text-xs text-secondary">
             Drop or <span className="text-accent underline">Upload</span>
           </span>
-          <span className="text-xs text-secondary">{`${
-            text ? text : "profile picture"
-          }`}</span>
+          <span className="text-xs text-secondary">{`${text ? text : "profile picture"
+            }`}</span>
         </div>
       )}
       <input
         type="file"
-        accept="image/*"
+        accept={accept}
         ref={fileInputRef}
         className="hidden"
         onChange={handleFileChange}
