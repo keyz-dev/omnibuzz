@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAgency } from '../../../../stateManagement/contexts/dashboard';
+import { useAgency } from '../../../../stateManagement/contexts/dashboard/agency_admin';
 import { Input, Button } from '../../../ui';
 
 const AMENITIES_LIST = ['Wi-Fi', 'AC', 'Power Outlet', 'Restroom', 'TV'];

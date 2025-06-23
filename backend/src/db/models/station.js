@@ -26,6 +26,16 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'baseStationId',
         as: 'buses',
       });
+
+      // Station.belongsTo(models.Route, {
+      //   foreignKey: 'from',
+      //   as: 'from',
+      // });
+
+      // Station.belongsTo(models.Route, {
+      //   foreignKey: 'to',
+      //   as: 'to',
+      // });
     }
 
     // Method to add a destination

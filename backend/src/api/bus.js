@@ -10,7 +10,7 @@ router.get('/all', busController.getAll);
 router.use(authorize(['agency_admin', 'system_admin']));
 
 router.get('/by-agency/:agencyId', busController.getAgencyBuses);
-router.get('/stats/by-agency/:agencyId', busController.getBusStatsByAgency);
+router.get('/by-agency/:agencyId/stats', busController.getBusStatsByAgency);
 router.get('/:id', busController.getBusById);
 router.post('/bulk-import', bulkUpload.single('file'), busController.bulkImportBuses);
 router.post('/bulk-insert/:agencyId', busController.bulkInsertBuses);

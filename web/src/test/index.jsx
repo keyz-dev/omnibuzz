@@ -1,7 +1,7 @@
 // BulkInsertView.jsx - Main component (now much smaller!)
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAgency } from '../../../../stateManagement/contexts/dashboard';
+import { useAgency } from '../../../../stateManagement/contexts/dashboard/agency_admin';
 
 // Import reusable UI components
 import { Button } from '../../../ui';

@@ -1,13 +1,13 @@
 const Joi = require('joi');
 
 const createRouteSchema = Joi.object({
-    originStationId: Joi.string().uuid().required().messages({
-        'string.guid': 'Origin station ID must be a valid UUID.',
-        'any.required': 'Origin station is required.',
+    from: Joi.string().uuid().required().messages({
+        'string.guid': 'From station ID must be a valid UUID.',
+        'any.required': 'From station is required.',
     }),
-    destinationStationId: Joi.string().uuid().required().messages({
-        'string.guid': 'Destination station ID must be a valid UUID.',
-        'any.required': 'Destination station is required.',
+    to: Joi.string().uuid().required().messages({
+        'string.guid': 'To station ID must be a valid UUID.',
+        'any.required': 'To station is required.',
     }),
     distance: Joi.number().positive().required().messages({
         'number.base': 'Distance must be a number.',
@@ -30,11 +30,11 @@ const createRouteSchema = Joi.object({
 });
 
 const updateRouteSchema = Joi.object({
-    originStationId: Joi.string().uuid().messages({
-        'string.guid': 'Origin station ID must be a valid UUID.',
+    from: Joi.string().uuid().messages({
+        'string.guid': 'From station ID must be a valid UUID.',
     }),
-    destinationStationId: Joi.string().uuid().messages({
-        'string.guid': 'Destination station ID must be a valid UUID.',
+    to: Joi.string().uuid().messages({
+        'string.guid': 'To station ID must be a valid UUID.',
     }),
     distance: Joi.number().positive().messages({
         'number.base': 'Distance must be a number.',

@@ -9,10 +9,11 @@ router.use(authenticate);
 // Routes accessible to agency_admin and system_admin
 router.use(authorize(['agency_admin', 'system_admin']));
 
-router.post('/agency', routeController.createRoute);
-router.get('/agency', routeController.getAgencyRoutes);
-router.get('/agency/:id', routeController.getRouteById);
-router.put('/agency/:id', routeController.updateRoute);
-router.delete('/agency/:id', routeController.deleteRoute);
+router.post('/by-agency/:agencyId', routeController.createRoute);
+router.get('/by-agency/:agencyId', routeController.getAgencyRoutes);
+router.get('/by-agency/:agencyId/stats', routeController.getAgencyRoutesStats);
+router.get('/:id', routeController.getRouteById);
+router.put('/:id', routeController.updateRoute);
+router.delete('/:id', routeController.deleteRoute);
 
 module.exports = router;

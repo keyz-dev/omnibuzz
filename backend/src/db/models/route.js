@@ -10,12 +10,12 @@ module.exports = (sequelize, DataTypes) => {
       });
 
       Route.belongsTo(models.Station, {
-        foreignKey: 'originStationId',
+        foreignKey: 'from',
         as: 'originStation',
       });
 
       Route.belongsTo(models.Station, {
-        foreignKey: 'destinationStationId',
+        foreignKey: 'to',
         as: 'destinationStation',
       });
     }
@@ -38,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
       },
-      originStationId: {
+      from: {
         type: DataTypes.UUID,
         allowNull: false,
         references: {
@@ -48,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
       },
-      destinationStationId: {
+      to: {
         type: DataTypes.UUID,
         allowNull: false,
         references: {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAgency } from '../../../stateManagement/contexts/dashboard/index'
+import { useAgency } from '../../../stateManagement/contexts/dashboard/agency_admin'
 import { Loader } from '../../../components/ui'
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';

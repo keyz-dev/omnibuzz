@@ -1,6 +1,6 @@
 // BulkInsertView.jsx - Main component (now much smaller!)
 import React, { useState } from 'react';
-import { useAgency } from '../../../../stateManagement/contexts/dashboard';
+import { useAgency, useAgencyStation, useAgencyBuses } from '../../../../stateManagement/contexts/dashboard/agency_admin';
 
 // Import reusable UI components
 import { Button } from '../../../ui';
@@ -13,7 +13,9 @@ import ErrorMessages from './ErrorMessages';
 import FileUploadSection from './FileUploadSection';
 
 const BulkInsertView = ({ setView }) => {
-    const { bulkInsertBuses, loading, error, stations } = useAgency();
+    const { stations } = useAgencyStation();
+    const { bulkInsertBuses, loading, error } = useAgencyBuses();
+
     const [buses, setBuses] = useState([]);
     const [file, setFile] = useState(null);
     const [validationError, setValidationError] = useState('');

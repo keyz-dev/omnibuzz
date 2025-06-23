@@ -1,29 +1,39 @@
-const { Route, Station, Agency, sequelize } = require('../db/models');
-const { Op } = require('sequelize');
-const { validateRequest } = require('../utils/validation');
-const { createRouteSchema, updateRouteSchema } = require('../schemas/routeSchema');
+const { Route, Station, Agency, sequelize } = require("../db/models");
+const { Op } = require("sequelize");
+const { validateRequest } = require("../utils/validation");
+const {
+    createRouteSchema,
+    updateRouteSchema,
+} = require("../schemas/routeSchema");
+
+const catchAsync = (fn) => (req, res, next) => {
+    fn(req, res, next).catch(next);
+};
+
+const { BadRequestError, NotFoundError } = require("../utils/errors");
 
 // @desc    Create a new route
 // @route   POST /api/routes/agency
 // @access  Private (Agency Admin)
-exports.createRoute = async (req, res, next) => {
+exports.createRoute = catchAsync(async (req, res, next) => {
     try {
         const { error, value } = validateRequest(req.body, createRouteSchema);
         if (error) return next(error);
 
-        const agencyId = req.user.agencyId;
-        const { originStationId, destinationStationId, distance, estimatedDuration, basePrice, status } = value;
+        const { from, to, distance, estimatedDuration, basePrice, status } = value;
+        const agencyId = req.params.agencyId;
 
-        if (originStationId === destinationStationId) {
-            return res.status(400).json({ success: false, message: 'Origin and destination stations cannot be the same.' });
-        }
-
+        // Check for duplicate route
         const existingRoute = await Route.findOne({
-            where: { agencyId, originStationId, destinationStationId },
+            where: {
+                agencyId,
+                from,
+                to,
+            },
         });
 
         if (existingRoute) {
-            return res.status(409).json({ success: false, message: 'This route already exists for your agency.' });
+            return res.status(409).json({ success: false, message: 'A route with the same origin and destination already exists.' });
         }
 
         const newRoute = await Route.create({
@@ -35,91 +45,123 @@ exports.createRoute = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-};
+});
+
+// @desc    Get agency routes stats
+// @route   GET /api/routes/agency/:agencyId/stats
+// @access  Private (Agency Admin)
+exports.getAgencyRoutesStats = catchAsync(async (req, res, next) => {
+    const { agencyId } = req.params;
+
+    const [total, active, inactive] = await Promise.all([
+        Route.count({ where: { agencyId } }),
+        Route.count({ where: { agencyId, status: "Active" } }),
+        Route.count({ where: { agencyId, status: "Inactive" } }),
+    ]);
+
+    return res.status(200).json({
+        success: true,
+        status: "success",
+        data: { total, active, inactive },
+    });
+});
 
 // @desc    Get all routes for an agency
 // @route   GET /api/routes/agency
 // @access  Private (Agency Admin)
-exports.getAgencyRoutes = async (req, res, next) => {
-    try {
-        const agencyId = req.user.agencyId;
-        const { page = 1, limit = 10, search, status } = req.query;
-        const offset = (parseInt(page) - 1) * parseInt(limit);
+exports.getAgencyRoutes = catchAsync(async (req, res, next) => {
+    const { agencyId } = req.params;
+    const {
+        page = 1,
+        limit = 10,
+        origin,
+        destination,
+        status,
+        sortBy = "createdAt",
+        order = "DESC",
+    } = req.query;
 
-        const whereClause = { agencyId };
-        if (status) {
-            whereClause.status = status;
-        }
+    const whereClause = { agencyId };
+    if (origin) whereClause["$from.name$"] = origin;
+    if (destination) whereClause["$to.name$"] = destination;
+    if (status) whereClause.status = status;
 
-        let includeClause = [
-            { model: Station, as: 'originStation', attributes: ['name'] },
-            { model: Station, as: 'destinationStation', attributes: ['name'] },
-        ];
-
-        if (search) {
-            whereClause[Op.or] = [
-                { '$originStation.name$': { [Op.iLike]: `%${search}%` } },
-                { '$destinationStation.name$': { [Op.iLike]: `%${search}%` } },
-            ];
-        }
-
-        const { count, rows: routes } = await Route.findAndCountAll({
-            where: whereClause,
-            include: includeClause,
-            limit: parseInt(limit),
-            offset: offset,
-            order: [['createdAt', 'DESC']],
-        });
-
-        res.status(200).json({
-            success: true,
-            data: routes,
-            pagination: {
-                totalItems: count,
-                totalPages: Math.ceil(count / limit),
-                currentPage: parseInt(page),
+    const { count, rows } = await Route.findAndCountAll({
+        where: whereClause,
+        include: [
+            { model: Station, as: "originStation", attributes: ["name", "baseTown"] },
+            {
+                model: Station,
+                as: "destinationStation",
+                attributes: ["name", "baseTown"],
             },
-        });
-    } catch (error) {
-        next(error);
-    }
-};
+        ],
+        offset: (page - 1) * limit,
+        limit: parseInt(limit),
+        order: [[sortBy, order]],
+    });
+
+    return res.status(200).json({
+        success: true,
+        status: "success",
+        results: rows.length,
+        data: {
+            routes: rows,
+            totalPages: Math.ceil(count / limit),
+            currentPage: parseInt(page),
+            totalRecords: count,
+        },
+    });
+});
 
 // @desc    Get a single route by ID
 // @route   GET /api/routes/agency/:id
 // @access  Private (Agency Admin)
-exports.getRouteById = async (req, res, next) => {
+exports.getRouteById = catchAsync(async (req, res, next) => {
+    const route = await Route.findOne({
+        where: { id: req.params.id },
+        include: [
+            { model: Station, as: "originStation" },
+            { model: Station, as: "destinationStation" },
+        ],
+    });
+
+    if (!route) {
+        throw new NotFoundError("Route not found");
+    }
+
+    return res.status(200).json({ success: true, data: route });
+});
+
+// @desc    Update a route
+// @route   PUT /api/routes/agency/:id
+// @access  Private (Agency Admin)
+exports.updateRoute = catchAsync(async (req, res, next) => {
     try {
-        const route = await Route.findOne({
-            where: { id: req.params.id, agencyId: req.user.agencyId },
-            include: [
-                { model: Station, as: 'originStation' },
-                { model: Station, as: 'destinationStation' },
-            ],
-        });
+        const { error, value } = validateRequest(req.body, updateRouteSchema);
+        if (error) return next(error);
+
+        const route = await Route.findOne({ where: { id: req.params.id, agencyId: req.params.agencyId } });
 
         if (!route) {
             return res.status(404).json({ success: false, message: 'Route not found' });
         }
 
-        res.status(200).json({ success: true, data: route });
-    } catch (error) {
-        next(error);
-    }
-};
+        // Check for duplicate route if origin/destination are being changed
+        const { from, to } = value;
+        if (from || to) {
+            const existingRoute = await Route.findOne({
+                where: {
+                    id: { [Op.ne]: req.params.id },
+                    agencyId: req.params.agencyId,
+                    from: from || route.from,
+                    to: to || route.to,
+                },
+            });
 
-// @desc    Update a route
-// @route   PUT /api/routes/agency/:id
-// @access  Private (Agency Admin)
-exports.updateRoute = async (req, res, next) => {
-    try {
-        const { error, value } = validateRequest(req.body, updateRouteSchema);
-        if (error) return next(error);
-
-        const route = await Route.findOne({ where: { id: req.params.id, agencyId: req.user.agencyId } });
-
-        if (!route) {
-            return res.status(404).json({ success: false, message: 'Route not found' });
+            if (existingRoute) {
+                return res.status(409).json({ success: false, message: 'Another route with the same origin and destination already exists.' });
+            }
         }
 
         await route.update(value);
@@ -128,23 +170,21 @@ exports.updateRoute = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-};
+});
 
 // @desc    Delete a route
 // @route   DELETE /api/routes/agency/:id
 // @access  Private (Agency Admin)
-exports.deleteRoute = async (req, res, next) => {
-    try {
-        const route = await Route.findOne({ where: { id: req.params.id, agencyId: req.user.agencyId } });
+exports.deleteRoute = catchAsync(async (req, res, next) => {
+    const route = await Route.findOne({ where: { id: req.params.id, agencyId: req.params.agencyId } });
 
-        if (!route) {
-            return res.status(404).json({ success: false, message: 'Route not found' });
-        }
-
-        await route.destroy();
-
-        res.status(200).json({ success: true, message: 'Route deleted successfully!' });
-    } catch (error) {
-        next(error);
+    if (!route) {
+        throw new NotFoundError("Route not found");
     }
-};
+
+    await route.destroy();
+
+    return res
+        .status(200)
+        .json({ success: true, message: "Route deleted successfully!" });
+});

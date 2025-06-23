@@ -25,3 +25,6 @@ export { default as DropdownMenu } from "./DropdownMenu";
 export { default as Table } from "./Table";
 export { default as StatCard } from "./StatCard";
 export { default as Select } from './Select';
+export { default as UserInfo } from './UserInfo';
+export { default as ModalWrapper } from './ModalWrapper';
+export { default as ConfirmDeleteModal } from './ConfirmDeleteModal';

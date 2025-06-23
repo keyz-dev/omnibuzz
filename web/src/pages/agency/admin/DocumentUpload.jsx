@@ -3,7 +3,7 @@ import { Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import { DocumentRequirements, FilePreviewModal, FileDropzone, UploadedFileItem } from '../../../components/document_upload/';
-import { useAgency } from '../../../stateManagement/contexts/dashboard';
+import { useAgency } from '../../../stateManagement/contexts/dashboard/agency_admin';
 
 const documentTypeList = [
   "business_registration",

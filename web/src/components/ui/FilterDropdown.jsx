@@ -7,7 +7,7 @@ const FilterDropdown = ({ label, options, selected, setSelected }) => {
       <select
         value={selected}
         onChange={(e) => setSelected(e.target.value)}
-        className="appearance-none w-full bg-white border border-gray-300 rounded-md py-2 pl-3 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+        className="appearance-none w-full bg-white border border-gray-300 rounded-xs py-2 pl-3 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
       >
         <option value="">{`All ${label}s`}</option>
         {options.map(option => (

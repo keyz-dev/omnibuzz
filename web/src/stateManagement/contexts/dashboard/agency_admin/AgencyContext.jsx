@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { agencyAPI } from '../../../api/agencyAdminApi';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { agencyAPI } from '../../../../api/agencyAdminApi';
 
 const AgencyAdminContext = createContext();
 
@@ -11,7 +11,7 @@ export const useAgency = () => {
   return context;
 };
 
-export const AgencyProvider = ({ children }) => {
+const AgencyProvider = ({ children }) => {
   const [agencyProfile, setAgencyProfile] = useState(() => {
     try {
       const saved = localStorage.getItem("myAgency");
@@ -22,8 +22,6 @@ export const AgencyProvider = ({ children }) => {
     }
   });
   const [bookings, setBookings] = useState([]);
-  const [buses, setBuses] = useState([]);
-  const [routes, setRoutes] = useState([]);
   const [staff, setStaff] = useState([]);
   const [stations, setStations] = useState([]);
   const [revenue, setRevenue] = useState({});
@@ -32,8 +30,6 @@ export const AgencyProvider = ({ children }) => {
   const [successMessage, setSuccessMessage] = useState('');
   const [isPublishable, setIsPublishable] = useState(false);
   const [publishStatus, setPublishStatus] = useState(false);
-  const [busStats, setBusStats] = useState({ total: 0, active: 0, available: 0, maintenance: 0 });
-  const [pagination, setPagination] = useState({ currentPage: 1, totalPages: 1, totalItems: 0 });
 
   const clearMessages = () => {
     setError(null);
@@ -109,83 +105,6 @@ export const AgencyProvider = ({ children }) => {
     }
   };
 
-  const fetchBuses = useCallback(async (page = 1, filters = {}) => {
-    setLoading(true);
-    clearMessages();
-    try {
-      const data = await agencyAPI.getBuses(agencyProfile.agency.id, page, filters);
-      setBuses(data.buses);
-      setPagination(data.pagination);
-    } catch (err) {
-      setError(err.message || 'Failed to fetch buses.');
-    } finally {
-      setLoading(false);
-    }
-  }, [agencyProfile]);
-
-  const fetchBusStats = useCallback(async () => {
-    if (!agencyProfile?.agency?.id) return;
-    try {
-      const data = await agencyAPI.getBusStats(agencyProfile.agency.id);
-      if (data.success) {
-        setBusStats(data.stats);
-      }
-    } catch (err) {
-      console.error('Could not fetch bus stats:', err);
-    }
-  }, [agencyProfile]);
-
-  const addBus = async (busData) => {
-
-    setLoading(true);
-    clearMessages();
-    try {
-      // Add agencyId to the payload
-      const payload = { ...busData, agencyId: agencyProfile.agency.id }
-      const newBus = await agencyAPI.addBus(payload);
-      setSuccessMessage('Bus added successfully!');
-      await Promise.all([fetchBuses(pagination.currentPage), fetchBusStats()]);
-      return { success: true, data: newBus };
-    } catch (err) {
-      setError(err.message || 'Failed to add bus.');
-      return { success: false, error: err.message };
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const deleteBus = async (busId) => {
-    setLoading(true);
-    clearMessages();
-    try {
-      await agencyAPI.deleteBus(busId);
-      setSuccessMessage('Bus deleted successfully!');
-      await Promise.all([fetchBuses(pagination.currentPage), fetchBusStats()]);
-      return { success: true };
-    } catch (err) {
-      setError(err.message || 'Failed to delete bus.');
-      return { success: false, error: err.message };
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const bulkInsertBuses = async (busesData) => {
-    setLoading(true);
-    clearMessages();
-    try {
-      const response = await agencyAPI.bulkInsertBuses(agencyProfile.agency.id, busesData);
-      setSuccessMessage(response.message || 'Buses imported successfully!');
-      await Promise.all([fetchBuses(), fetchBusStats()]);
-      return { success: true };
-    } catch (err) {
-      setError(err.message || 'Failed to import buses.');
-      return { success: false, error: err.message };
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const saveDocuments = async (documents) => {
     setLoading(true);
     setError(null);
@@ -210,28 +129,6 @@ export const AgencyProvider = ({ children }) => {
       setError(err.message);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const updateBus = async (busId, busData) => {
-    try {
-      const updatedBus = await agencyAPI.updateBus(busId, busData);
-      setBuses(prev =>
-        prev.map(bus => bus.id === busId ? updatedBus : bus)
-      );
-      return updatedBus;
-    } catch (err) {
-      setError(err.message);
-      throw err;
-    }
-  };
-
-  const fetchRoutes = async () => {
-    try {
-      const data = await agencyAPI.getRoutes();
-      setRoutes(data);
-    } catch (err) {
-      setError(err.message);
     }
   };
 
@@ -268,8 +165,6 @@ export const AgencyProvider = ({ children }) => {
     // State
     agencyProfile,
     bookings,
-    buses,
-    routes,
     staff,
     stations,
     revenue,
@@ -278,20 +173,11 @@ export const AgencyProvider = ({ children }) => {
     successMessage,
     isPublishable,
     publishStatus,
-    busStats,
-    pagination,
 
     // Actions
     fetchAgencyProfile,
     fetchStations,
     fetchBookings,
-    fetchBuses,
-    fetchBusStats,
-    addBus,
-    deleteBus,
-    bulkInsertBuses,
-    updateBus,
-    fetchRoutes,
     fetchStaff,
     addStaffMember,
     fetchRevenue,
@@ -309,3 +195,5 @@ export const AgencyProvider = ({ children }) => {
     </AgencyAdminContext.Provider>
   );
 };
+
+export default AgencyProvider;

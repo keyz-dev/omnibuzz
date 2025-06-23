@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth } from './AuthContext';
-import { AdminProvider, BaseDashboardProvider, StationManagerProvider, AgencyProvider } from './dashboard';
+import { AdminProvider, BaseDashboardProvider, StationManagerProvider } from './dashboard';
+import { AgencyContextWrapper } from './dashboard/agency_admin';
 import { USER_ROLES } from '../../config/userRoles';
 import { Loader } from '../../components/ui';
 
@@ -14,7 +15,7 @@ const DashboardContextWrapper = ({ children }) => {
       case USER_ROLES.ADMIN:
         return AdminProvider;
       case USER_ROLES.AGENCY_ADMIN:
-        return AgencyProvider;
+        return AgencyContextWrapper;
       case USER_ROLES.STATION_MANAGER:
         return StationManagerProvider;
       default:

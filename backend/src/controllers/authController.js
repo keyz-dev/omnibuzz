@@ -103,18 +103,21 @@ const login = async (req, res) => {
     throw new UnauthorizedError("Incorrect email or password");
   }
 
+  console.log("\n\nuser: ", user)
+
   if (user.role === "station_manager" || user.role === "ticket_agent") {
     await user.reload({
       include: [
         {
           model: StationWorker,
-          as: "workingStations",
+          as: "worker",
           include: [{ model: Station, as: "station" }],
         },
       ],
     });
   }
 
+  console.log("\n\nuser after reload: ", user)
   if (user.authProvider === "google" && !user.password) {
     throw new UnauthorizedError("Please Continue with Google Sign In");
   }

@@ -5,7 +5,7 @@ import { isValidCMNumber } from "../../utils/validateForm";
 import { normalizeNumber } from "../../utils/normalizePhone";
 import { useStation } from "../../stateManagement/contexts";
 import { toast } from "react-toastify";
-import { useAgency } from "../../stateManagement/contexts/dashboard";
+import { useAgency } from "../../stateManagement/contexts/dashboard/agency_admin";
 
 const Step6_AssignManager = () => {
   const { isLoading, assignWorker } = useStation();

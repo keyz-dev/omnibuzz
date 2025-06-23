@@ -9,7 +9,7 @@ import {
   Loader,
 } from "../ui";
 import { useStation } from "../../stateManagement/contexts";
-import { useAgency } from '../../stateManagement/contexts/dashboard'
+import { useAgency } from '../../stateManagement/contexts/dashboard/agency_admin'
 import { useNavigate } from "react-router-dom";
 
 const Step1_BasicInformation = () => {
@@ -106,7 +106,7 @@ const Step1_BasicInformation = () => {
               name="baseTown"
               value={baseTown}
               placeholder="Select base town"
-              onChangeHandler={() => {}}
+              onChangeHandler={() => { }}
               error={errors.baseTown}
               required={true}
               disabled={true}

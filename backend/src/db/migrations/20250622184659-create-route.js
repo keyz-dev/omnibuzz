@@ -18,7 +18,7 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      originStationId: {
+      from: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {
@@ -28,7 +28,7 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
       },
-      destinationStationId: {
+      to: {
         type: Sequelize.UUID,
         allowNull: false,
         references: {

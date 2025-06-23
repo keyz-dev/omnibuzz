@@ -33,6 +33,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "userId",
         as: "workingStations",
       });
+
+      User.hasOne(models.StationWorker, {
+        foreignKey: 'userId',
+        as: 'worker',
+      });
     }
 
     // Instance method to check password
@@ -46,7 +51,7 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     // Helper method to check if user is an agency worker
-    isStationWorker() {
+    isAgencyWorker() {
       return ["agency_admin", "station_manager", "ticket_agent"].includes(
         this.role
       );
