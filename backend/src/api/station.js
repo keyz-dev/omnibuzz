@@ -42,15 +42,6 @@ router.put(
 // Delete station (requires authentication)
 router.delete("/:id", authenticate, stationController.remove);
 
-// Worker management routes
-router.post(
-  "/workers/assign",
-  authenticate,
-  isAgencyOwner,
-  stationController.assignWorker
-);
-router.get("/:id/workers", authenticate, stationController.getWorkers);
-
 // Get station by agency ID
 router.get(
   "/by-agency/:agencyId",

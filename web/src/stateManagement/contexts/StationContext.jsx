@@ -50,7 +50,7 @@ export const StationProvider = ({ children }) => {
     }
 
     try {
-      const res = await api.post("/station/workers/assign", worker);
+      const res = await api.post("/staff", worker);
       return res.data;
     } catch (error) {
       return {
@@ -124,6 +124,7 @@ export const StationProvider = ({ children }) => {
     visitedSteps,
     STEPS,
     isLoading,
+
     setStationCreationData,
     updateFormData,
     nextStep,

@@ -1,20 +1,23 @@
-import React from 'react';
-import cn from 'classnames';
+import React from "react";
+import cn from "classnames";
 
 const TableCell = React.forwardRef(({ className, ...props }, ref) => (
   <td
     ref={ref}
-    className={cn("p-4 align-middle [&:has([role=checkbox])]:pr-0 relative", className)}
+    className={cn(
+      "p-4 align-middle [&:has([role=checkbox])]:pr-0 relative",
+      className
+    )}
     {...props}
   />
-))
-TableCell.displayName = "TableCell"
+));
+TableCell.displayName = "TableCell";
 
-const Table = ({ columns, data }) => {
+const Table = ({ columns, data, emptyStateMessage }) => {
   if (!data || data.length === 0) {
     return (
       <div className="p-6 text-center text-gray-500">
-        No data available.
+        {emptyStateMessage || "No data available."}
       </div>
     );
   }
@@ -39,7 +42,10 @@ const Table = ({ columns, data }) => {
           {data.map((row, rowIndex) => (
             <tr key={rowIndex} className="hover:bg-gray-50">
               {columns.map((col) => (
-                <TableCell key={col.accessor} className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                <TableCell
+                  key={col.accessor}
+                  className="px-6 py-4 whitespace-nowrap text-sm text-gray-700"
+                >
                   {col.Cell ? col.Cell({ row }) : row[col.accessor]}
                 </TableCell>
               ))}

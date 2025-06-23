@@ -44,7 +44,7 @@ exports.createBus = async (req, res, next) => {
 exports.getAgencyBuses = async (req, res, next) => {
     try {
         const { agencyId } = req.params;
-        const { page = 1, limit = 10, search, station, type, status } = req.query;
+        const { page = 1, limit = 5, search, station, type, status } = req.query;
         const offset = (parseInt(page) - 1) * parseInt(limit);
 
         const whereClause = { agencyId };

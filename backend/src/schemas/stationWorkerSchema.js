@@ -24,7 +24,14 @@ const acceptInvitationSchema = Joi.object({
   avatar: singleImageSchema,
 });
 
+// Schema for updating an existing worker
+const updateWorkerSchema = Joi.object({
+  role: Joi.string().valid("station_manager", "ticket_agent").optional(),
+  stationId: Joi.string().uuid().optional(),
+}).min(1); // Requires at least one field to be updated
+
 module.exports = {
   assignWorkerSchema,
   acceptInvitationSchema,
+  updateWorkerSchema,
 };

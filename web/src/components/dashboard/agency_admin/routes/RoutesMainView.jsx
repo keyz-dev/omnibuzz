@@ -32,12 +32,14 @@ const RoutesMainView = ({
     });
   }, [routes, searchTerm, originFilter, destinationFilter, statusFilter]);
 
+  console.log(routes);
+
   const originOptions = useMemo(
     () =>
       routes && routes.length > 0
-        ? [...new Set(routes.map((r) => r.from))].map((from) => ({
-            value: from,
-            label: from,
+        ? [...new Set(routes.map((r) => r.originStation))].map((from) => ({
+            value: from.id,
+            label: from.name,
           }))
         : [],
     [routes]
@@ -45,9 +47,9 @@ const RoutesMainView = ({
   const destinationOptions = useMemo(
     () =>
       routes && routes.length > 0
-        ? [...new Set(routes.map((r) => r.to))].map((to) => ({
-            value: to,
-            label: to,
+        ? [...new Set(routes.map((r) => r.destinationStation))].map((to) => ({
+            value: to.id,
+            label: to.name,
           }))
         : [],
     [routes]
@@ -77,16 +79,19 @@ const RoutesMainView = ({
         </div>
         <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
           <FilterDropdown
+            label="Origin"
             placeholder="Origin: N/A"
             options={originOptions}
             onSelect={setOriginFilter}
           />
           <FilterDropdown
+            label="Destination"
             placeholder="Destination: N/A"
             options={destinationOptions}
             onSelect={setDestinationFilter}
           />
           <FilterDropdown
+            label="Status"
             placeholder="Status: N/A"
             options={statusOptions}
             onSelect={setStatusFilter}

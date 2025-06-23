@@ -150,7 +150,7 @@ const MainView = ({ setView }) => {
       </div>
 
       {/* search and filter */}
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
         <div className="w-full md:w-1/3">
           <SearchBar
             placeholder="Search by plate number..."
