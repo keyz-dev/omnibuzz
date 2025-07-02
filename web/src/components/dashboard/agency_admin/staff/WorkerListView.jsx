@@ -33,7 +33,7 @@ const WorkerListView = ({
       {
         Header: "Assigned Station",
         accessor: "station.name",
-        Cell: ({ row }) => row.station.name || "N/A",
+        Cell: ({ row }) => row.station?.name || "N/A",
       },
       {
         Header: "Date Added",

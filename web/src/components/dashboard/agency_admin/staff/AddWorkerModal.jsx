@@ -5,11 +5,11 @@ import { X } from "lucide-react";
 import { toast } from "react-toastify";
 import { isValidCMNumber } from "../../../../utils/validateForm";
 import { normalizeNumber } from "../../../../utils/normalizePhone";
-import { useStation } from "../../../../stateManagement/contexts";
+import { useAgencyStaff } from "../../../../stateManagement/contexts/dashboard/agency_admin";
 
 const AddWorkerModal = ({ isOpen, onClose, station }) => {
   const { stations, loading, fetchStations } = useAgencyStation();
-  const { assignWorker } = useStation();
+  const { addStaff } = useAgencyStaff();
 
   const [worker, setWorker] = useState({
     fullName: "",
@@ -70,11 +70,12 @@ const AddWorkerModal = ({ isOpen, onClose, station }) => {
 
     const workerData = {
       ...worker,
-      stationId: station.id,
       phone: normalizeNumber(worker.phone),
     };
 
-    const res = await assignWorker(workerData);
+    console.log(workerData);
+
+    const res = await addStaff(workerData);
     if (res.success) {
       await fetchStations();
       toast.success(
@@ -94,7 +95,7 @@ const AddWorkerModal = ({ isOpen, onClose, station }) => {
   ];
 
   const stationOptions =
-    stations?.map((s) => ({ value: s._id, label: s.name })) || [];
+    stations?.map((s) => ({ value: s.id, label: s.name })) || [];
 
   const isFormIncomplete =
     !worker.fullName.trim() ||
