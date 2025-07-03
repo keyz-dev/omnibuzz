@@ -16,10 +16,6 @@ const StationsMainView = ({ setView, setStation }) => {
   const [isAddWorkerModalOpen, setAddWorkerModalOpen] = useState(false);
   const [selectedStation, setSelectedStation] = useState(null);
 
-  // useEffect(() => {
-  //   fetchStations();
-  // }, []);
-
   const filteredStations = (stations || []).filter((station) => {
     const stationName = station.name || "";
     const stationAddress = station.address?.fullAddress || "";

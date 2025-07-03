@@ -1,6 +1,5 @@
 const { Station, Agency, User } = require("../db/models");
 const { validateRequest } = require("../utils/validation");
-const { formatStationData } = require("../utils/agencyProfileUtils");
 const {
   addDestinationSchema,
   removeDestinationSchema,
@@ -64,12 +63,9 @@ class StationDestinationController {
         ],
       });
 
-      // Format station data
-      const formattedStation = formatStationData(updatedStation);
-
       res.json({
         success: true,
-        data: formattedStation,
+        data: updatedStation,
       });
     } catch (error) {
       next(error);
@@ -134,12 +130,9 @@ class StationDestinationController {
         ],
       });
 
-      // Format station data
-      const formattedStation = formatStationData(updatedStation);
-
       res.json({
         success: true,
-        data: formattedStation,
+        data: updatedStation,
       });
     } catch (error) {
       next(error);

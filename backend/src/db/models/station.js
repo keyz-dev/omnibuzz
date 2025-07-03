@@ -6,6 +6,7 @@ const {
   cleanUpInstanceImages,
   cleanupOldImages,
 } = require("../../utils/imageCleanup");
+const { formatImageUrl } = require("../../utils/agencyProfileUtils");
 
 module.exports = (sequelize, DataTypes) => {
   class Station extends Model {
@@ -26,16 +27,6 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'baseStationId',
         as: 'buses',
       });
-
-      // Station.belongsTo(models.Route, {
-      //   foreignKey: 'from',
-      //   as: 'from',
-      // });
-
-      // Station.belongsTo(models.Route, {
-      //   foreignKey: 'to',
-      //   as: 'to',
-      // });
     }
 
     // Method to add a destination
@@ -170,6 +161,10 @@ module.exports = (sequelize, DataTypes) => {
               );
             }
           },
+        },
+        get() {
+          const images = this.getDataValue("images");
+          return images.map((image) => formatImageUrl(image));
         },
       },
       agencyId: {

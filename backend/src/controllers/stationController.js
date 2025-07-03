@@ -1,5 +1,4 @@
 const { Station, Agency, User, StationWorker } = require("../db/models");
-const sequelize = require("../config/config");
 const {
   createStationSchema,
   updateStationSchema,
@@ -11,10 +10,6 @@ const {
   cleanUpFileImages,
 } = require("../utils/imageCleanup");
 const { validateRequest } = require("../utils/validation");
-const { formatStationData, formatImageUrl } = require("../utils/agencyProfileUtils");
-const { assignWorkerSchema } = require("../schemas/stationWorkerSchema");
-const { generateToken } = require("../utils/jwt");
-const emailService = require("../services/emailService");
 
 class StationController {
   // Get all stations with pagination and filters
@@ -73,14 +68,9 @@ class StationController {
         order: [["createdAt", "DESC"]],
       });
 
-      // Format image URLs
-      const formattedStations = stations.map((station) =>
-        formatStationData(station)
-      );
-
       res.json({
         success: true,
-        data: formattedStations,
+        data: stations,
         pagination: {
           total: count,
           page: parseInt(page),
@@ -120,12 +110,9 @@ class StationController {
         agencyId: req.agency.id,
       });
 
-      // Format station data
-      const formattedStation = formatStationData(station);
-
       res.status(201).json({
         success: true,
-        data: formattedStation,
+        data: station,
       });
     } catch (error) {
       if (req.files) {
@@ -160,12 +147,9 @@ class StationController {
         });
       }
 
-      // Format station data
-      const formattedStation = formatStationData(station);
-
       res.json({
         success: true,
-        data: formattedStation,
+        data: station,
       });
     } catch (error) {
       next(error);
@@ -250,12 +234,9 @@ class StationController {
         ],
       });
 
-      // Format station data
-      const formattedStation = formatStationData(updatedStation);
-
       res.json({
         success: true,
-        data: formattedStation,
+        data: updatedStation,
       });
     } catch (error) {
       next(error);
@@ -334,9 +315,6 @@ class StationController {
       stations.forEach((station) => {
         if (station.workers && station.workers.length > 0) {
           const manager = station.workers[0].user.toJSON();
-          if (manager.avatar) {
-            manager.avatar = formatImageUrl(manager.avatar);
-          }
           station.dataValues.manager = manager;
         } else {
           station.dataValues.manager = null;
@@ -350,7 +328,7 @@ class StationController {
 
       res.json({
         success: true,
-        data: stations.map((station) => formatStationData(station)),
+        data: stations,
       });
     } catch (error) {
       next(error);

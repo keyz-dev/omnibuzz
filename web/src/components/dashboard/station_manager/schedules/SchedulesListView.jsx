@@ -1,47 +1,34 @@
 import React from "react";
+import { useSchedules } from "../../../../contexts/dashboard/station_manager/SchedulesContext";
 import { Table, StatusPill, DropdownMenu } from "../../../ui";
 import { Edit, Trash2 } from "lucide-react";
 
-const SchedulesListView = ({ schedules, onEdit, onDelete }) => {
+const SchedulesListView = ({ onEdit, onDelete }) => {
+  const { schedules, loading } = useSchedules();
+
   const columns = React.useMemo(
     () => [
       {
-        Header: "Origin",
-        accessor: "from",
-        Cell: ({ row }) => (
-          <span>
-            {row.originStation?.name} ({row.originStation?.baseTown})
-          </span>
-        ),
+        Header: "Route",
+        accessor: "route",
+        Cell: ({ row }) => <span>{row.original.route?.name || "N/A"}</span>,
       },
       {
-        Header: "Destination",
-        accessor: "to",
-        Cell: ({ row }) => (
-          <span>
-            {row.destinationStation?.name} ({row.destinationStation?.baseTown})
-          </span>
-        ),
+        Header: "Departure Time",
+        accessor: "departureTime",
       },
       {
-        Header: "Price (XAF)",
-        accessor: "price",
-        Cell: ({ row }) => row.basePrice?.toLocaleString(),
+        Header: "Frequency",
+        accessor: "frequency",
       },
       {
-        Header: "Distance (Km)",
-        accessor: "distance",
-        Cell: ({ row }) => row.distance,
-      },
-      {
-        Header: "Duration (H)",
-        accessor: "duration",
-        Cell: ({ row }) => row.estimatedDuration,
+        Header: "Bus Type",
+        accessor: "busType",
       },
       {
         Header: "Status",
         accessor: "status",
-        Cell: ({ row }) => <StatusPill status={row.status} />,
+        Cell: ({ row }) => <StatusPill status={row.original.status} />,
       },
       {
         id: "actions",
@@ -50,12 +37,12 @@ const SchedulesListView = ({ schedules, onEdit, onDelete }) => {
             {
               label: "Edit Schedule",
               icon: <Edit size={16} />,
-              onClick: () => onEdit(row),
+              onClick: () => onEdit(row.original),
             },
             {
               label: "Delete Schedule",
               icon: <Trash2 size={16} />,
-              onClick: () => onDelete(row),
+              onClick: () => onDelete(row.original),
               isdestructive: "true",
             },
           ];
@@ -69,8 +56,9 @@ const SchedulesListView = ({ schedules, onEdit, onDelete }) => {
   return (
     <Table
       columns={columns}
-      data={shedules}
-      emptyStateMessage="No shedules found. Try adjusting your filters or adding a new shedule."
+      data={schedules}
+      isLoading={loading}
+      emptyStateMessage="No schedules found. Try adjusting your filters or adding a new schedule."
     />
   );
 };

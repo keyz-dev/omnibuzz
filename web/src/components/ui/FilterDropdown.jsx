@@ -1,5 +1,5 @@
-import React from 'react';
-import { ChevronDown } from 'lucide-react';
+import React from "react";
+import { ChevronDown } from "lucide-react";
 
 const FilterDropdown = ({ label, options, selected, setSelected }) => {
   return (
@@ -7,10 +7,10 @@ const FilterDropdown = ({ label, options, selected, setSelected }) => {
       <select
         value={selected}
         onChange={(e) => setSelected(e.target.value)}
-        className="appearance-none w-full bg-white border border-gray-300 rounded-xs py-2 pl-3 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+        className="appearance-none w-full bg-white border border-gray-300 rounded-xs py-2 pl-3 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent text-secondary"
       >
         <option value="">{`All ${label}s`}</option>
-        {options.map(option => (
+        {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>

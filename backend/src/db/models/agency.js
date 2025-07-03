@@ -5,6 +5,7 @@ const {
   cleanUpInstanceImages,
   cleanupOldImages,
 } = require("../../utils/imageCleanup");
+const { formatImageUrl } = require("../../utils/agencyProfileUtils");
 
 module.exports = (sequelize, DataTypes) => {
   class Agency extends Model {
@@ -80,6 +81,10 @@ module.exports = (sequelize, DataTypes) => {
       },
       logo: {
         type: DataTypes.STRING,
+        get() {
+          const logo = this.getDataValue("logo");
+          return formatImageUrl(logo);
+        },
       },
       contactInfo: {
         type: DataTypes.ARRAY(DataTypes.JSONB),
@@ -87,6 +92,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       images: {
         type: DataTypes.ARRAY(DataTypes.STRING),
+        get() {
+          const images = this.getDataValue("images");
+          if (!images) return [];
+          return images.map((image) => formatImageUrl(image));
+        },
       },
       towns: {
         type: DataTypes.ARRAY(DataTypes.STRING),

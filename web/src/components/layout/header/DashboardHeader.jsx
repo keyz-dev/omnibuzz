@@ -1,19 +1,23 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useBaseDashboard } from '../../../contexts/dashboard/BaseDashboardContext';
-import { Menu, Bell, Search, ChevronsLeft, ChevronDown, ChevronsRight } from 'lucide-react';
-import { Logo, Button } from '../../ui'
-import { useAuth } from '../../../contexts';
+import React, { useEffect, useState, useRef } from "react";
+import { useBaseDashboard } from "../../../contexts/dashboard/BaseDashboardContext";
+import {
+  Menu,
+  Bell,
+  Search,
+  ChevronsLeft,
+  ChevronDown,
+  ChevronsRight,
+} from "lucide-react";
+import { Logo, Button } from "../../ui";
+import { useAuth } from "../../../contexts";
 
 const Header = () => {
-  const {
-    pageTitle,
-    sidebarCollapsed,
-    setSidebarCollapsed,
-    roleConfig
-  } = useBaseDashboard();
+  const { pageTitle, sidebarCollapsed, setSidebarCollapsed, roleConfig } =
+    useBaseDashboard();
 
-  const { logout, user } = useAuth()
-  const imagePlaceholder = 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541'
+  const { logout, user } = useAuth();
+  const imagePlaceholder =
+    "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541";
 
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const dropdownRef = useRef(null);
@@ -45,7 +49,10 @@ const Header = () => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowUserDropdown(false);
       }
-      if (searchInputRef.current && !searchInputRef.current.contains(event.target)) {
+      if (
+        searchInputRef.current &&
+        !searchInputRef.current.contains(event.target)
+      ) {
         setLangDropdownOpen(false);
       }
     };
@@ -62,27 +69,32 @@ const Header = () => {
     <header className="bg-white shadow-sm p-2 flex items-center justify-between px-[3%]">
       {/* Left Side */}
       <div className="flex items-center gap-4">
-
         {/* Logo */}
         <Logo size={150} destination={roleConfig.basePath} />
 
         {/* Hamburger Menu - Mobile Only */}
-        <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} className="md:hidden text-gray-600">
+        <button
+          onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+          className="md:hidden text-gray-600"
+        >
           <Menu size={24} />
         </button>
 
         {/* Back Arrow - Desktop Only */}
         <Button
           onClickHandler={() => setSidebarCollapsed(!sidebarCollapsed)}
-          additionalClasses="hidden md:block text-gray-500 hover:text-gray-800 min-h-[35px] min-w-[35px] h-[40px] w-[40px] p-0 grid place-items-center rounded-full bg-light_bg">
-          {sidebarCollapsed ?
-            <ChevronsRight size={24} className='text-secondary' />
-            :
-            <ChevronsLeft size={24} className='text-secondary' />
-          }
+          additionalClasses="hidden md:block text-gray-500 hover:text-gray-800 min-h-[35px] min-w-[35px] h-[40px] w-[40px] p-0 grid place-items-center rounded-full bg-light_bg"
+        >
+          {sidebarCollapsed ? (
+            <ChevronsRight size={24} className="text-secondary" />
+          ) : (
+            <ChevronsLeft size={24} className="text-secondary" />
+          )}
         </Button>
 
-        <h1 className="text-xl md:text-2xl font-bold text-gray-800">{pageTitle}</h1>
+        <h1 className="text-xl md:text-2xl font-bold text-gray-800">
+          {pageTitle}
+        </h1>
       </div>
 
       {/* Right Side */}
@@ -98,7 +110,7 @@ const Header = () => {
             className={`
               transition-all duration-300 ease-in-out outline-none
               rounded-xs border focus:border-accent border-light_bg px-2 py-2 text-sm
-              ${isSearchOpen ? 'w-52 opacity-100' : 'w-0 opacity-0'}
+              ${isSearchOpen ? "w-52 opacity-100" : "w-0 opacity-0"}
             `}
           />
           <button
@@ -120,20 +132,33 @@ const Header = () => {
 
         {/* --- MODIFIED: Language Switcher --- */}
         <div className="relative hidden sm:flex">
-          <button onClick={handleLangClick} className="flex items-center gap-1 text-gray-600">
+          <button
+            onClick={handleLangClick}
+            className="flex items-center gap-1 text-gray-600"
+          >
             <span>Eng (US)</span>
             <ChevronDown size={16} />
           </button>
           {isLangDropdownOpen && (
             <div className="absolute top-full right-0 mt-2 w-32 bg-white rounded-md shadow-lg py-1 z-10">
-              <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">English</a>
-              <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">French</a>
+              <a
+                href="#"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                English
+              </a>
+              <a
+                href="#"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                French
+              </a>
             </div>
           )}
         </div>
 
         {/* User Profile */}
-        <div className='relative' ref={dropdownRef}>
+        <div className="relative" ref={dropdownRef}>
           <button
             onClick={handleProfileClick}
             className="flex items-center gap-3 rounded-lg hover:bg-light_bg px-4 py-2 cursor-pointer"
@@ -144,18 +169,36 @@ const Header = () => {
               className="w-10 h-10 rounded-full object-cover"
             />
             <div className="hidden lg:block">
-              <p className="font-semibold text-gray-800 text-sm">{user.fullName}</p>
+              <p className="font-semibold text-gray-800 text-sm">
+                {user.fullName}
+              </p>
               <p className="text-gray-500 text-xs">{user.role}</p>
             </div>
             <ChevronDown size={20} />
           </button>
 
           {showUserDropdown && (
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
-              <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Profile</a>
-              <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-10">
+              <a
+                href="#"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                My Profile
+              </a>
+              <a
+                href="#"
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                Settings
+              </a>
               <hr className="my-2 text-line_clr" />
-              <a href="" onClick={logout} className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Sign Out</a>
+              <a
+                href=""
+                onClick={logout}
+                className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+              >
+                Sign Out
+              </a>
             </div>
           )}
         </div>

@@ -12,7 +12,9 @@ const WorkerListView = ({
 }) => {
   const getStatusText = (row) => {
     if (row.isActive) return "Active";
-    if (row.invitationToken) return "Invited";
+    if (row.invitationStatus === "expired") return "Expired";
+    if (row.invitationStatus === "pending" || row.invitationToken)
+      return "Pending";
     return "Inactive";
   };
 
@@ -59,7 +61,11 @@ const WorkerListView = ({
             },
           ];
 
-          if (!row.isActive && row.invitationToken) {
+          // Show "Resend Invite" if the invitation is pending or has expired.
+          if (
+            row.invitationStatus === "pending" ||
+            row.invitationStatus === "expired"
+          ) {
             menuItems.push({
               label: "Resend Invite",
               icon: <Send size={16} />,
@@ -69,9 +75,9 @@ const WorkerListView = ({
 
           menuItems.push({
             label: "Delete",
+            isDestructive: true,
             icon: <Trash2 size={16} />,
             onClick: () => onDelete(row),
-            isdestructive: "true",
           });
 
           return <DropdownMenu items={menuItems} />;

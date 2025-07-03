@@ -22,12 +22,16 @@ const ConfirmDeleteModal = ({
           be undone.
         </p>
         <div className="flex justify-end space-x-4">
-          <Button variant="outline" onClick={onClose} disabled={isLoading}>
+          <Button
+            variant="outline"
+            onClickHandler={onClose}
+            disabled={isLoading}
+          >
             Cancel
           </Button>
           <Button
             variant="destructive"
-            onClick={onConfirm}
+            onClickHandler={onConfirm}
             disabled={isLoading}
           >
             {isLoading ? <Loader size="sm" /> : "Delete"}

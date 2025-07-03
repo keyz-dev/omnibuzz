@@ -61,7 +61,7 @@ const WorkerMainView = ({
       </div>
 
       <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4">
-        <div className="w-full md:w-1/3">
+        <div className="w-full lg:w-1/3">
           <SearchBar
             placeholder="Search by name or email"
             onSearch={setSearchTerm}

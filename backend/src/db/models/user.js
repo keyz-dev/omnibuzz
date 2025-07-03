@@ -1,6 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
 const bcrypt = require("bcryptjs");
+const { formatImageUrl } = require("../../utils/agencyProfileUtils");
 const {
   cleanUpInstanceImages,
   cleanupOldImages,
@@ -93,6 +94,10 @@ module.exports = (sequelize, DataTypes) => {
       avatar: {
         type: DataTypes.STRING,
         allowNull: true,
+        get() {
+          const avatar = this.getDataValue("avatar");
+          return formatImageUrl(avatar);
+        },
       },
       authProvider: {
         type: DataTypes.ENUM("local", "google"),

@@ -73,6 +73,20 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
       },
+      invitationStatus: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          if (this.isActive === true) {
+            return 'accepted';
+          }
+
+          if (this.invitationExpires && new Date(this.invitationExpires) < new Date()) {
+            return 'expired';
+          }
+
+          return 'pending';
+        },
+      },
     },
     {
       sequelize,

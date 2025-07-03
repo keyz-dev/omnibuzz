@@ -14,6 +14,7 @@ const StatusPill = ({ status }) => {
       case "rejected":
       case "invalid":
       case "unavailable":
+      case "expired":
         return {
           bg: "bg-red-100",
           text: "text-red-800",

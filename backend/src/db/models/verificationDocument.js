@@ -1,5 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
+const { formatImageUrl } = require("../../utils/agencyProfileUtils");
 
 module.exports = (sequelize, DataTypes) => {
   class VerificationDocument extends Model {
@@ -88,6 +89,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           isUrl: true,
+        },
+        get() {
+          const url = this.getDataValue("url");
+          return formatImageUrl(url);
         },
       },
       agencyId: {

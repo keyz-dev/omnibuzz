@@ -2,14 +2,9 @@ const { VerificationDocument, Agency, User } = require("../db/models");
 const {
   BadRequestError,
   NotFoundError,
-  ValidationError,
 } = require("../utils/errors");
-const {
-  createVerificationDocumentSchema,
-} = require("../schemas/verificationDocumentSchema");
 
 const { cleanUpFileImages } = require('../utils/imageCleanup');
-const { formatImageUrl } = require("../utils/agencyProfileUtils");
 
 // Helper function to get file type string from mimetype
 const getFileTypeFromMimetype = (mimetype) => {
@@ -149,24 +144,11 @@ class VerificationDocumentController {
         order: [['createdAt', 'DESC']],
       });
 
-      const formattedDocuments = rows.map(doc => {
-        const docJSON = doc.toJSON();
-        // Format the main document URL
-        if (docJSON.url) {
-          docJSON.url = formatImageUrl(docJSON.url);
-        }
-        // Format the agency logo URL
-        if (docJSON.agency && docJSON.agency.logo) {
-          docJSON.agency.logo = formatImageUrl(docJSON.agency.logo);
-        }
-        return docJSON;
-      });
-
       res.status(200).json({
         totalPages: Math.ceil(count / limit),
         currentPage: parseInt(page, 10),
         totalDocuments: count,
-        documents: formattedDocuments,
+        documents: rows,
       });
     } catch (error) {
       res.status(500).json({ message: 'Error fetching documents', error: error.message });

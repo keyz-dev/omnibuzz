@@ -1,13 +1,13 @@
-import React from 'react'
-import { StationManagerProvider } from '../dashboard/station_manager'
+import React from "react";
+import { StationManagerProvider } from "../dashboard/station_manager/StationManagerContext";
+import { SchedulesProvider } from "../dashboard/station_manager/SchedulesContext";
 
-
-const ManagerContextWrapper = ({children}) => {
+const ManagerContextWrapper = ({ children }) => {
   return (
     <StationManagerProvider>
-      {children}
+      <SchedulesProvider>{children}</SchedulesProvider>
     </StationManagerProvider>
-  )
-}
+  );
+};
 
-export default ManagerContextWrapper
+export default ManagerContextWrapper;

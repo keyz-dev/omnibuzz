@@ -17,11 +17,11 @@ const DashboardLayout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="h-screen bg-gray-50 flex flex-col">
       <DashboardHeader />
-      <div className="flex-1 flex">
+      <div className="flex-1 flex overflow-hidden">
         <DashboardSidebar />
-        <main className="flex-1 p-4">
+        <main className="flex-1 p-4 overflow-y-auto">
           <Outlet />
         </main>
       </div>

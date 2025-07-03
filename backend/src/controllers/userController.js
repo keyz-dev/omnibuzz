@@ -12,11 +12,9 @@ const {
 } = require("../utils/errors");
 const { Op } = require("sequelize");
 const { generateToken } = require("../utils/jwt");
-const { isLocalImageUrl } = require("../utils/imageUtils");
 const bcrypt = require("bcryptjs");
 const { ValidationError } = require("../utils/errors");
 const { verifyToken } = require("../utils/jwt");
-const { formatImageUrl } = require("../utils/agencyProfileUtils");
 
 // Verify email
 const verifyEmail = async (req, res) => {
@@ -76,7 +74,7 @@ const verifyEmail = async (req, res) => {
         fullName: user.fullName,
         email: user.email,
         role: user.role,
-        avatar: formatImageUrl(user.avatar),
+        avatar: user.avatar,
         emailVerified: true,
       },
       token, // Only send token after successful verification

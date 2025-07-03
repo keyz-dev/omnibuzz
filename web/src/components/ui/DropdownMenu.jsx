@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { MoreVertical } from 'lucide-react';
+import React, { useState, useRef, useEffect } from "react";
+import { MoreVertical } from "lucide-react";
 
 const DropdownMenu = ({ items }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,9 +13,9 @@ const DropdownMenu = ({ items }) => {
         setIsOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -30,7 +30,12 @@ const DropdownMenu = ({ items }) => {
 
       {isOpen && (
         <div className="origin-top-right absolute right-0 mt-2 w-40 rounded-md shadow-lg bg-white ring-1 ring-line_clr ring-opacity-5 z-10">
-          <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+          <div
+            className="py-1"
+            role="menu"
+            aria-orientation="vertical"
+            aria-labelledby="options-menu"
+          >
             {items.map((item, index) => (
               <button
                 key={index}
@@ -40,8 +45,8 @@ const DropdownMenu = ({ items }) => {
                 }}
                 className={`w-full text-left flex items-center px-4 py-2 text-sm ${
                   item.isDestructive
-                    ? 'text-red-700 hover:bg-red-50'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? "text-red-700 hover:bg-red-50"
+                    : "text-gray-700 hover:bg-gray-100"
                 }`}
                 role="menuitem"
               >

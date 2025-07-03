@@ -1,7 +1,8 @@
 import React from "react";
+import SchedulesMainView from "../../../components/dashboard/station_manager/schedules/SchedulesMainView";
 
 const Schedules = () => {
-  return <div>Schedules</div>;
+  return <SchedulesMainView />;
 };
 
 export default Schedules;

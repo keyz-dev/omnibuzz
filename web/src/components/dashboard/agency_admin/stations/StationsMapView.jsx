@@ -1,9 +1,7 @@
-import React from 'react';
-import LeafletMapView from './LeafletMapView';
+import React from "react";
+import LeafletMapView from "./LeafletMapView";
 
 const StationsMapView = ({ stations }) => {
-  console.log('Stations data received:', stations); // Debug log
-
   if (!stations || stations.length === 0) {
     return (
       <div className="p-6 text-center text-gray-500">
@@ -15,14 +13,21 @@ const StationsMapView = ({ stations }) => {
   // Enhanced coordinate extraction with multiple fallback patterns
   const extractCoordinates = (station) => {
     // Try different possible coordinate formats
-    if (station.coordinates && Array.isArray(station.coordinates) && station.coordinates.length === 2) {
+    if (
+      station.coordinates &&
+      Array.isArray(station.coordinates) &&
+      station.coordinates.length === 2
+    ) {
       return station.coordinates;
     }
 
-    if (station.coordinates && typeof station.coordinates === 'object') {
+    if (station.coordinates && typeof station.coordinates === "object") {
       // Handle {lat: x, lng: y} or {latitude: x, longitude: y} format
       const lat = station.coordinates.lat || station.coordinates.latitude;
-      const lng = station.coordinates.lng || station.coordinates.longitude || station.coordinates.lon;
+      const lng =
+        station.coordinates.lng ||
+        station.coordinates.longitude ||
+        station.coordinates.lon;
       if (lat !== undefined && lng !== undefined) {
         return [parseFloat(lat), parseFloat(lng)];
       }
@@ -42,9 +47,12 @@ const StationsMapView = ({ stations }) => {
       if (Array.isArray(station.location) && station.location.length === 2) {
         return station.location;
       }
-      if (typeof station.location === 'object') {
+      if (typeof station.location === "object") {
         const lat = station.location.lat || station.location.latitude;
-        const lng = station.location.lng || station.location.longitude || station.location.lon;
+        const lng =
+          station.location.lng ||
+          station.location.longitude ||
+          station.location.lon;
         if (lat !== undefined && lng !== undefined) {
           return [parseFloat(lat), parseFloat(lng)];
         }
@@ -61,26 +69,36 @@ const StationsMapView = ({ stations }) => {
   stations.forEach((station, index) => {
     const coordinates = extractCoordinates(station);
 
-    if (coordinates && coordinates.length === 2 &&
-      !isNaN(coordinates[0]) && !isNaN(coordinates[1]) &&
-      coordinates[0] >= -90 && coordinates[0] <= 90 &&
-      coordinates[1] >= -180 && coordinates[1] <= 180) {
-
+    if (
+      coordinates &&
+      coordinates.length === 2 &&
+      !isNaN(coordinates[0]) &&
+      !isNaN(coordinates[1]) &&
+      coordinates[0] >= -90 &&
+      coordinates[0] <= 90 &&
+      coordinates[1] >= -180 &&
+      coordinates[1] <= 180
+    ) {
       validStations.push({ ...station, coordinates });
 
       // Get the first image from the images array
-      const firstImage = station.images && Array.isArray(station.images) && station.images.length > 0
-        ? station.images[0]
-        : null;
+      const firstImage =
+        station.images &&
+        Array.isArray(station.images) &&
+        station.images.length > 0
+          ? station.images[0]
+          : null;
 
       // Create marker with enhanced popup content including image
       const popupContent = `
         <div class="font-sans flex flex-col">
-          ${firstImage ? `
+          ${
+            firstImage
+              ? `
             <div class="mb-3 p-2 pt-6 flex-1">
               <img 
                 src="${firstImage}" 
-                alt="${station.name || 'Station'}" 
+                alt="${station.name || "Station"}" 
                 class="w-full h-full object-cover rounded-t-lg"
                 style=" object-fit: cover; border-radius: 6px 6px 0 0;"
                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
@@ -92,25 +110,58 @@ const StationsMapView = ({ stations }) => {
                 <br>Image not available
               </div>
             </div>
-          ` : ''}
-          <div class="p-3 ${firstImage ? 'pt-0' : ''}">
-            <h3 class="font-bold text-lg mb-2 text-gray-800">${station.name || 'Unnamed Station'}</h3>
-            ${station.baseTown ? `<p class="text-sm text-gray-600 mb-1"><strong>Town:</strong> ${station.baseTown}</p>` : ''}
-            ${station.region ? `<p class="text-sm text-gray-600 mb-1"><strong>Region:</strong> ${station.region}</p>` : ''}
-            ${station.address ? `<p class="text-sm text-gray-600 mb-1"><strong>Address:</strong> ${station.address}</p>` : ''}
-            ${station.status ? `<p class="text-sm text-gray-600 mb-1"><strong>Status:</strong> <span class="px-2 py-1 rounded text-xs ${station.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">${station.status}</span></p>` : ''}
-            ${station.images && station.images.length > 1 ? `<p class="text-xs text-blue-600 mb-1">${station.images.length} images available</p>` : ''}
-            <p class="text-xs text-gray-500 mt-2">Coordinates: ${coordinates[0].toFixed(4)}, ${coordinates[1].toFixed(4)}</p>
+          `
+              : ""
+          }
+          <div class="p-3 ${firstImage ? "pt-0" : ""}">
+            <h3 class="font-bold text-lg mb-2 text-gray-800">${
+              station.name || "Unnamed Station"
+            }</h3>
+            ${
+              station.baseTown
+                ? `<p class="text-sm text-gray-600 mb-1"><strong>Town:</strong> ${station.baseTown}</p>`
+                : ""
+            }
+            ${
+              station.region
+                ? `<p class="text-sm text-gray-600 mb-1"><strong>Region:</strong> ${station.region}</p>`
+                : ""
+            }
+            ${
+              station.address
+                ? `<p class="text-sm text-gray-600 mb-1"><strong>Address:</strong> ${station.address}</p>`
+                : ""
+            }
+            ${
+              station.status
+                ? `<p class="text-sm text-gray-600 mb-1"><strong>Status:</strong> <span class="px-2 py-1 rounded text-xs ${
+                    station.status === "active"
+                      ? "bg-green-100 text-green-800"
+                      : "bg-gray-100 text-gray-800"
+                  }">${station.status}</span></p>`
+                : ""
+            }
+            ${
+              station.images && station.images.length > 1
+                ? `<p class="text-xs text-blue-600 mb-1">${station.images.length} images available</p>`
+                : ""
+            }
+            <p class="text-xs text-gray-500 mt-2">Coordinates: ${coordinates[0].toFixed(
+              4
+            )}, ${coordinates[1].toFixed(4)}</p>
           </div>
         </div>
       `;
 
       markers.push({
         position: coordinates,
-        popupContent: popupContent
+        popupContent: popupContent,
       });
     } else {
-      console.warn(`Station "${station.name || 'Unknown'}" has invalid coordinates:`, station);
+      console.warn(
+        `Station "${station.name || "Unknown"}" has invalid coordinates:`,
+        station
+      );
     }
   });
 
@@ -119,12 +170,25 @@ const StationsMapView = ({ stations }) => {
     return (
       <div className="p-6 text-center text-yellow-600 bg-yellow-50 rounded-lg border border-yellow-200">
         <div className="flex flex-col items-center space-y-2">
-          <svg className="w-12 h-12 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.314 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          <svg
+            className="w-12 h-12 text-yellow-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.314 16.5c-.77.833.192 2.5 1.732 2.5z"
+            />
           </svg>
-          <h3 className="text-lg font-semibold">No Valid Station Coordinates</h3>
+          <h3 className="text-lg font-semibold">
+            No Valid Station Coordinates
+          </h3>
           <p className="text-sm">
-            Found {stations.length} station(s), but none have valid coordinate data.
+            Found {stations.length} station(s), but none have valid coordinate
+            data.
           </p>
           <details className="mt-2 text-xs">
             <summary className="cursor-pointer text-yellow-700 hover:text-yellow-800">
@@ -145,8 +209,12 @@ const StationsMapView = ({ stations }) => {
     initialCenter = validStations[0].coordinates;
   } else {
     // Calculate center point of all stations
-    const avgLat = validStations.reduce((sum, station) => sum + station.coordinates[0], 0) / validStations.length;
-    const avgLng = validStations.reduce((sum, station) => sum + station.coordinates[1], 0) / validStations.length;
+    const avgLat =
+      validStations.reduce((sum, station) => sum + station.coordinates[0], 0) /
+      validStations.length;
+    const avgLng =
+      validStations.reduce((sum, station) => sum + station.coordinates[1], 0) /
+      validStations.length;
     initialCenter = [avgLat, avgLng];
   }
 
@@ -155,8 +223,8 @@ const StationsMapView = ({ stations }) => {
     if (validStations.length === 1) return 10;
 
     // Calculate the bounding box of all stations
-    const lats = validStations.map(s => s.coordinates[0]);
-    const lngs = validStations.map(s => s.coordinates[1]);
+    const lats = validStations.map((s) => s.coordinates[0]);
+    const lngs = validStations.map((s) => s.coordinates[1]);
 
     const latSpread = Math.max(...lats) - Math.min(...lats);
     const lngSpread = Math.max(...lngs) - Math.min(...lngs);
@@ -175,7 +243,8 @@ const StationsMapView = ({ stations }) => {
     <div className="h-[600px] w-full">
       {/* Status information */}
       <div className="mb-2 px-2 py-1 bg-blue-50 rounded-sm text-sm text-blue-700">
-        Showing {validStations.length} of {stations.length} stations with valid coordinates
+        Showing {validStations.length} of {stations.length} stations with valid
+        coordinates
       </div>
 
       <LeafletMapView

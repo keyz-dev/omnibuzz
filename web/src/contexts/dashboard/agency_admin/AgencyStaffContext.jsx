@@ -98,7 +98,6 @@ const AgencyStaffProvider = ({ children }) => {
     async (workerId) => {
       const originalStaff = [...staff];
       setStaff((prev) => prev.filter((s) => s.id !== workerId));
-      toast.info("Deleting staff member...");
 
       try {
         await staffAPI.delete(workerId);
@@ -114,19 +113,23 @@ const AgencyStaffProvider = ({ children }) => {
     [staff, fetchStaffStats]
   );
 
-  const resendInvite = useCallback(async (workerId) => {
-    setLoading(true);
-    try {
-      await staffAPI.resendInvite(workerId);
-      toast.success("Invitation resent successfully!");
-    } catch (error) {
-      const errorMessage =
-        error.response?.data?.message || "Failed to resend invitation.";
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const resendInvite = useCallback(
+    async (workerId) => {
+      setLoading(true);
+      try {
+        await staffAPI.resendInvite(workerId);
+        await fetchStaff();
+        toast.success("Invitation resent successfully!");
+      } catch (error) {
+        const errorMessage =
+          error.response?.data?.message || "Failed to resend invitation.";
+        toast.error(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fetchStaff]
+  );
 
   const value = {
     // state

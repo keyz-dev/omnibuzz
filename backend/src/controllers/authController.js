@@ -12,17 +12,7 @@ const {
   NotFoundError,
 } = require("../utils/errors");
 const { generateToken } = require("../utils/jwt");
-const { isLocalImageUrl } = require("../utils/imageUtils");
-const axios = require("axios");
-
-// Helper function to format avatar URL
-const formatAvatarUrl = (avatar) => {
-  if (!avatar) return null;
-  if (isLocalImageUrl(avatar)) {
-    return `${process.env.SERVER_URL}${avatar}`;
-  }
-  return avatar;
-};
+const axios = require("axios")
 
 // Register a new user
 const register = async (req, res) => {
@@ -210,7 +200,7 @@ const googleLogin = async (req, res) => {
         fullName: user.fullName,
         email: user.email,
         role: user.role,
-        avatar: formatAvatarUrl(user.avatar),
+        avatar: user.avatar,
       },
       token: authToken,
     },
@@ -231,7 +221,7 @@ const verifyToken = async (req, res) => {
         fullName: user.fullName,
         email: user.email,
         role: user.role,
-        avatar: formatAvatarUrl(user.avatar),
+        avatar: user.avatar,
         emailVerified: user.emailVerified,
       },
     },

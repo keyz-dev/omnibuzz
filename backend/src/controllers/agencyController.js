@@ -15,7 +15,6 @@ const { sequelize } = require("../db/models");
 const {
   getStationCompletionStatus,
   getVerificationCompletionStatus,
-  formatAgencyData,
 } = require("../utils/agencyProfileUtils");
 const { generateToken } = require("../utils/jwt");
 
@@ -75,14 +74,9 @@ class AgencyController {
         order: [["createdAt", "DESC"]],
       });
 
-      // Format image URLs
-      const formattedAgencies = agencies.map((agency) =>
-        formatAgencyData(agency)
-      );
-
       res.json({
         success: true,
-        data: formattedAgencies,
+        data: agencies,
         pagination: {
           total: count,
           page: parseInt(page),
@@ -159,9 +153,6 @@ class AgencyController {
         return agencyWithOwner;
       });
 
-      // Format agency data including owner avatar
-      const formattedAgency = formatAgencyData(result);
-
       // Send welcome email to the new agency admin
       await emailService.sendEmail({
         to: req.user.email,
@@ -169,7 +160,7 @@ class AgencyController {
         template: "agencyAdminWelcome",
         data: {
           name: req.user.fullName,
-          agencyName: formattedAgency.name,
+          agencyName: result.name,
           dashboardUrl: `${process.env.FRONTEND_URL}/agency/admin`,
           supportEmail: process.env.SMTP_EMAIL,
           currentYear: new Date().getFullYear(),
@@ -181,7 +172,7 @@ class AgencyController {
 
       res.status(201).json({
         success: true,
-        data: { agency: formattedAgency, user: user.toJSON(), token },
+        data: { agency: result, user: user.toJSON(), token },
       });
     } catch (error) {
       // Delete any uploaded images
@@ -207,7 +198,7 @@ class AgencyController {
       );
 
       const profileData = {
-        agency: formatAgencyData(agency),
+        agency,
         isPublishable,
         completionSteps: {
           verification: {
@@ -259,12 +250,10 @@ class AgencyController {
           message: "Agency not found",
         });
       }
-      // Format agency data including owner avatar
-      const formattedAgency = formatAgencyData(agency);
 
       res.json({
         success: true,
-        data: formattedAgency,
+        data: agency,
       });
     } catch (error) {
       next(error);
@@ -324,12 +313,9 @@ class AgencyController {
         ],
       });
 
-      // Format agency data including owner avatar
-      const formattedAgency = formatAgencyData(updatedAgency);
-
       res.json({
         success: true,
-        data: formattedAgency,
+        data: updatedAgency,
       });
     } catch (error) {
       next(error);

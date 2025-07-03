@@ -81,7 +81,11 @@ const MainView = ({ setView }) => {
 
   const columns = [
     { Header: "Plate Number", accessor: "plateNumber" },
-    { Header: "Base Station", accessor: "baseStation.name" },
+    {
+      Header: "Base Station",
+      accessor: "baseStation.name",
+      Cell: ({ row }) => <span>{row.baseStation.name}</span>,
+    },
     { Header: "Type", accessor: "busType" },
     { Header: "Capacity", accessor: "capacity" },
     { Header: "Seat Layout", accessor: "seatLayout" },
@@ -150,7 +154,7 @@ const MainView = ({ setView }) => {
 
       {/* search and filter */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-        <div className="w-full md:w-1/3">
+        <div className="w-full lg:w-1/3">
           <SearchBar
             placeholder="Search by plate number..."
             searchTerm={filters.search}
@@ -215,7 +219,12 @@ const MainView = ({ setView }) => {
         </div>
       </section>
 
-      {isModalOpen && <AddBusModal onClose={() => setIsModalOpen(false)} />}
+      {isModalOpen && (
+        <AddBusModal
+          onClose={() => setIsModalOpen(false)}
+          stations={stations}
+        />
+      )}
     </section>
   );
 };
