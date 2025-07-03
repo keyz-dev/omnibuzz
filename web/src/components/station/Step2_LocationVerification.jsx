@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { useStation } from "../../stateManagement/contexts";
+import { useStationCreation } from "../../contexts/dashboard/agency_admin";
 import { MapSelector } from "../maps/leaflet";
 
 const Step2_LocationVerification = () => {
   const { stationCreationData, setStationCreationData, nextStep, prevStep } =
-    useStation();
+    useStationCreation();
 
   const [address, setAddress] = useState(stationCreationData.name);
 

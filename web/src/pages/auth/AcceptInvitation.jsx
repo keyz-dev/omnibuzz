@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Input, Button, FileUploader } from "../../components/ui";
-import { useAuth } from "../../stateManagement/contexts/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 import { FormHeader, Logo } from "../../components/ui";
 
 const AcceptInvitation = () => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useAdmin } from '../../stateManagement/contexts/dashboard/AdminContext';
+import { useAdminDocuments } from '../../contexts/dashboard/admin/';
 import { Card, Loader, Button } from '../../components/ui';
 
 import { DocumentStats, DocumentFilters, DocumentsTable, RejectDocumentModal } from '../../components/dashboard/system_admin/documents';
@@ -17,7 +17,7 @@ const Documents = () => {
         addRemark,
         successMessage,
         setSuccessMessage,
-    } = useAdmin();
+    } = useAdminDocuments();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isRemarkModalOpen, setIsRemarkModalOpen] = useState(false);

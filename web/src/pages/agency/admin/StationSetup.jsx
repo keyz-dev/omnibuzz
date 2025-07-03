@@ -1,5 +1,5 @@
 import React from "react";
-import { useAuth } from "../../../stateManagement/contexts/AuthContext";
+import { useAuth } from "../../../contexts/AuthContext";
 import StationCreationSideBar from "../../../components/layout/StationCreation";
 import {
   Step1_BasicInformation,
@@ -9,12 +9,12 @@ import {
   Step5_ContactSetup,
   Step6_AssignManager,
 } from "../../../components/station";
-import { useStation, StationProvider } from "../../../stateManagement/contexts";
+import { useStationCreation } from "../../../contexts/dashboard/agency_admin";
 import { Navigate } from "react-router-dom";
 import { Loader } from "../../../components/ui";
 
 const StationSetupFlow = () => {
-  const { activeStep, STEPS, visitedSteps } = useStation();
+  const { activeStep, STEPS, visitedSteps } = useStationCreation();
 
   const renderStep = () => {
     switch (activeStep) {
@@ -63,9 +63,7 @@ const StationSetup = () => {
     );
   }
   return (
-    <StationProvider>
       <StationSetupFlow />
-    </StationProvider>
   );
 };
 

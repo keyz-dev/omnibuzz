@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { ImageUploadStep } from "../images";
-import { useStation } from "../../stateManagement/contexts";
+import { useStationCreation } from "../../contexts/dashboard/agency_admin";
 
 const Step3_ImageUpload = () => {
   const { stationCreationData, setStationCreationData, nextStep, prevStep } =
-    useStation();
+    useStationCreation();
   const [stationImages, setStationImages] = useState(
     stationCreationData.images
   );

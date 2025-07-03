@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { agencyAPI } from '../../../../api/agencyAdminApi';
+import { agencyAPI } from '../../../api/agency_admin';
 
 const AgencyAdminContext = createContext();
 
@@ -21,9 +21,6 @@ const AgencyProvider = ({ children }) => {
       return null;
     }
   });
-  const [bookings, setBookings] = useState([]);
-  const [staff, setStaff] = useState([]);
-  const [stations, setStations] = useState([]);
   const [revenue, setRevenue] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -87,71 +84,6 @@ const AgencyProvider = ({ children }) => {
     }
   }
 
-  const fetchStations = async () => {
-    setLoading(true);
-    const agencyId = agencyProfile.agency.id
-    try {
-      const response = await agencyAPI.getStations(agencyId);
-      if (response.success) {
-        setStations(response.data);
-      } else {
-        setStations([]);
-        setError(response.message || 'Failed to fetch stations');
-      }
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const saveDocuments = async (documents) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await agencyAPI.uploadDocuments(documents, agencyProfile.agency.id);
-      await fetchAgencyProfile();
-      return response;
-    } catch (err) {
-      setError(err.response?.data?.message || 'Failed to upload documents.');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchBookings = async (filters = {}) => {
-    setLoading(true);
-    try {
-      const data = await agencyAPI.getBookings(filters);
-      setBookings(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchStaff = async () => {
-    try {
-      const data = await agencyAPI.getStaff();
-      setStaff(data);
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  const addStaffMember = async (staffData) => {
-    try {
-      const newStaff = await agencyAPI.addStaff(staffData);
-      setStaff(prev => [...prev, newStaff]);
-      return newStaff;
-    } catch (err) {
-      setError(err.message);
-      throw err;
-    }
-  };
-
   const fetchRevenue = async (period = 'month') => {
     try {
       const data = await agencyAPI.getRevenue(period);
@@ -164,9 +96,6 @@ const AgencyProvider = ({ children }) => {
   const value = {
     // State
     agencyProfile,
-    bookings,
-    staff,
-    stations,
     revenue,
     loading,
     error,
@@ -176,13 +105,8 @@ const AgencyProvider = ({ children }) => {
 
     // Actions
     fetchAgencyProfile,
-    fetchStations,
-    fetchBookings,
-    fetchStaff,
-    addStaffMember,
     fetchRevenue,
     setError,
-    saveDocuments,
     publishAgency,
     setIsPublishable,
     setPublishStatus,

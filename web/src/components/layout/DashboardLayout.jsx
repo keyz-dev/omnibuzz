@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Outlet, useLocation, Navigate } from "react-router-dom";
-import { useBaseDashboard } from "../../stateManagement/contexts/dashboard";
+import { useBaseDashboard } from "../../contexts/dashboard/BaseDashboardContext";
 import DashboardSidebar from "./sidebar/DashboardSidebar";
 import DashboardHeader from "./header/DashboardHeader";
 

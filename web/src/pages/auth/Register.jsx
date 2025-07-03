@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-import { useAuth } from "../../stateManagement/contexts/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 import { Input, Button, FileUploader } from "../../components/ui";
 import { validateRegisterForm } from "../../utils/validateForm";
 import { normalizeNumber } from "../../utils/normalizePhone";

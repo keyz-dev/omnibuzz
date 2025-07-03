@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { Logo } from "../ui/";
-import { useAuth } from "../../stateManagement/contexts/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 import { ChevronDown, LogOut, User } from "lucide-react";
 
 const Header = () => {

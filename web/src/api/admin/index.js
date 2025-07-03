@@ -1,5 +1,4 @@
-import api from "./config";
-const API_BASE_URL = "/api/admin";
+import api from "..";
 
 export const adminAPI = {
   // Agency management
@@ -37,42 +36,6 @@ export const adminAPI = {
   suspendAgency: async (agencyId, reason) => {
     const response = await api.patch(`/agency/${agencyId}/suspend`, {
       reason,
-    });
-    return response.data;
-  },
-
-  // Document management
-  getDocuments: async (filters = {}) => {
-    const params = new URLSearchParams(filters).toString();
-    const response = await api.get(`/document?${params}`);
-    return response.data;
-  },
-
-  getDocument: async (documentId) => {
-    const response = await api.get(`/document/${documentId}`);
-    return response.data;
-  },
-
-  getDocumentStats: async () => {
-    const response = await api.get(`/document/stats`);
-    return response.data;
-  },
-
-  approveDocument: async (documentId) => {
-    const response = await api.patch(`/document/${documentId}/approve`);
-    return response.data;
-  },
-
-  rejectDocument: async (documentId, reason) => {
-    const response = await api.patch(`/document/${documentId}/reject`, {
-      reason,
-    });
-    return response.data;
-  },
-
-  addRemark: async (documentId, remark) => {
-    const response = await api.patch(`/document/${documentId}/remark`, {
-      remark,
     });
     return response.data;
   },

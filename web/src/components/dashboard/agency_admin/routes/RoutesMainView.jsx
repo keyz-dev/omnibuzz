@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { StatCard, SearchBar, Button, FilterDropdown } from "../../../ui";
-import { PlusCircle } from "lucide-react";
+import { SearchBar, Button, FilterDropdown } from "../../../ui";
 import { RouteCardSection, RoutesListView } from "./";
 
 const RoutesMainView = ({
@@ -8,7 +7,6 @@ const RoutesMainView = ({
   onAddRoute,
   onEditRoute,
   onDeleteRoute,
-  loading,
   stats,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");

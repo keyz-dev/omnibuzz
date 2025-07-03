@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AddressInput } from "../ui";
-import { useAgencyCreation } from "../../stateManagement/contexts";
+import { useAgencyCreation } from "../../contexts";
 import { StepNavButtons } from "./index";
 
 const Step2_Location = () => {

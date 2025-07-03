@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { MapSelector } from "../maps/leaflet";
-import { useAgencyCreation } from "../../stateManagement/contexts";
+import { useAgencyCreation } from "../../contexts";
 
 const Step2_Location = () => {
   const { agencyCreationData, setAgencyCreationData, nextStep, prevStep } =

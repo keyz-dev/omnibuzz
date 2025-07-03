@@ -2,9 +2,9 @@ import React from "react";
 import {
   AgencyCreationProvider,
   useAgencyCreation,
-} from "../stateManagement/contexts";
+} from "../contexts";
 import AgencyCreationSidebar from "../components/layout/AgencyCreationSidebar"; // The left sidebar
-import { useAuth } from "../stateManagement/contexts/AuthContext";
+import { useAuth } from "../contexts/AuthContext";
 import { Navigate } from "react-router-dom";
 import { Loader } from "../components/ui";
 

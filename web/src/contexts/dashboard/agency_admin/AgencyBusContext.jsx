@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { busesAPI } from '../../../../api/agency_admin/buses';
+import { busesAPI } from '../../../api/agency_admin/buses';
 import { useAgency } from './';
 
 const AgencyBusContext = createContext();

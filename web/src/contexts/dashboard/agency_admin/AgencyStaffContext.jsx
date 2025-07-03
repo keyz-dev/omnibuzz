@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
 import { toast } from "react-toastify";
-import { staffAPI } from "../../../../api/agency_admin/staff";
+import { staffAPI } from "../../../api/agency_admin/staff";
 import { useAgency } from "./";
 
 const AgencyStaffContext = createContext();

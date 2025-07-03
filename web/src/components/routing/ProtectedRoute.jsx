@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "../../stateManagement/contexts/AuthContext";
+import { useAuth } from "../../contexts";
 import { Loader } from "../ui";
 
 const ProtectedRoute = ({ allowedRoles }) => {

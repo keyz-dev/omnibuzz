@@ -1,5 +1,5 @@
 import React from "react";
-import { useAgency } from "../../../stateManagement/contexts/dashboard/agency_admin";
+import { useAgency } from "../../../contexts/dashboard/agency_admin";
 import { Loader, ProfileCompletionStep } from "../../../components/ui";
 import {
   CheckCircle,

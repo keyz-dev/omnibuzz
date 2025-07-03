@@ -1,5 +1,5 @@
 import React from "react";
-import { useAgencyCreation, useAuth } from "../../stateManagement/contexts";
+import { useAgencyCreation, useAuth } from "../../contexts";
 import AgencyOverviewHeader from "./overview/AgencyOverviewHeader";
 import AgencyOverviewDescription from "./overview/AgencyOverviewDescription";
 import AgencyOverviewTowns from "./overview/AgencyOverviewTowns";

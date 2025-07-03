@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useBaseDashboard } from '../../../stateManagement/contexts/dashboard';
+import { useBaseDashboard } from '../../../contexts/dashboard/BaseDashboardContext';
 import * as Icons from 'lucide-react';
 
 const DashboardSidebar = () => {

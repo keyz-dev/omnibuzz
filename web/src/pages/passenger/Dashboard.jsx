@@ -1,4 +1,4 @@
-import { useAuth } from "../../stateManagement/contexts/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 
 const PassengerDashboard = () => {
   const { user } = useAuth();

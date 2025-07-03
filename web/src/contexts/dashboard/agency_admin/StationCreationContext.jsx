@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import api from "../api";
+import { stationsAPI } from "../../../api/agency_admin/stations";
 
 const StationContext = React.createContext();
 
@@ -12,7 +12,7 @@ const STEPS = {
   ASSIGN_MANAGER: 5,
 };
 
-export const StationProvider = ({ children }) => {
+const StationCreationProvider = ({ children }) => {
   const [stationCreationData, setStationCreationData] = useState({
     name: "",
     neighborhood: "",
@@ -43,34 +43,9 @@ export const StationProvider = ({ children }) => {
     setActiveStep((prev) => Math.max(prev - 1, STEPS.BASIC_INFORMATION));
   };
 
-  const assignWorker = async (worker) => {
-    setIsLoading(true);
-    if (!worker.stationId) {
-      worker.stationId = createdStation.id;
-    }
-
-    try {
-      const res = await api.post("/staff", worker);
-      return res.data;
-    } catch (error) {
-      return {
-        success: false,
-        error:
-          error.response?.data?.error ||
-          error.response?.data?.error?.[0]?.message ||
-          error.response?.data?.message ||
-          error.message ||
-          "Unknown error occured. Please try again later.",
-      };
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const createStation = async (contactInfo) => {
     try {
       setIsLoading(true);
-
       const stationName = `${stationCreationData.neighborhood}`;
 
       const formData = new FormData();
@@ -95,13 +70,8 @@ export const StationProvider = ({ children }) => {
       });
       formData.append("contactInfo", JSON.stringify(contactInfo));
 
-      const res = await api.post("/station", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      setCreatedStation(res.data.data);
+      const res = await stationsAPI.createStation(formData);
+      setCreatedStation(res.data);
       return res.data;
     } catch (error) {
       return {
@@ -124,13 +94,13 @@ export const StationProvider = ({ children }) => {
     visitedSteps,
     STEPS,
     isLoading,
+    createdStation,
 
     setStationCreationData,
     updateFormData,
     nextStep,
     prevStep,
     createStation,
-    assignWorker,
   };
 
   return (
@@ -138,10 +108,12 @@ export const StationProvider = ({ children }) => {
   );
 };
 
-export const useStation = () => {
+export default StationCreationProvider;
+
+export const useStationCreation = () => {
   const context = useContext(StationContext);
   if (!context) {
-    throw new Error("useStation must be used within a StationProvider");
+    throw new Error("useStationCreation must be used within a StationCreationProvider");
   }
   return context;
 };

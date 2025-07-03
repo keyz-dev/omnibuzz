@@ -1,6 +1,6 @@
 import { Link as RouterLink } from "react-router-dom";
 import heroImg from "../assets/images/hero.jpg";
-import { useAuth } from "../stateManagement/contexts";
+import { useAuth } from "../contexts";
 import { Loader } from "../components/ui";
 
 const features = [

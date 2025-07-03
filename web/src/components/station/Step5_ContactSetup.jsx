@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useStation } from "../../stateManagement/contexts";
+import { useStationCreation } from "../../contexts/dashboard/agency_admin";
 import { ContactInfo } from "../ui";
 import { toast } from "react-toastify";
 
@@ -18,7 +18,7 @@ const Step5_ContactSetup = () => {
     nextStep,
     createStation,
     isLoading,
-  } = useStation();
+  } = useStationCreation();
   const [contactFields, setContactFields] = useState(
     stationCreationData.contactInfo
   );

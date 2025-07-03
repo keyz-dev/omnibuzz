@@ -1,42 +1,36 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { adminAPI } from '../../../api/adminAPI';
+import React, { createContext, useContext, useState } from "react";
+import { adminDocAPI } from "../../../api/admin/documents";
 
 const AdminContext = createContext();
 
-export const useAdmin = () => {
+export const useAdminDocuments = () => {
   const context = useContext(AdminContext);
   if (!context) {
-    throw new Error('useAdmin must be used within AdminProvider');
+    throw new Error("useAdminDocuments must be used within AdminProvider");
   }
   return context;
 };
 
-export const AdminProvider = ({ children }) => {
-  const [agencies, setAgencies] = useState([]);
+const AdminDocumentsProvider = ({ children }) => {
   const [documents, setDocuments] = useState([]);
   const [documentStats, setDocumentStats] = useState({});
-  const [pendingApprovals, setPendingApprovals] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  // Admin-specific data fetching
-  const fetchAgencies = async (filters = {}) => {
-    setLoading(true);
-    try {
-      const data = await adminAPI.getAgencies(filters);
-      setAgencies(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+  // Initialize data when first needed
+  const initializeDocuments = async () => {
+    if (!isInitialized) {
+      await Promise.all([fetchDocuments(), fetchDocumentStats()]);
+      setIsInitialized(true);
     }
   };
 
   const fetchDocuments = async (filters = {}) => {
     setLoading(true);
     try {
-      const data = await adminAPI.getDocuments(filters);
+      const data = await adminDocAPI.getDocuments(filters);
       setDocuments(data.documents);
     } catch (err) {
       setError(err.message);
@@ -48,7 +42,7 @@ export const AdminProvider = ({ children }) => {
   const fetchDocumentStats = async () => {
     setLoading(true);
     try {
-      const data = await adminAPI.getDocumentStats();
+      const data = await adminDocAPI.getDocumentStats();
       setDocumentStats(data);
     } catch (err) {
       setError(err.message);
@@ -59,7 +53,7 @@ export const AdminProvider = ({ children }) => {
 
   const approveDocument = async (documentId) => {
     try {
-      await adminAPI.approveDocument(documentId);
+      await adminDocAPI.approveDocument(documentId);
       setSuccessMessage("Document approved successfully");
       await fetchDocuments();
     } catch (err) {
@@ -70,13 +64,12 @@ export const AdminProvider = ({ children }) => {
   const rejectDocument = async (documentId, reason) => {
     setLoading(true);
     try {
-      await adminAPI.rejectDocument(documentId, reason);
+      await adminDocAPI.rejectDocument(documentId, reason);
       setSuccessMessage("Document rejected successfully");
       await fetchDocuments();
     } catch (err) {
       setError(err.message);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -84,57 +77,41 @@ export const AdminProvider = ({ children }) => {
   const addRemark = async (documentId, remark) => {
     try {
       setLoading(true);
-      const updatedDoc = await adminAPI.addRemark(documentId, remark);
+      const updatedDoc = await adminDocAPI.addRemark(documentId, remark);
       if (updatedDoc.success) {
         setSuccessMessage(updatedDoc.message);
         await fetchDocuments();
       }
     } catch (err) {
       setError(err.message);
-    }
-    finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchSystemStats = async () => {
-    try {
-      setLoading(true);
-      const stats = await adminAPI.getSystemStats();
-      setSystemStats(stats);
-    } catch (err) {
-      setError(err.message);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
 
   const value = {
     // State
-    agencies,
     documents,
     documentStats,
-    pendingApprovals,
     loading,
     error,
     successMessage,
+    isInitialized,
 
     // Actions
-    fetchAgencies,
     fetchDocuments,
     fetchDocumentStats,
     approveDocument,
     rejectDocument,
     addRemark,
-    fetchSystemStats,
     setError,
-    setSuccessMessage
+    setSuccessMessage,
+    initializeDocuments
   };
 
   return (
-    <AdminContext.Provider value={value}>
-      {children}
-    </AdminContext.Provider>
+    <AdminContext.Provider value={value}>{children}</AdminContext.Provider>
   );
 };
+
+export default AdminDocumentsProvider;

@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useBaseDashboard } from '../../../stateManagement/contexts/dashboard';
+import { useBaseDashboard } from '../../../contexts/dashboard/BaseDashboardContext';
 import { Menu, Bell, Search, ChevronsLeft, ChevronDown, ChevronsRight } from 'lucide-react';
 import { Logo, Button } from '../../ui'
-import { useAuth } from '../../../stateManagement/contexts/AuthContext';
+import { useAuth } from '../../../contexts';
 
 const Header = () => {
   const {

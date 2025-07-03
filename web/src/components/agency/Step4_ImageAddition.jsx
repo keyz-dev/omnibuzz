@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useAgencyCreation } from "../../stateManagement/contexts";
+import { useAgencyCreation } from "../../contexts";
 import { ImageUploadStep } from "../images";
 
 const Step4_ImageAddition = () => {

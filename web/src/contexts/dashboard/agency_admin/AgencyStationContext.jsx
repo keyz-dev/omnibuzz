@@ -1,6 +1,6 @@
 import React, { useContext, createContext, useState, useCallback } from 'react'
 import { useAgency } from './';
-import { stationsAPI } from '../../../../api/agency_admin/stations';
+import { stationsAPI } from '../../../api/agency_admin/stations';
 
 const AgencyStationContext = createContext();
 

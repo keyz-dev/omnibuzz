@@ -3,12 +3,12 @@ import { FormHeader, Input, StepNavButtons } from "../ui";
 import { useNavigate } from "react-router-dom";
 import { isValidCMNumber } from "../../utils/validateForm";
 import { normalizeNumber } from "../../utils/normalizePhone";
-import { useStation } from "../../stateManagement/contexts";
+import { useStationCreation } from "../../contexts/dashboard/agency_admin";
 import { toast } from "react-toastify";
-import { useAgency } from "../../stateManagement/contexts/dashboard/agency_admin";
+import { useAgency } from "../../contexts/dashboard/agency_admin";
 
 const Step6_AssignManager = () => {
-  const { isLoading, assignWorker } = useStation();
+  const { isLoading, assignWorker } = useStationCreation();
   const { fetchAgencyProfile, agencyProfile, fetchStations } = useAgency();
   const navigate = useNavigate();
   const [manager, setManager] = useState({

@@ -2,7 +2,7 @@
 import { Outlet, Route } from "react-router-dom";
 import { DashboardLayout } from "../components/layout";
 import ProtectedRoute from "../components/routing/ProtectedRoute";
-import { DashboardContextWrapper } from "../stateManagement/contexts";
+import { DashboardContextWrapper } from "../contexts/wrappers";
 import {
   Dashboard as AdminDashboard,
   Agencies as AdminAgencies,

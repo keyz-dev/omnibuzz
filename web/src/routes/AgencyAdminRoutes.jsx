@@ -4,7 +4,7 @@ import {
   ProfileCompletionLayout,
   DashboardLayout
 } from "../components/layout";
-import { DashboardContextWrapper } from "../stateManagement/contexts";
+import { DashboardContextWrapper } from "../contexts/wrappers";
 
 // Agency Admin Pages
 import {

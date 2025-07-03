@@ -1,7 +1,7 @@
 import React from "react";
 import { Logo } from "../ui/Logo";
 import { Outlet } from "react-router-dom";
-import { useAuth } from "../../stateManagement/contexts/AuthContext";
+import { useAuth } from "../../contexts/AuthContext";
 import { User, LogOut, ChevronDown } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 

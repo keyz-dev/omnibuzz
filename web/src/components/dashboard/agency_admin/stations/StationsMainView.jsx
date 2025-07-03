@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAgencyStation } from "../../../../stateManagement/contexts/dashboard/agency_admin";
+import { useAgencyStation } from "../../../../contexts/dashboard/agency_admin";
 import { Map, List } from "lucide-react";
 import { StationsListView, StationsMapView } from ".";
 import { FilterDropdown, SearchBar, Button } from "../../../ui";
@@ -16,9 +16,9 @@ const StationsMainView = ({ setView, setStation }) => {
   const [isAddWorkerModalOpen, setAddWorkerModalOpen] = useState(false);
   const [selectedStation, setSelectedStation] = useState(null);
 
-  useEffect(() => {
-    fetchStations();
-  }, [fetchStations]);
+  // useEffect(() => {
+  //   fetchStations();
+  // }, []);
 
   const filteredStations = (stations || []).filter((station) => {
     const stationName = station.name || "";

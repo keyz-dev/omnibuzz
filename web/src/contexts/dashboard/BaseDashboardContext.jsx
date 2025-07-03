@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 import { useAuth } from '../AuthContext';
-import { ROLE_CONFIGS } from '../../../config/userRoles';
+import { ROLE_CONFIGS } from '../../config/userRoles';
 
 const BaseDashboardContext = createContext();
 
@@ -39,6 +39,7 @@ export const BaseDashboardProvider = ({ children }) => {
     pageTitle,
     activeNavItem,
     sidebarCollapsed,
+    
     setPageTitle,
     setActiveNavItem,
     setSidebarCollapsed,

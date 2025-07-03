@@ -8,14 +8,14 @@ import {
   FormHeader,
   Loader,
 } from "../ui";
-import { useStation } from "../../stateManagement/contexts";
-import { useAgency } from '../../stateManagement/contexts/dashboard/agency_admin'
+import { useStationCreation } from "../../contexts/dashboard/agency_admin";
+import { useAgency } from '../../contexts/dashboard/agency_admin'
 import { useNavigate } from "react-router-dom";
 
 const Step1_BasicInformation = () => {
   const navigate = useNavigate();
   const { stationCreationData, setStationCreationData, nextStep } =
-    useStation();
+    useStationCreation();
   const { agencyProfile, isLoading: profileLoading } = useAgency();
 
   const [errors, setErrors] = useState({});

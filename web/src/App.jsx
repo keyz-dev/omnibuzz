@@ -1,5 +1,5 @@
 import { BrowserRouter as Router } from "react-router-dom";
-import { AuthProvider } from "./stateManagement/contexts";
+import { AuthProvider } from "./contexts";
 import { AppRoutes } from "./routes/";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ToastContainer } from "react-toastify";

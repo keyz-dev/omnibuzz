@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAgency } from '../../../stateManagement/contexts/dashboard/agency_admin'
+import { useAgency } from '../../../contexts/dashboard/agency_admin'
 import { Loader } from '../../../components/ui'
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -10,7 +10,7 @@ import { SecurityNotice } from '../../../components/ui';
 const AgencyProfile = () => {
   // View state
   const navigate = useNavigate()
-  const { agencyProfile, loading, publishStatus, isPublishable, publishAgency } = useAgency();
+  const { agencyProfile, loading, setPublishStatus, publishStatus, isPublishable, publishAgency } = useAgency();
   const [currentView, setCurrentView] = useState('map');
 
   // Form state

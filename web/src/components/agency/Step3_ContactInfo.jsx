@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ContactInfo } from "../ui";
-import { useAgencyCreation } from "../../stateManagement/contexts";
+import { useAgencyCreation } from "../../contexts";
 
 const contactTypes = [
   { id: "business-email", label: "Business Email", type: "email" },

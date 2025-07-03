@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth } from "../../../stateManagement/contexts/AuthContext";
+import { useAuth } from "../../../contexts/AuthContext";
 
 const Dashboard = () => {
   const { user } = useAuth();

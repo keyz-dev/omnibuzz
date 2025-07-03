@@ -1,11 +1,11 @@
 import React from "react";
 import { PaymentSetup } from "./payment";
-import { useStation } from "../../stateManagement/contexts";
+import { useStationCreation } from "../../contexts/dashboard/agency_admin";
 
 // Demo wrapper
 const Step4_PaymentSetup = () => {
   const { stationCreationData, setStationCreationData, prevStep, nextStep } =
-    useStation();
+    useStationCreation();
   const handleBack = () => {
     prevStep();
   };
