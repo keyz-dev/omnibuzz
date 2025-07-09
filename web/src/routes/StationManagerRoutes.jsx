@@ -13,6 +13,7 @@ import {
   Profile as ManagerProfile,
   Reports as ManagerReports,
   Schedules as ManagerSchedules,
+  Trips as ManagerTrips,
 } from "../pages/agency/manager";
 
 export const stationManagerRoutes = [
@@ -38,6 +39,7 @@ export const stationManagerRoutes = [
         <Route path="profile" element={<ManagerProfile />} />
         <Route path="reports" element={<ManagerReports />} />
         <Route path="schedules" element={<ManagerSchedules />} />
+        <Route path="trips" element={<ManagerTrips />} />
       </Route>
     </Route>
   </Route>,

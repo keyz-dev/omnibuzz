@@ -4,17 +4,17 @@ import { ModalWrapper, FormHeader, Input, Select, Button } from "../../../ui";
 import { X, Sun, Calendar, CalendarDays, Clock } from "lucide-react";
 
 const AddScheduleModal = ({ isOpen, onClose }) => {
-  const { routes, createSchedule, loading, error, success } = useSchedules();
+  const { routes, createSchedule, error, success } = useSchedules();
 
   const initialFormData = {
     routeId: "",
     departureTime: "",
-    frequency: "Daily",
+    frequency: "daily",
     startDate: "",
     endDate: "",
     busType: "Standard",
     activeDays: [],
-    status: "Upcoming",
+    status: "upcoming",
     hour: "12",
     minute: "00",
     ampm: "AM",
@@ -22,6 +22,7 @@ const AddScheduleModal = ({ isOpen, onClose }) => {
 
   const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -46,7 +47,7 @@ const AddScheduleModal = ({ isOpen, onClose }) => {
           ? "00"
           : newData.hour.padStart(2, "0");
 
-      newData.departureTime = `${hour24}:${newData.minute}`;
+      newData.departureTime = `${hour24}:${newData.minute}:00`;
       return newData;
     });
   };
@@ -70,7 +71,11 @@ const AddScheduleModal = ({ isOpen, onClose }) => {
     if (!formData.departureTime)
       newErrors.departureTime = "Departure time is required.";
     if (!formData.startDate) newErrors.startDate = "Start date is required.";
-    if (formData.frequency !== "Daily" && formData.activeDays.length === 0) {
+    if (!formData.endDate) newErrors.endDate = "End date is required.";
+    if (
+      ["weekly", "monthly"].includes(formData.frequency) &&
+      formData.activeDays.length === 0
+    ) {
       newErrors.activeDays =
         "At least one active day is required for this frequency.";
     }
@@ -80,16 +85,20 @@ const AddScheduleModal = ({ isOpen, onClose }) => {
 
   const handleSave = async () => {
     if (!validateForm()) return;
-
+    delete formData.ampm;
+    delete formData.hour;
+    delete formData.minute;
+    setLoading(true);
     const result = await createSchedule(formData);
     if (result.success) {
       onClose();
     }
+    setLoading(false);
   };
 
   const routeOptions = routes.map((route) => ({
     value: route.id,
-    label: `${route.origin.name} to ${route.destination.name}`,
+    label: `${route.originStation.name} to ${route.destinationStation.name}`,
   }));
 
   const busTypeOptions = [
@@ -98,10 +107,10 @@ const AddScheduleModal = ({ isOpen, onClose }) => {
   ];
 
   const frequencyOptions = [
-    { value: "Daily", label: "Daily", icon: Sun },
-    { value: "Weekly", label: "Weekly", icon: Calendar },
-    { value: "Monthly", label: "Monthly", icon: CalendarDays },
-    { value: "One-time", label: "One-time", icon: Clock },
+    { value: "daily", label: "Daily", icon: Sun },
+    { value: "weekly", label: "Weekly", icon: Calendar },
+    { value: "monthly", label: "Monthly", icon: CalendarDays },
+    { value: "one-time", label: "One-time", icon: Clock },
   ];
 
   const hours = Array.from({ length: 12 }, (_, i) =>
@@ -110,6 +119,15 @@ const AddScheduleModal = ({ isOpen, onClose }) => {
   const minutes = Array.from({ length: 60 }, (_, i) =>
     i.toString().padStart(2, "0")
   );
+
+  const isFormIncomplete =
+    !formData.routeId ||
+    !formData.busType ||
+    !formData.startDate ||
+    !formData.endDate ||
+    !formData.frequency ||
+    (["weekly", "monthly"].includes(formData.frequency) &&
+      formData.activeDays.length === 0);
 
   const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -217,9 +235,7 @@ const AddScheduleModal = ({ isOpen, onClose }) => {
               </div>
             </div>
             {errors.departureTime && (
-              <p className="text-red-500 text-xs mt-1">
-                {errors.departureTime}
-              </p>
+              <p className="text-error text-xs mt-1">{errors.departureTime}</p>
             )}
           </div>
 
@@ -285,14 +301,16 @@ const AddScheduleModal = ({ isOpen, onClose }) => {
                 type="date"
                 value={formData.endDate}
                 onChangeHandler={handleChange}
+                disabled={!formData.startDate}
+                min={formData.startDate}
                 error={errors.endDate}
               />
             </div>
           </div>
 
           {/* Active Days (for Weekly/Monthly) */}
-          {(formData.frequency === "Weekly" ||
-            formData.frequency === "Monthly") && (
+          {(formData.frequency === "weekly" ||
+            formData.frequency === "monthly") && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Active Days
@@ -314,7 +332,7 @@ const AddScheduleModal = ({ isOpen, onClose }) => {
                 ))}
               </div>
               {errors.activeDays && (
-                <p className="text-red-500 text-xs mt-1">{errors.activeDays}</p>
+                <p className="text-error text-xs mt-1">{errors.activeDays}</p>
               )}
             </div>
           )}
@@ -324,8 +342,9 @@ const AddScheduleModal = ({ isOpen, onClose }) => {
         <div className="flex justify-end mt-8">
           <Button
             onClickHandler={handleSave}
-            additionalClasses="bg-blue-500 hover:bg-blue-600 text-white px-8"
+            additionalClasses="primaryBtn bg-accent text-white"
             isLoading={loading}
+            isDisabled={isFormIncomplete || Object.keys(errors).length > 0}
           >
             Save Schedule
           </Button>
@@ -333,10 +352,10 @@ const AddScheduleModal = ({ isOpen, onClose }) => {
 
         {/* Error/Success Messages */}
         {error && (
-          <p className="text-red-500 text-sm mt-4 text-right">{error}</p>
+          <p className="text-error text-sm mt-4 text-center">{error}</p>
         )}
         {success && (
-          <p className="text-green-500 text-sm mt-4 text-right">{success}</p>
+          <p className="text-success text-sm mt-4 text-center">{success}</p>
         )}
       </div>
     </ModalWrapper>

@@ -1,18 +1,19 @@
 import { Route } from "react-router-dom";
-import LandingPage from "../pages/LandingPage";
+import { Home, About, ContactUs, AgencyCreationPage } from "../pages/home";
 import {
   Login,
   Register,
   VerifyAccount,
   AcceptInvitation,
 } from "../pages/auth/";
-import AgencyCreationPage from "../pages/AgencyCreationPage";
 import { Layout, AuthLayout } from "../components/layout";
 
 // Export individual route elements with full paths
 export const publicRoutes = [
   <Route key="home" path="/" element={<Layout />}>
-    <Route index element={<LandingPage />} />
+    <Route index element={<Home />} />
+    <Route path="about" element={<About />} />
+    <Route path="contact-us" element={<ContactUs />} />
   </Route>,
   <Route key="login" path="/login" element={<AuthLayout />}>
     <Route index element={<Login />} />

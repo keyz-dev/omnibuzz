@@ -44,6 +44,7 @@ export const ROLE_CONFIGS = {
       { path: "buses", label: "Buses", icon: "Bus" },
       { path: "routes", label: "Routes", icon: "Route" },
       { path: "schedules", label: "Schedules", icon: "Clock" },
+      { path: "trips", label: "Trips", icon: "BusFront" },
       { path: "reports", label: "Reports", icon: "BarChart3" },
       { path: "profile", label: "Profile", icon: "User" },
     ],

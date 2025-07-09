@@ -9,11 +9,12 @@ const Header = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { user, logout } = useAuth();
   const profileRef = useRef(null);
-  const imagePlaceholder = 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541'
+  const imagePlaceholder =
+    "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png?20150327203541";
   const navItems = [
     { label: "Home", path: "/" },
     { label: "About", path: "/about" },
-    { label: "Contact", path: "/contact" },
+    { label: "Contact Us", path: "/contact-us" },
   ];
 
   // Close profile dropdown when clicking outside

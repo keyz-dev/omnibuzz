@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Logo, Button } from "../../ui";
 import { useAuth } from "../../../contexts";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const { pageTitle, sidebarCollapsed, setSidebarCollapsed, roleConfig } =
@@ -27,6 +28,7 @@ const Header = () => {
   // State and ref for the animated search bar
   const [isSearchOpen, setSearchOpen] = useState(false);
   const searchInputRef = useRef(null);
+  const navigate = useNavigate();
 
   const handleProfileClick = () => {
     if (isLangDropdownOpen) setLangDropdownOpen(false);
@@ -180,13 +182,15 @@ const Header = () => {
           {showUserDropdown && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-10">
               <a
-                href="#"
+                href=""
+                onClick={() => navigate(roleConfig.basePath + "/profile")}
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               >
                 My Profile
               </a>
               <a
-                href="#"
+                href=""
+                onClick={() => navigate(roleConfig.basePath + "/settings")}
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               >
                 Settings

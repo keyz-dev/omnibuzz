@@ -1,0 +1,104 @@
+{
+    "navLinks":[
+        { "href": "/", "active": true, "label": "Home" },
+        { "href": "#about-us", "active": false, "label": "About Us" },
+        { "href": "#services", "active": false, "label": "Services" },
+        { "href": "#contact-us", "active": false, "label": "Contact Us" }
+    ],
+    "hero": {
+        "slack": {
+            "title": "Professional",
+            "subTitle": "CNN DEALS"
+        },
+        "subHeading": "Your trusted partner in accounting, auditing, and financial management" 
+    },
+    "services":{
+        "heading": "Our Services",
+        "subHeading": "Innovative and Advanced Finance and Monetary Services at your disposal",
+        "cards":[{
+            "id": 1,
+            "title": "Accounting Expertise",
+            "description":
+              "Our accounting services include the revision and organization of accounts, implementation of international standards (such as IFRS), and preparation of financial reports. We ensure that your financial records comply with the latest regulations and are meticulously maintained.",
+            "iconClass": "fas fa-book-open"
+          },
+          {
+            "id": 2,
+            "title": "Auditing and Related Missions",
+            "description":
+              "We provide comprehensive auditing services, including legal and statutory audits, IT audits, and procurement reviews. Our expertise ensures the integrity of your financial operations and compliance with international donor requirements.",
+            "iconClass": "fas fa-shield-alt"
+          },
+          {
+            "id": 3,
+            "title": "Financial and Tax Management",
+            "description":
+              "From cash management to tax optimization and business valuations, our financial and tax management services are tailored to help you achieve financial efficiency and maximize profitability while adhering to tax regulations.",
+            "iconClass": "fas fa-dollar-sign"
+          },
+          {
+            "id": 4,
+            "title": "Administrative Management",
+            "description":
+              "We assist in managing your administrative tasks, including inventory management, drafting and revising operational procedures, and contract management. Our solutions are designed to streamline your business processes.",
+            "iconClass": "fas fa-clipboard-list"
+          },
+          {
+            "id": 5,
+            "title": "Advice, Studies, and Training",
+            "description":
+              "Our advisory services include business creation guidance, wealth management advice, and conducting economic and administrative studies. Additionally, we provide tailored training programs to empower your team with essential skills.",
+            "iconClass": "fas fa-lightbulb"
+          }
+        ]
+    },
+    "contact":{
+        "heading":"Contact Us",
+        "subHeading": "Reach out to us with your worries, questions or anything else in relation to our services or further clarification",
+        "cards": [
+            {
+                "id": 1,
+                "title": "Phone Number",
+                "value": "+237 6 99 83 27 13",
+                "iconClass": "fas fa-phone-alt"
+            },
+            {
+                "id": 2,
+                "title": "Email",
+                "value": "Ngeric654@yahoo.fr",
+                "iconClass": "fas fa-envelope"
+            },
+            {
+                "id": 3,
+                "title": "Company Address",
+                "value": "Entree Mature Biteng, Yaounde",
+                "iconClass": "fas fa-map-marker-alt"
+            }
+        ],
+        "form":{
+            "title": "Send Us a Message",
+            "labels": {
+                "name": "Your Name",
+                "email": "Email",
+                "phone": "Phone Number",
+                "subject": "Subject",
+                "message": "Message"
+            },
+            "placeholders":{
+                "name": "Your Name",
+                "email": "e.g email@example.com",
+                "phone": "e.g +237 673333333",
+                "subject": "Subject",
+                "message": "Write Down Your Message"
+            },
+            "submit": "Send Message",
+            "statusMessage": {
+              "success": "Message has been sent successfully, we'll get to back to you soon!",
+              "error": "An error occurred while sending the message, please try again later."
+            }
+        }
+    },
+    "footer":{
+        "copyright": "Copyright © 2025 CNN. All rights reserved."
+    }
+}

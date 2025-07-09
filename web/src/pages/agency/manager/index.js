@@ -5,3 +5,4 @@ export { default as Routes } from "./Routes";
 export { default as Buses } from "./Buses";
 export { default as Schedules } from "./Schedules";
 export { default as Reports } from "./Reports";
+export { default as Trips } from "./Trips";

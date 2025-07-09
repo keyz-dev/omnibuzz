@@ -5,7 +5,7 @@ import AddScheduleModal from "./AddScheduleModal";
 import { Button, SearchBar, FilterDropdown } from "../../../ui";
 
 const SchedulesMainView = () => {
-  const { fetchSchedules } = useSchedules();
+  const { fetchSchedules, schedules, loading } = useSchedules();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
@@ -69,7 +69,12 @@ const SchedulesMainView = () => {
         </div>
       </div>
 
-      <SchedulesListView onEdit={() => {}} onDelete={() => {}} />
+      <SchedulesListView
+        schedules={schedules}
+        loading={loading}
+        onEdit={() => {}}
+        onDelete={() => {}}
+      />
 
       <AddScheduleModal
         isOpen={isModalOpen}

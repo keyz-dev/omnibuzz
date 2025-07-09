@@ -30,8 +30,6 @@ const RoutesMainView = ({
     });
   }, [routes, searchTerm, originFilter, destinationFilter, statusFilter]);
 
-  console.log(routes);
-
   const originOptions = useMemo(
     () =>
       routes && routes.length > 0

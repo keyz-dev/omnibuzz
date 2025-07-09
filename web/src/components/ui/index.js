@@ -28,3 +28,10 @@ export { default as Select } from './Select';
 export { default as UserInfo } from './UserInfo';
 export { default as ModalWrapper } from './ModalWrapper';
 export { default as ConfirmDeleteModal } from './ConfirmDeleteModal';
+export { default as ContactCard } from './ContactCard';
+export { default as ContactForm } from './ContactForm';
+export { default as ToastMessage } from './ToastMessage';
+export { default as SubHeading } from './SubHeading';
+
+
+

@@ -67,24 +67,12 @@ const AddWorkerModal = ({ isOpen, onClose, station }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-
     const workerData = {
       ...worker,
       phone: normalizeNumber(worker.phone),
     };
-
-    console.log(workerData);
-
-    const res = await addStaff(workerData);
-    if (res.success) {
-      await fetchStations();
-      toast.success(
-        `The assignment request has been sent to the ${worker.role} successfully!`
-      );
-      onClose();
-    } else {
-      toast.error(res.error || "Failed to assign worker.");
-    }
+    await addStaff(workerData);
+    onClose();
   };
 
   if (!isOpen) return null;

@@ -61,8 +61,8 @@ const AgencyRouteProvider = ({ children }) => {
           agencyProfile.agency.id,
           routeData
         );
-        setRoutes((prev) => [newRoute, ...prev]);
-        fetchRouteStats(); // Refetch stats after adding
+        await fetchRoutes();
+        await fetchRouteStats(); // Refetch stats after adding
         toast.success("Route added successfully!");
       } catch (error) {
         const errorMessage =
@@ -72,18 +72,16 @@ const AgencyRouteProvider = ({ children }) => {
         setLoading(false);
       }
     },
-    [agencyProfile, fetchRouteStats]
+    [agencyProfile, fetchRoutes, fetchRouteStats]
   );
 
   const updateRoute = useCallback(
     async (routeId, routeData) => {
       setLoading(true);
       try {
-        const updatedRoute = await routesAPI.update(routeId, routeData);
-        setRoutes((prev) =>
-          prev.map((r) => (r.id === routeId ? { ...r, ...updatedRoute } : r))
-        );
-        fetchRouteStats(); // Refetch stats if status changes
+        await routesAPI.update(routeId, routeData);
+        await fetchRoutes();
+        await fetchRouteStats(); // Refetch stats if status changes
         toast.success("Route updated successfully!");
       } catch (error) {
         const errorMessage =
@@ -93,27 +91,25 @@ const AgencyRouteProvider = ({ children }) => {
         setLoading(false);
       }
     },
-    [fetchRouteStats]
+    [agencyProfile, fetchRoutes, fetchRouteStats]
   );
 
   const deleteRoute = useCallback(
     async (routeId) => {
-      const originalRoutes = [...routes];
-      setRoutes((prev) => prev.filter((r) => r.id !== routeId));
       toast.info("Deleting route...");
 
       try {
         await routesAPI.delete(routeId);
-        fetchRouteStats(); // Refetch stats after deleting
+        await fetchRoutes();
+        await fetchRouteStats(); // Refetch stats after deleting
         toast.success("Route deleted successfully!");
       } catch (error) {
-        setRoutes(originalRoutes);
         const errorMessage =
           error.response?.data?.message || "Failed to delete route.";
         toast.error(errorMessage);
       }
     },
-    [routes, fetchRouteStats]
+    [agencyProfile, fetchRoutes, fetchRouteStats]
   );
 
   const value = {

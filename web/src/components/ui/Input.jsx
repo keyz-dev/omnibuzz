@@ -18,11 +18,11 @@ const Input = ({
   labelClasses = "",
   value,
   error,
-  props,
   autoFocus = false,
   onFocusHandler,
   onBlurHandler,
   isSecretField = false,
+  ...props
 }) => {
   // If label is a string and required, append a red asterisk unless already present
   let labelContent = label;

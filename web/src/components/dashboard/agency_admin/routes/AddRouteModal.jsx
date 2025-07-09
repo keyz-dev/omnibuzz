@@ -2,7 +2,14 @@ import React, { useState, useMemo, useEffect } from "react";
 import { Input, Button, Select, FormHeader, ModalWrapper } from "../../../ui";
 import { X } from "lucide-react";
 
-const AddRouteModal = ({ isOpen, onClose, onSave, stations, isSaving }) => {
+const AddRouteModal = ({
+  isOpen,
+  onClose,
+  onSave,
+  stations,
+  isSaving,
+  routes,
+}) => {
   const [formData, setFormData] = useState({
     from: "",
     to: "",
@@ -39,14 +46,43 @@ const AddRouteModal = ({ isOpen, onClose, onSave, stations, isSaving }) => {
   );
 
   const destinationOptions = useMemo(() => {
+    // formData.from is a string from the select input.
     if (!formData.from) return [];
-    const originStation = stations.find((s) => s.id === formData.from);
+
+    const originStation = stations.find((s) => String(s.id) === formData.from);
     if (!originStation) return [];
+
+    // Create a set of destination station IDs that already have a route
+    // from the selected origin. Convert all IDs to strings for reliable comparison.
+    const existingDestinationIds = new Set(
+      routes
+        .filter((route) => String(route.originStation?.id) === formData.from)
+        .map((route) => String(route.destinationStation?.id))
+    );
+
     return stationOptions.filter((opt) => {
-      const station = stations.find((s) => s.id === opt.value);
-      return station.baseTown !== originStation.baseTown;
+      const destinationStationId = String(opt.value);
+
+      // A route cannot be to the same station as its origin.
+      if (destinationStationId === formData.from) {
+        return false;
+      }
+
+      // Filter out destinations that already form a route with the origin.
+      if (existingDestinationIds.has(destinationStationId)) {
+        return false;
+      }
+
+      // The destination must be in a different town from the origin.
+      const destinationStation = stations.find(
+        (s) => String(s.id) === destinationStationId
+      );
+      return (
+        destinationStation &&
+        destinationStation.baseTown !== originStation.baseTown
+      );
     });
-  }, [formData.from, stations, stationOptions]);
+  }, [formData.from, routes, stations, stationOptions]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

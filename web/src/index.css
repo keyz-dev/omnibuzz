@@ -1,18 +1,19 @@
 @import "tailwindcss";
 
-:root{
+:root {
   font-family: 'Euclid Circular', 'Sofia Pro Regular', 'sans serif';
 }
 
-html{
+html {
   scroll-behavior: smooth;
+  font-size: 0.87rem;
 }
 
 @theme {
   --font-hero: 'Recoleta', 'Sofia Pro Light', 'Euclid Circular';
   --font-custom: 'Sofia Pro Light', 'Euclid Circular';
 
-  --breakpoint-2xl: 1540px; 
+  --breakpoint-2xl: 1540px;
   --color-accent: #3e8cff;
   --color-accent-bg: #94A3BB;
   --color-primary: #212121;
@@ -43,31 +44,34 @@ html{
 }
 
 @layer components {
-  .container{
+  .container {
     @apply mx-auto px-1 max-w-[840px];
   }
-  
+
   .btn {
     @apply px-4 py-2 font-medium rounded-xs text-base min-w-32 min-h-[45px] transition duration-150 ease-in-out hover:opacity-75;
   }
+
   .primarybtn {
-      @apply bg-accent text-white hover:opacity-75;
+    @apply bg-accent text-white hover:opacity-75;
   }
+
   .secondarybtn {
-      @apply bg-primary text-white hover:opacity-75 border border-border_clr;
+    @apply bg-primary text-white hover:opacity-75 border border-border_clr;
   }
 }
 
-@layer utilities{
-  .default_transition{
+@layer utilities {
+  .default_transition {
     @apply transition-all duration-300 ease-in-out;
   }
-  .flexbox{
+
+  .flexbox {
     @apply flex items-center justify-center
   }
 }
 
-.nav_active, .nav_item:hover{
+.nav_active, .nav_item:hover {
   color: var(--color-accent);
   position: relative;
   transition: ease 0.3s;
@@ -86,7 +90,17 @@ html{
 }
 
 @keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
-.animate-fade-in-up { animation: fade-in-up 0.2s ease; }
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.2s ease;
+}

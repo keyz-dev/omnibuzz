@@ -1,0 +1,100 @@
+{
+    "navLinks":[
+        { "href": "/", "active": true, "label": "Accueil" },
+        { "href": "#about-us", "active": false, "label": "À propos" },
+        { "href": "#services", "active": false, "label": "Services" },
+        { "href": "#contact-us", "active": false, "label": "Nous Contacter" }
+    ],
+    "hero": {
+        "slack": {
+            "title": "Professionnel",
+            "subTitle": "OFFRES CNN"
+        },
+        "subHeading": "Votre partenaire de confiance en comptabilité, audit et gestion financière"
+    },
+    "services": {
+        "heading": "Nos Services",
+        "subTitle": "Services financiers et monétaires innovants et avancés à votre disposition",
+        "cards": [
+            {
+                "id": 1,
+                "title": "Expertise Comptable",
+                "description": "Nos services de comptabilité incluent la révision et l'organisation des comptes, la mise en œuvre des normes internationales (telles que les IFRS) et la préparation des rapports financiers. Nous veillons à ce que vos documents financiers soient conformes aux dernières réglementations et soient soigneusement tenus à jour.",
+                "iconClass": "fas fa-book-open"
+            },
+            {
+                "id": 2,
+                "title": "Audit et Missions Associées",
+                "description": "Nous fournissons des services d'audit complets, y compris des audits légaux et statutaires, des audits informatiques et des revues d'approvisionnement. Notre expertise garantit l'intégrité de vos opérations financières et la conformité aux exigences des donateurs internationaux.",
+                "iconClass": "fas fa-shield-alt"
+            },
+            {
+                "id": 3,
+                "title": "Gestion Financière et Fiscale",
+                "description": "De la gestion de trésorerie à l'optimisation fiscale et aux évaluations d'entreprises, nos services de gestion financière et fiscale sont conçus pour vous aider à atteindre l'efficacité financière et à maximiser la rentabilité tout en respectant les réglementations fiscales.",
+                "iconClass": "fas fa-dollar-sign"
+            },
+            {
+                "id": 4,
+                "title": "Gestion Administrative",
+                "description": "Nous aidons à la gestion de vos tâches administratives, y compris la gestion des stocks, la rédaction et la révision des procédures opérationnelles, et la gestion des contrats. Nos solutions sont conçues pour rationaliser vos processus commerciaux.",
+                "iconClass": "fas fa-clipboard-list"
+            },
+            {
+                "id": 5,
+                "title": "Conseils, Études et Formations",
+                "description": "Nos services de conseil incluent des conseils sur la création d'entreprise, des conseils en gestion de patrimoine, et la réalisation d'études économiques et administratives. De plus, nous proposons des programmes de formation sur mesure pour renforcer les compétences essentielles de votre équipe.",
+                "iconClass": "fas fa-lightbulb"
+            }
+        ]
+    },
+    "contact": {
+        "heading": "Nous Contacter",
+        "subHeading": "Contactez-nous avec vos préoccupations, questions ou toute autre chose concernant nos services ou pour des précisions supplémentaires",
+        "cards": [
+            {
+                "id": 1,
+                "title": "Numéro de Téléphone",
+                "value": "+237 6 99 83 27 13",
+                "iconClass": "fas fa-phone-alt"
+            },
+            {
+                "id": 2,
+                "title": "Email",
+                "value": "Ngeric654@yahoo.fr",
+                "iconClass": "fas fa-envelope"
+            },
+            {
+                "id": 3,
+                "title": "Notre Adresse",
+                "value": "Entree Mature Biteng, Yaounde",
+                "iconClass": "fas fa-map-marker-alt"
+            }
+        ],
+        "form": {
+            "title": "Envoyez-nous un Message",
+            "labels": {
+                "name": "Votre Nom",
+                "email": "Email",
+                "phone": "Numéro de Téléphone",
+                "subject": "Sujet",
+                "message": "Message"
+            },
+            "placeholders": {
+                "name": "Votre Nom",
+                "email": "ex: email@example.com",
+                "phone": "ex: +237 673333333",
+                "subject": "Sujet",
+                "message": "Écrivez votre message"
+            },
+            "submit": "Envoyer le Message",
+            "statusMessage": {
+                "success": "Le message a été envoyé avec succès, nous vous répondrons bientôt !",
+                "error": "Une erreur est survenue lors de l'envoi du message, veuillez réessayer plus tard."
+            }
+        }
+    },
+    "footer": {
+        "copyright": "Droits d'auteur © 2025 CNN. Tous droits réservés."
+    }
+}

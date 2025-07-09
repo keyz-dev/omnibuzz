@@ -58,10 +58,10 @@ const AgencyStaffProvider = ({ children }) => {
     async (staffData) => {
       setLoading(true);
       try {
-        const newStaff = await staffAPI.create(staffData);
-        setStaff((prev) => [newStaff, ...prev]);
-        fetchStaffStats(); // Refetch stats after adding
-        toast.success("Staff member added successfully!");
+        await staffAPI.create(staffData);
+        await fetchStaff();
+        await fetchStaffStats();
+        toast.success("Assignment request sent successfully!");
       } catch (error) {
         const errorMessage =
           error.response?.data?.message || "Failed to add staff member.";
@@ -70,7 +70,7 @@ const AgencyStaffProvider = ({ children }) => {
         setLoading(false);
       }
     },
-    [agencyProfile, fetchStaffStats]
+    [agencyProfile, fetchStaffStats, fetchStaff]
   );
 
   const updateStaff = useCallback(
@@ -81,7 +81,7 @@ const AgencyStaffProvider = ({ children }) => {
         setStaff((prev) =>
           prev.map((s) => (s.id === workerId ? { ...s, ...updatedStaff } : s))
         );
-        fetchStaffStats(); // Refetch stats if role changes
+        await fetchStaffStats();
         toast.success("Staff member updated successfully!");
       } catch (error) {
         const errorMessage =
@@ -91,7 +91,7 @@ const AgencyStaffProvider = ({ children }) => {
         setLoading(false);
       }
     },
-    [fetchStaffStats]
+    [fetchStaffStats, fetchStaff]
   );
 
   const deleteStaff = useCallback(
@@ -101,7 +101,8 @@ const AgencyStaffProvider = ({ children }) => {
 
       try {
         await staffAPI.delete(workerId);
-        fetchStaffStats(); // Refetch stats after deleting
+        await fetchStaff();
+        await fetchStaffStats();
         toast.success("Staff member deleted successfully!");
       } catch (error) {
         setStaff(originalStaff);
@@ -110,7 +111,7 @@ const AgencyStaffProvider = ({ children }) => {
         toast.error(errorMessage);
       }
     },
-    [staff, fetchStaffStats]
+    [staff, fetchStaffStats, fetchStaff]
   );
 
   const resendInvite = useCallback(
@@ -118,6 +119,7 @@ const AgencyStaffProvider = ({ children }) => {
       setLoading(true);
       try {
         await staffAPI.resendInvite(workerId);
+        await fetchStaffStats();
         await fetchStaff();
         toast.success("Invitation resent successfully!");
       } catch (error) {
@@ -128,7 +130,7 @@ const AgencyStaffProvider = ({ children }) => {
         setLoading(false);
       }
     },
-    [fetchStaff]
+    [fetchStaffStats, fetchStaff]
   );
 
   const value = {

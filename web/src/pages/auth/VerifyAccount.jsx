@@ -11,7 +11,7 @@ const REDIRECT_DELAY = 2000; // 3 seconds delay
 const VerifyAccount = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const email = location.state?.email || "";
+  const email = location.state?.email;
   const origin = location.state?.origin || null;
   const [code, setCode] = useState(Array(CODE_LENGTH).fill(""));
   const [error, setError] = useState("");
@@ -20,6 +20,10 @@ const VerifyAccount = () => {
   const { verifyAccount, loading, resendVerification, redirectBasedOnRole } =
     useAuth();
 
+  if (!email) {
+    navigate("/");
+    return;
+  }
   // Check if all code entries are filled
   const isCodeComplete = code.every((digit) => digit !== "");
 
@@ -191,8 +195,9 @@ const VerifyAccount = () => {
             </Button>
             <Button
               type="submit"
-              additionalClasses={`w-32 ${isCodeComplete ? "primarybtn" : "bg-gray-300 cursor-not-allowed"
-                }`}
+              additionalClasses={`w-32 ${
+                isCodeComplete ? "primarybtn" : "bg-gray-300 cursor-not-allowed"
+              }`}
               isLoading={loading}
               disabled={loading || showSuccess || !isCodeComplete}
             >

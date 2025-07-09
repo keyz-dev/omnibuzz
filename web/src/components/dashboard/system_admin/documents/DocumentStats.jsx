@@ -1,48 +1,46 @@
-import React from 'react';
-import { Card } from '../../../ui';
-import { FileText, Clock, CheckCircle, XCircle } from 'lucide-react';
+import React from "react";
+import { StatCard } from "../../../ui";
+import { FileText, Clock, CheckCircle, XCircle } from "lucide-react";
 
 const DocumentStats = ({ stats }) => {
-    const statItems = [
-        {
-            label: 'All Documents',
-            value: stats.all,
-            icon: <FileText size={24} className="text-blue-600" />,
-            bgColor: 'bg-blue-100',
-        },
-        {
-            label: 'Pending Review',
-            value: stats.pending,
-            icon: <Clock size={24} className="text-yellow-600" />,
-            bgColor: 'bg-yellow-100',
-        },
-        {
-            label: 'Approved',
-            value: stats.approved,
-            icon: <CheckCircle size={24} className="text-green-600" />,
-            bgColor: 'bg-green-100',
-        },
-        {
-            label: 'Rejected',
-            value: stats.rejected,
-            icon: <XCircle size={24} className="text-red-600" />,
-            bgColor: 'bg-red-100',
-        },
-    ];
+  const statCards = [
+    {
+      title: "All Documents",
+      value: stats.all,
+      colorTheme: "blue",
+      icon: FileText,
+      description: "Total number of documents submitted",
+    },
+    {
+      title: "Approved",
+      value: stats.approved,
+      colorTheme: "green",
+      icon: CheckCircle,
+      description: "Number of approved documents",
+    },
+    {
+      title: "Pending Review",
+      value: stats.pending,
+      colorTheme: "purple",
+      icon: Clock,
+      description: "Number of documents pending review",
+    },
+    {
+      title: "Rejected",
+      value: stats.rejected,
+      colorTheme: "red",
+      icon: XCircle,
+      description: "Number of rejected documents",
+    },
+  ];
 
-    return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {statItems.map((item, index) => (
-                <Card key={index} className="p-6 flex items-center gap-4">
-                    <div className={`p-3 ${item.bgColor} rounded-full`}>{item.icon}</div>
-                    <div>
-                        <p className="text-2xl font-bold">{item.value}</p>
-                        <p className="text-sm text-gray-500">{item.label}</p>
-                    </div>
-                </Card>
-            ))}
-        </div>
-    );
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-2">
+      {statCards.map((card) => (
+        <StatCard key={card.title} {...card} />
+      ))}
+    </div>
+  );
 };
 
 export default DocumentStats;

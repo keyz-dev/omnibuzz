@@ -1,12 +1,9 @@
 import React from "react";
-import {
-  AgencyCreationProvider,
-  useAgencyCreation,
-} from "../contexts";
-import AgencyCreationSidebar from "../components/layout/AgencyCreationSidebar"; // The left sidebar
-import { useAuth } from "../contexts/AuthContext";
+import { AgencyCreationProvider, useAgencyCreation } from "../../contexts";
+import AgencyCreationSidebar from "../../components/layout/AgencyCreationSidebar"; // The left sidebar
+import { useAuth } from "../../contexts/AuthContext";
 import { Navigate } from "react-router-dom";
-import { Loader } from "../components/ui";
+import { Loader } from "../../components/ui";
 
 // Import step components
 import {
@@ -16,7 +13,7 @@ import {
   Step4_ImageAddition,
   Step5_Overview,
   Step6_CreationSuccess,
-} from "../components/agency/";
+} from "../../components/agency/";
 
 // This is the main component that renders the correct step
 const AgencyCreationFlow = () => {

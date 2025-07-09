@@ -1,12 +1,12 @@
 import api from "../";
 
-const routePrefix = "schedule/station-manager/";
+const routePrefix = "/schedule";
 
 export const schedulesAPI = {
     // Fetch all schedules for the station manager's agency
-    fetchSchedules: async (filters = {}) => {
+    fetchSchedules: async (stationId, filters = {}) => {
         try {
-            const response = await api.get(`${routePrefix}`, { params: filters });
+            const response = await api.get(routePrefix + `/by-station/${stationId}`, { params: filters });
             return response.data;
         } catch (error) {
             console.error("Error fetching schedules:", error);
@@ -17,7 +17,7 @@ export const schedulesAPI = {
     // Create a new schedule
     createSchedule: async (scheduleData) => {
         try {
-            const response = await api.post(`${routePrefix}`, scheduleData);
+            const response = await api.post(routePrefix, scheduleData);
             return response.data;
         } catch (error) {
             console.error("Error creating schedule:", error);
@@ -36,7 +36,7 @@ export const schedulesAPI = {
         }
     },
 
-    // Delete a schedule
+    // Delete an existing schedule
     deleteSchedule: async (scheduleId) => {
         try {
             const response = await api.delete(`${routePrefix}/${scheduleId}`);
@@ -47,15 +47,14 @@ export const schedulesAPI = {
         }
     },
 
-    // To populate the routes dropdown in the schedule creation form
-    fetchRoutes: async () => {
+    // Fetch routes for the dropdown
+    fetchRoutes: async (stationId) => {
         try {
-            // Assuming a general routes endpoint exists
-            const response = await api.get("/routes");
+            const response = await api.get(`/route/by-station/${stationId}`);
             return response.data;
         } catch (error) {
             console.error("Error fetching routes:", error);
             throw error;
         }
-    },
+    }
 };

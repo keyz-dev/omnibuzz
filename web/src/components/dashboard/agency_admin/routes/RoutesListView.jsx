@@ -56,7 +56,7 @@ const RoutesListView = ({ routes, onEdit, onDelete }) => {
               label: "Delete",
               icon: <Trash2 size={16} />,
               onClick: () => onDelete(row),
-              isdestructive: "true",
+              isDestructive: true,
             },
           ];
           return <DropdownMenu items={menuItems} />;

@@ -1,37 +1,56 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { ModalWrapper, Input, Button, Select, Loader } from "../../../ui";
-import { useAgencyStation } from "../../../../contexts/dashboard/agency_admin";
+import React, { useState, useMemo, useEffect } from "react";
+import { Input, Button, Select, FormHeader, ModalWrapper } from "../../../ui";
+import { X } from "lucide-react";
 
-const EditRouteModal = ({ isOpen, onClose, onSave, routeToEdit, isSaving }) => {
+const EditRouteModal = ({
+  isOpen,
+  onClose,
+  onSave,
+  stations,
+  isSaving,
+  routeToEdit,
+  routes,
+}) => {
   const [formData, setFormData] = useState({
     from: "",
     to: "",
     distance: "",
     estimatedDuration: "",
     basePrice: "",
-    status: "Active",
+    routeStatus: "Active",
   });
-  const [error, setError] = useState("");
-  const { stations } = useAgencyStation();
+
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    if (routeToEdit) {
+    if (isOpen && routeToEdit) {
       setFormData({
-        from: routeToEdit.from || "",
-        to: routeToEdit.to || "",
+        from: String(routeToEdit.originStation?.id || ""),
+        to: String(routeToEdit.destinationStation?.id || ""),
         distance: routeToEdit.distance || "",
         estimatedDuration: routeToEdit.estimatedDuration || "",
         basePrice: routeToEdit.basePrice || "",
-        status: routeToEdit.status || "Active",
+        routeStatus: routeToEdit.status || "Active",
       });
-      setError("");
+      setErrors({});
+    } else if (!isOpen) {
+      // Reset form when modal is closed
+      setFormData({
+        from: "",
+        to: "",
+        distance: "",
+        estimatedDuration: "",
+        basePrice: "",
+        routeStatus: "Active",
+      });
+      setErrors({});
     }
-  }, [routeToEdit]);
+  }, [isOpen, routeToEdit]);
 
   const stationOptions = useMemo(
     () =>
       stations.map((s) => ({
-        value: s.id,
+        value: String(s.id),
         label: `${s.name} (${s.baseTown})`,
       })),
     [stations]
@@ -39,13 +58,34 @@ const EditRouteModal = ({ isOpen, onClose, onSave, routeToEdit, isSaving }) => {
 
   const destinationOptions = useMemo(() => {
     if (!formData.from) return [];
-    const origin = stations.find((s) => s.id === formData.from);
-    if (!origin) return [];
+
+    const originStation = stations.find((s) => String(s.id) === formData.from);
+    if (!originStation) return [];
+
+    const existingDestinationIds = new Set(
+      routes
+        .filter(
+          (route) =>
+            String(route.originStation?.id) === formData.from &&
+            String(route.id) !== String(routeToEdit?.id) // Exclude the current route being edited
+        )
+        .map((route) => String(route.destinationStation?.id))
+    );
+
     return stationOptions.filter((opt) => {
-      const station = stations.find((s) => s.id === opt.value);
-      return station.baseTown !== origin.baseTown;
+      const destinationStationId = String(opt.value);
+      if (destinationStationId === formData.from) return false;
+      if (existingDestinationIds.has(destinationStationId)) return false;
+
+      const destinationStation = stations.find(
+        (s) => String(s.id) === destinationStationId
+      );
+      return (
+        destinationStation &&
+        destinationStation.baseTown !== originStation.baseTown
+      );
     });
-  }, [formData.from, stations, stationOptions]);
+  }, [formData.from, routes, stations, stationOptions, routeToEdit]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -53,97 +93,121 @@ const EditRouteModal = ({ isOpen, onClose, onSave, routeToEdit, isSaving }) => {
   };
 
   const handleSelectChange = (name, value) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (name === "from") {
-      setFormData((prev) => ({ ...prev, to: "" }));
-    }
+    setFormData((prev) => {
+      const newState = { ...prev, [name]: value };
+      if (name === "from") newState.to = "";
+      return newState;
+    });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setError("");
+  const handleSave = () => {
+    const newErrors = {};
+    if (!formData.from) newErrors.from = "Origin station is required.";
+    if (!formData.to) newErrors.to = "Destination station is required.";
+    if (!formData.basePrice) newErrors.basePrice = "Base price is required.";
 
-    if (!formData.from || !formData.to || !formData.basePrice) {
-      setError("Please fill in all required fields.");
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
-    onSave(formData);
+    const updatedData = {
+      from: formData.from,
+      to: formData.to,
+      distance: formData.distance,
+      estimatedDuration: formData.estimatedDuration,
+      basePrice: parseFloat(formData.basePrice),
+      status: formData.routeStatus,
+    };
+
+    onSave(updatedData);
   };
 
   if (!isOpen) return null;
 
   return (
-    <ModalWrapper isOpen={isOpen} onClose={onClose}>
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4">Edit Route</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="from">Origin Station</label>
-            <Select
-              name="from"
-              options={stationOptions}
-              value={formData.from}
-              onChange={(value) => handleSelectChange("from", value)}
-              placeholder="Select Origin"
-            />
-          </div>
-          <div>
-            <label htmlFor="to">Destination Station</label>
-            <Select
-              name="to"
-              options={destinationOptions}
-              value={formData.to}
-              onChange={(value) => handleSelectChange("to", value)}
-              placeholder="Select Destination"
-              disabled={!formData.from}
-            />
-          </div>
-          <Input
-            name="distance"
-            label="Distance (km)"
-            value={formData.distance}
-            onChange={handleChange}
-          />
-          <Input
-            name="estimatedDuration"
-            label="Estimated Duration"
-            value={formData.estimatedDuration}
-            onChange={handleChange}
-          />
-          <Input
-            name="basePrice"
-            label="Base Price"
-            value={formData.basePrice}
-            onChange={handleChange}
+    <ModalWrapper>
+      <div className="p-2 md:p-8 w-full max-w-2xl relative">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+        >
+          <X size={24} />
+        </button>
+
+        <FormHeader
+          title="Edit Route"
+          subtitle="Update the details for this route"
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          <Select
+            label="Origin Station"
+            name="from"
+            placeholder="Select origin"
+            options={stationOptions}
+            value={formData.from}
+            onChange={(e) => handleSelectChange("from", e.target.value)}
+            error={errors.from}
             required
           />
-          <div>
-            <label htmlFor="status">Route Status</label>
-            <Select
-              name="status"
-              options={[
-                { value: "Active", label: "Active" },
-                { value: "Inactive", label: "Inactive" },
-              ]}
-              value={formData.status}
-              onChange={(value) => handleSelectChange("status", value)}
-            />
-          </div>
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-          <div className="flex justify-end space-x-2">
-            <Button
-              type="button"
-              onClick={onClose}
-              additionalClasses="bg-gray-300 text-gray-800"
-            >
-              Cancel
-            </Button>
-            <Button type="submit" isLoading={isSaving}>
-              Save Changes
-            </Button>
-          </div>
-        </form>
+          <Select
+            label="Destination Station"
+            name="to"
+            placeholder="Select destination"
+            options={destinationOptions}
+            value={formData.to}
+            onChange={(e) => handleSelectChange("to", e.target.value)}
+            disabled={!formData.from}
+            error={errors.to}
+            required
+          />
+          <Input
+            label="Distance (km)"
+            name="distance"
+            type="number"
+            value={formData.distance}
+            onChangeHandler={handleChange}
+            placeholder="e.g., 250"
+          />
+          <Input
+            label="Estimated duration (In Hours)"
+            name="estimatedDuration"
+            type="number"
+            value={formData.estimatedDuration}
+            onChangeHandler={handleChange}
+            placeholder="e.g., 4 hours"
+          />
+          <Input
+            label="Base Price (XAF) *"
+            name="basePrice"
+            type="number"
+            value={formData.basePrice}
+            onChangeHandler={handleChange}
+            error={errors.basePrice}
+            required
+          />
+          <Select
+            label="Route Status"
+            name="routeStatus"
+            value={formData.routeStatus}
+            onChange={(e) => handleSelectChange("routeStatus", e.target.value)}
+            options={[
+              { value: "Active", label: "Active" },
+              { value: "Inactive", label: "Inactive" },
+            ]}
+            required
+          />
+        </div>
+        <div className="flex justify-end mt-8">
+          <Button
+            onClickHandler={handleSave}
+            additionalClasses="bg-accent text-white"
+            isLoading={isSaving}
+          >
+            Save Changes
+          </Button>
+        </div>
       </div>
     </ModalWrapper>
   );

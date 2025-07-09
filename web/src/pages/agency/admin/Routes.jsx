@@ -44,7 +44,6 @@ const AgencyRoutes = () => {
         basePrice: parseFloat(newRouteData.basePrice),
         status: newRouteData.routeStatus,
       };
-
       await addRoute(routeToAdd);
       setAddModalOpen(false);
     },
@@ -79,7 +78,7 @@ const AgencyRoutes = () => {
   }, [deleteRoute, selectedRoute]);
 
   return (
-    <div className="container">
+    <section>
       <RoutesMainView
         routes={routes}
         stats={routeStats}
@@ -95,6 +94,7 @@ const AgencyRoutes = () => {
           onClose={() => setAddModalOpen(false)}
           onSave={handleAddRoute}
           stations={stations}
+          routes={routes}
           isSaving={loading}
         />
       )}
@@ -106,6 +106,7 @@ const AgencyRoutes = () => {
           onSave={handleUpdateRoute}
           routeToEdit={selectedRoute}
           stations={stations}
+          routes={routes}
           isSaving={loading}
         />
       )}
@@ -120,7 +121,7 @@ const AgencyRoutes = () => {
           isDeleting={loading}
         />
       )}
-    </div>
+    </section>
   );
 };
 
